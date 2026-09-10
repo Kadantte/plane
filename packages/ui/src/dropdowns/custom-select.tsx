@@ -1,10 +1,16 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Combobox } from "@headlessui/react";
 
 import React, { createContext, useCallback, useContext, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
 import { useOutsideClickDetector } from "@plane/hooks";
-import { CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
+import { ChevronDownOutline, TickOutline } from "@makeplane/propel/icons";
 // plane helpers
 // hooks
 import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
@@ -80,7 +86,7 @@ function CustomSelect(props: ICustomSelectProps) {
               <button
                 ref={setReferenceElement}
                 type="button"
-                className={`flex items-center justify-between gap-1 text-11 rounded ${
+                className={`flex items-center justify-between gap-1 rounded text-11 ${
                   disabled ? "cursor-not-allowed text-secondary" : "cursor-pointer hover:bg-layer-transparent-hover"
                 } ${customButtonClassName}`}
                 onClick={toggleDropdown}
@@ -106,17 +112,17 @@ function CustomSelect(props: ICustomSelectProps) {
                 onClick={toggleDropdown}
               >
                 {label}
-                {!noChevron && !disabled && <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />}
+                {!noChevron && !disabled && <ChevronDownOutline className="h-3 w-3" aria-hidden="true" />}
               </button>
             </Combobox.Button>
           )}
         </>
         {isOpen &&
           createPortal(
-            <Combobox.Options data-prevent-outside-click>
+            <Combobox.Options as="ul" data-prevent-outside-click>
               <div
                 className={cn(
-                  "my-1 overflow-y-scroll rounded-md border-[0.5px] border-subtle-1 bg-surface-1 px-2 py-2.5 text-11 focus:outline-none min-w-48 whitespace-nowrap z-30",
+                  "z-30 my-1 min-w-48 overflow-y-scroll rounded-md border-[0.5px] border-subtle-1 bg-surface-1 px-2 py-2.5 text-11 whitespace-nowrap focus:outline-none",
                   optionsClassName
                 )}
                 ref={setPopperElement}
@@ -157,10 +163,11 @@ function Option(props: ICustomSelectItemProps) {
 
   return (
     <Combobox.Option
+      as="li"
       value={value}
       className={({ active }) =>
         cn(
-          "cursor-pointer select-none truncate rounded-sm px-1 py-1.5 text-secondary flex items-center justify-between gap-2",
+          "flex cursor-pointer items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 text-secondary select-none",
           {
             "bg-layer-transparent-hover": active,
           },
@@ -170,9 +177,9 @@ function Option(props: ICustomSelectItemProps) {
       onClick={handleClick}
     >
       {({ selected }) => (
-        <div className="flex items-center justify-between gap-2 w-full">
+        <div className="flex w-full items-center justify-between gap-2">
           {children}
-          {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
+          {selected && <TickOutline className="h-3.5 w-3.5 flex-shrink-0" />}
         </div>
       )}
     </Combobox.Option>

@@ -1,9 +1,16 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 // plane imports
 import { ROLE } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import type { IWorkspaceMemberInvitation } from "@plane/types";
-import { Checkbox, Spinner } from "@plane/ui";
+import { Checkbox } from "@makeplane/propel/components/checkbox";
+import { Spinner } from "@plane/ui";
 import { truncateText } from "@plane/utils";
 // constants
 import { WorkspaceLogo } from "@/components/workspace/logo";
@@ -11,7 +18,7 @@ import { WorkspaceLogo } from "@/components/workspace/logo";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserSettings } from "@/hooks/store/user";
 // services
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 // local components
 import { CommonOnboardingHeader } from "../common";
 
@@ -71,7 +78,7 @@ export function WorkspaceJoinInvitesStep(props: Props) {
             return (
               <div
                 key={invitation.id}
-                className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 border-subtle hover:bg-surface-2`}
+                className={`flex cursor-pointer items-center gap-2 rounded-lg border border-subtle px-3 py-2 hover:bg-surface-2`}
                 onClick={() => handleInvitation(invitation, isSelected ? "withdraw" : "accepted")}
               >
                 <div className="flex-shrink-0">
@@ -85,8 +92,8 @@ export function WorkspaceJoinInvitesStep(props: Props) {
                   <div className="text-13 font-medium">{truncateText(invitedWorkspace?.name, 30)}</div>
                   <p className="text-11 text-secondary">{ROLE[invitation.role]}</p>
                 </div>
-                <span className={`flex-shrink-0`}>
-                  <Checkbox checked={isSelected} />
+                <span className="pointer-events-none flex-shrink-0">
+                  <Checkbox checked={isSelected} aria-label={invitedWorkspace?.name ?? "Select workspace invitation"} />
                 </span>
               </div>
             );

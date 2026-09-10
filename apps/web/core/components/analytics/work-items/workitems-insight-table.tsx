@@ -1,16 +1,22 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useMemo } from "react";
 import type { ColumnDef, Row, RowData } from "@tanstack/react-table";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { UserRound } from "lucide-react";
+import { ProjectsOutline, UserOutline } from "@makeplane/propel/icons";
+import { Avatar } from "@makeplane/propel/components/avatar";
 import { useTranslation } from "@plane/i18n";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { ProjectIcon } from "@plane/propel/icons";
 // plane package imports
 import type { AnalyticsTableDataMap, WorkItemInsightColumns } from "@plane/types";
 // plane web components
-import { Avatar } from "@plane/ui";
+
 import { getFileURL } from "@plane/utils";
 // hooks
 import { useAnalytics } from "@/hooks/store/use-analytics";
@@ -23,6 +29,7 @@ import { InsightTable } from "../insight-table";
 const analyticsService = new AnalyticsService();
 
 declare module "@tanstack/react-table" {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface ColumnMeta<TData extends RowData, TValue> {
     export: {
       key: string;
@@ -83,7 +90,7 @@ const WorkItemsInsightTable = observer(function WorkItemsInsightTable() {
                   {project?.logo_props ? (
                     <Logo logo={project.logo_props} size={18} />
                   ) : (
-                    <ProjectIcon className="h-4 w-4" />
+                    <ProjectsOutline className="h-4 w-4" />
                   )}
                   {project?.name}
                 </div>
@@ -104,17 +111,17 @@ const WorkItemsInsightTable = observer(function WorkItemsInsightTable() {
                 <div className="flex items-center gap-2">
                   {row.original.avatar_url && row.original.avatar_url !== "" ? (
                     <Avatar
-                      name={row.original.display_name}
+                      alt={row.original.display_name}
+                      fallback={row.original.display_name?.[0]?.toUpperCase()}
                       src={getFileURL(row.original.avatar_url)}
-                      size={24}
-                      shape="circle"
+                      size="sm"
                     />
                   ) : (
-                    <div className="flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full bg-layer-1  capitalize overflow-hidden">
+                    <div className="flex h-4 w-4 flex-shrink-0 items-center justify-center overflow-hidden rounded-full bg-layer-1 capitalize">
                       {row.original.display_name ? (
                         row.original.display_name?.[0]
                       ) : (
-                        <UserRound className="text-secondary " size={12} />
+                        <UserOutline className="text-secondary" width={12} height={12} />
                       )}
                     </div>
                   )}

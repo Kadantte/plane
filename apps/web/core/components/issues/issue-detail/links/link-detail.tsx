@@ -1,6 +1,12 @@
-import { NewTabIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { DeleteOutline, EditOutline, NewTabOutline } from "@makeplane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { getIconForLink, copyTextToClipboard, calculateTimeAgo } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -54,11 +60,12 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
         >
           <div className="flex items-start gap-2 truncate">
             <span className="py-1">
-              <Icon className="size-3 stroke-2 text-tertiary group-hover:text-primary flex-shrink-0" />
+              <Icon className="size-3 flex-shrink-0 stroke-2 text-tertiary group-hover:text-primary" />
             </span>
             <Tooltip
-              tooltipContent={linkDetail.title && linkDetail.title !== "" ? linkDetail.title : linkDetail.url}
-              isMobile={isMobile}
+              label={linkDetail.title && linkDetail.title !== "" ? linkDetail.title : linkDetail.url}
+              layout="stacked"
+              disabled={isMobile}
             >
               <span className="truncate text-11">
                 {linkDetail.title && linkDetail.title !== "" ? linkDetail.title : linkDetail.url}
@@ -77,7 +84,7 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
                   toggleIssueLinkModal(true);
                 }}
               >
-                <EditIcon className="h-3 w-3 stroke-[1.5] text-secondary" />
+                <EditOutline className="h-3 w-3 stroke-[1.5] text-secondary" />
               </button>
               <a
                 href={linkDetail.url}
@@ -85,7 +92,7 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
                 rel="noopener noreferrer"
                 className="flex items-center justify-center p-1 hover:bg-layer-1"
               >
-                <NewTabIcon className="h-3 w-3 stroke-[1.5] text-secondary" />
+                <NewTabOutline className="h-3 w-3 stroke-[1.5] text-secondary" />
               </a>
               <button
                 type="button"
@@ -96,7 +103,7 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
                   linkOperations.remove(linkDetail.id);
                 }}
               >
-                <TrashIcon className="h-3 w-3" />
+                <DeleteOutline className="h-3 w-3" />
               </button>
             </div>
           )}

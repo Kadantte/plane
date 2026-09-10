@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useEffect, useState, useCallback } from "react";
 import type { LucideIcon } from "lucide-react";
 
@@ -8,13 +14,13 @@ import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { Button } from "@plane/propel/button";
-import { GlobeIcon, LockIcon } from "@plane/propel/icons";
+import { GlobeOutline, LockOutline } from "@makeplane/propel/icons";
 import type { ISvgIcons } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 // constants
 import { cn } from "@plane/utils";
-import type { ToolbarMenuItem } from "@/constants/editor";
-import { TOOLBAR_ITEMS } from "@/constants/editor";
+import type { ToolbarMenuItem } from "@plane/editor";
+import { TOOLBAR_ITEMS } from "@plane/editor";
 // helpers
 
 type Props = {
@@ -38,12 +44,12 @@ type TCommentAccessType = {
 
 const COMMENT_ACCESS_SPECIFIERS: TCommentAccessType[] = [
   {
-    icon: LockIcon,
+    icon: LockOutline,
     key: EIssueCommentAccessSpecifier.INTERNAL,
     label: "Private",
   },
   {
-    icon: GlobeIcon,
+    icon: GlobeOutline,
     key: EIssueCommentAccessSpecifier.EXTERNAL,
     label: "Public",
   },
@@ -97,18 +103,18 @@ export function IssueCommentToolbar(props: Props) {
   const isSubmitButtonDisabled = isCommentEmpty || !isEditorReadyToDiscard;
 
   return (
-    <div className="flex h-9 w-full items-stretch gap-1.5 bg-surface-2 overflow-x-scroll">
+    <div className="flex h-9 w-full items-stretch gap-1.5 overflow-x-scroll bg-surface-2">
       {showAccessSpecifier && (
         <div className="flex flex-shrink-0 items-stretch gap-0.5 rounded-sm border-[0.5px] border-subtle p-1">
           {COMMENT_ACCESS_SPECIFIERS.map((access) => {
             const isAccessActive = accessSpecifier === access.key;
 
             return (
-              <Tooltip key={access.key} tooltipContent={access.label}>
+              <Tooltip key={access.key} label={access.label} layout="stacked">
                 <button
                   type="button"
                   onClick={() => handleAccessChange?.(access.key)}
-                  className={cn("grid place-items-center aspect-square rounded-xs p-1 hover:bg-layer-1", {
+                  className={cn("grid aspect-square place-items-center rounded-xs p-1 hover:bg-layer-1", {
                     "bg-layer-1": isAccessActive,
                   })}
                 >
@@ -137,20 +143,12 @@ export function IssueCommentToolbar(props: Props) {
                 const isItemActive = activeStates[item.renderKey];
 
                 return (
-                  <Tooltip
-                    key={item.renderKey}
-                    tooltipContent={
-                      <p className="flex flex-col gap-1 text-center text-11">
-                        <span className="font-medium">{item.name}</span>
-                        {item.shortcut && <kbd className="text-placeholder">{item.shortcut.join(" + ")}</kbd>}
-                      </p>
-                    }
-                  >
+                  <Tooltip key={item.renderKey} label={item.name} shortcut={item.shortcut?.join(" + ")}>
                     <button
                       type="button"
                       onClick={() => executeCommand(item)}
                       className={cn(
-                        "grid place-items-center aspect-square rounded-xs p-0.5 text-placeholder hover:bg-layer-1",
+                        "grid aspect-square place-items-center rounded-xs p-0.5 text-placeholder hover:bg-layer-1",
                         {
                           "bg-layer-1 text-primary": isItemActive,
                         }

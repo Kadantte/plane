@@ -1,7 +1,14 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 // plane imports
+import { Banner } from "@makeplane/propel/components/banner";
 import { OAuthOptions } from "@plane/ui";
 // helpers
 import type { TAuthErrorInfo } from "@/helpers/authentication.helper";
@@ -17,7 +24,6 @@ import { useOAuthConfig } from "@/hooks/oauth";
 import { useInstance } from "@/hooks/store/use-instance";
 // local imports
 import { TermsAndConditions } from "../terms-and-conditions";
-import { AuthBanner } from "./auth-banner";
 import { AuthHeader, AuthHeaderBase } from "./auth-header";
 import { AuthFormRoot } from "./form-root";
 
@@ -110,7 +116,13 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
   return (
     <AuthContainer>
       {errorInfo && errorInfo?.type === EErrorAlertType.BANNER_ALERT && (
-        <AuthBanner message={errorInfo.message} handleBannerData={(value) => setErrorInfo(value)} />
+        <Banner
+          placement="inline"
+          variant="accent"
+          role="alert"
+          description={errorInfo.message}
+          onDismiss={() => setErrorInfo(undefined)}
+        />
       )}
       <AuthHeader
         workspaceSlug={workspaceSlug?.toString() || undefined}
@@ -145,8 +157,8 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
 
 function AuthContainer({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex flex-col justify-center items-center flex-grow w-full py-6 mt-10">
-      <div className="relative flex flex-col gap-6 max-w-[22.5rem] w-full">{children}</div>
+    <div className="mt-10 flex w-full flex-grow flex-col items-center justify-center py-6">
+      <div className="relative flex w-full max-w-[22.5rem] flex-col gap-6">{children}</div>
     </div>
   );
 }

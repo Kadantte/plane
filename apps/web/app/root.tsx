@@ -1,12 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { ReactNode } from "react";
-import * as Sentry from "@sentry/react-router";
-import Script from "next/script";
 import { Links, Meta, Outlet, Scripts } from "react-router";
 import type { LinksFunction } from "react-router";
 import { ThemeProvider, useTheme } from "next-themes";
 // plane imports
 import { SITE_DESCRIPTION, SITE_NAME } from "@plane/constants";
-import { cn } from "@plane/utils";
 // types
 // assets
 import favicon16 from "@/app/assets/favicon/favicon-16x16.png?url";
@@ -19,9 +22,10 @@ import globalStyles from "@/styles/globals.css?url";
 import type { Route } from "./+types/root";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
+// lib
+import { isStaleAssetError, recoverFromStaleAsset } from "@/lib/stale-asset-error";
 // local
 import { CustomErrorComponent } from "./error";
-import { AppProvider } from "./provider";
 // fonts
 import "@fontsource-variable/inter";
 import interVariableWoff2 from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url";
@@ -50,8 +54,6 @@ export const links: LinksFunction = () => [
 ];
 
 export function Layout({ children }: { children: ReactNode }) {
-  const isSessionRecorderEnabled = parseInt(process.env.VITE_ENABLE_SESSION_RECORDER || "0");
-
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -75,15 +77,6 @@ export function Layout({ children }: { children: ReactNode }) {
           {children}
         </ThemeProvider>
         <Scripts />
-        {!!isSessionRecorderEnabled && process.env.VITE_SESSION_RECORDER_KEY && (
-          <Script id="clarity-tracking">
-            {`(function(c,l,a,r,i,t,y){
-              c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-              t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-              y=l.getElementsByTagName(r)[0];if(y){y.parentNode.insertBefore(t,y);}
-          })(window, document, "clarity", "script", "${process.env.VITE_SESSION_RECORDER_KEY}");`}
-          </Script>
-        )}
       </body>
     </html>
   );
@@ -115,16 +108,11 @@ export const meta: Route.MetaFunction = () => [
   { name: "twitter:image:alt", content: "Plane - Modern project management" },
 ];
 
+// Root stays shell-thin: in SPA mode React Router server-builds only the root route, so
+// everything imported here is evaluated in Node just to prerender the fallback index.html.
+// Providers, the store layer, and app chrome belong in app/layout.tsx — never import them here.
 export default function Root() {
-  return (
-    <AppProvider>
-      <div className={cn("h-screen w-full overflow-hidden bg-canvas relative flex flex-col", "desktop-app-container")}>
-        <main className="w-full h-full overflow-hidden relative">
-          <Outlet />
-        </main>
-      </div>
-    </AppProvider>
-  );
+  return <Outlet />;
 }
 
 export function HydrateFallback() {
@@ -134,16 +122,17 @@ export function HydrateFallback() {
   if (typeof window === "undefined" || resolvedTheme === undefined) return <div />;
 
   return (
-    <div className="relative flex bg-canvas h-screen w-full items-center justify-center">
+    <div className="relative flex h-screen w-full items-center justify-center bg-canvas">
       <LogoSpinner />
     </div>
   );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-  if (error) {
-    Sentry.captureException(error);
-  }
+  // A stale chunk failure surfaces here as React Router's own wrapper error
+  // (the failed dynamic import itself never reaches a window event) — recover
+  // the same way entry.client.tsx does instead of just showing the error page.
+  if (import.meta.env.PROD && isStaleAssetError(error)) recoverFromStaleAsset();
 
   return <CustomErrorComponent error={error} />;
 }

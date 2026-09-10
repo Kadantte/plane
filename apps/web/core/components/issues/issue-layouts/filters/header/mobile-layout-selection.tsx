@@ -1,7 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { ISSUE_LAYOUTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { ChevronDownIcon } from "@plane/propel/icons";
+import { ChevronDownOutline } from "@makeplane/propel/icons";
 import type { EIssueLayoutTypes } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 import { IssueLayoutIcon } from "../../layout-icon";
@@ -27,7 +33,7 @@ export function MobileLayoutSelection({
           {activeLayout && (
             <IssueLayoutIcon layout={activeLayout} size={14} strokeWidth={2} className={`h-3.5 w-3.5`} />
           )}
-          <ChevronDownIcon className="size-3 text-secondary my-auto" strokeWidth={2} />
+          <ChevronDownOutline className="my-auto size-3 text-secondary" />
         </Button>
       }
       customButtonClassName="flex flex-grow justify-center text-secondary text-13"

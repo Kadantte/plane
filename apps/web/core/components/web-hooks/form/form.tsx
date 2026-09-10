@@ -1,7 +1,12 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { WORKSPACE_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import type { IWebhook, TWebhookEventTypes } from "@plane/types";
@@ -62,7 +67,7 @@ export const WebhookForm = observer(function WebhookForm(props: Props) {
 
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)}>
-      <div className="space-y-5 ">
+      <div className="space-y-5">
         <div className="text-18 font-medium text-secondary">
           {data
             ? t("workspace_settings.settings.webhooks.modal.details")
@@ -90,19 +95,14 @@ export const WebhookForm = observer(function WebhookForm(props: Props) {
         </div>
       </div>
       {data ? (
-        <div className="pt-0 space-y-5">
+        <div className="space-y-5 pt-0">
           <WebhookSecretKey data={data} />
-          <Button
-            size="lg"
-            type="submit"
-            loading={isSubmitting}
-            data-ph-element={WORKSPACE_SETTINGS_TRACKER_ELEMENTS.WEBHOOK_UPDATE_BUTTON}
-          >
+          <Button size="lg" type="submit" loading={isSubmitting}>
             {isSubmitting ? t("updating") : t("update")}
           </Button>
         </div>
       ) : (
-        <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle">
+        <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle px-5 py-4">
           <Button variant="secondary" size="lg" onClick={handleClose}>
             {t("cancel")}
           </Button>

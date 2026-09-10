@@ -1,7 +1,19 @@
-import { FileText, FolderPlus, Layers, SquarePlus } from "lucide-react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { SquarePlus } from "lucide-react";
+import {
+  CreateFolderOutline,
+  CyclesOutline,
+  DocumentationOutline,
+  ModuleOutline,
+  WorkItemsOutline,
+} from "@makeplane/propel/icons";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { ContrastIcon, DiceIcon, LayersIcon } from "@plane/propel/icons";
 // components
 import { EUserProjectRoles } from "@plane/types";
 import type { TPowerKCommandConfig, TPowerKContext } from "@/components/power-k/core/types";
@@ -9,8 +21,7 @@ import type { TPowerKCommandConfig, TPowerKContext } from "@/components/power-k/
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
-// plane web imports
-import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
+import { useInstance } from "@/hooks/store/use-instance";
 
 export type TPowerKCreationCommandKeys =
   | "create_work_item"
@@ -26,6 +37,7 @@ export type TPowerKCreationCommandKeys =
  */
 export const usePowerKCreationCommandsRecord = (): Record<TPowerKCreationCommandKeys, TPowerKCommandConfig> => {
   // store
+  const { config } = useInstance();
   const {
     canPerformAnyCreateAction,
     permission: { allowPermissions },
@@ -52,7 +64,7 @@ export const usePowerKCreationCommandsRecord = (): Record<TPowerKCreationCommand
       ctx.params.workspaceSlug?.toString(),
       ctx.params.projectId?.toString()
     );
-  const isWorkspaceCreationDisabled = getIsWorkspaceCreationDisabled();
+  const isWorkspaceCreationDisabled = config?.is_workspace_creation_disabled ?? false;
 
   const getProjectDetails = (ctx: TPowerKContext) =>
     ctx.params.projectId ? getPartialProjectById(ctx.params.projectId.toString()) : undefined;
@@ -63,7 +75,7 @@ export const usePowerKCreationCommandsRecord = (): Record<TPowerKCreationCommand
       type: "action",
       group: "create",
       i18n_title: "power_k.creation_actions.create_work_item",
-      icon: LayersIcon,
+      icon: WorkItemsOutline,
       keySequence: "ni",
       action: () => toggleCreateIssueModal(true),
       isEnabled: () => Boolean(canCreateWorkItem),
@@ -75,7 +87,7 @@ export const usePowerKCreationCommandsRecord = (): Record<TPowerKCreationCommand
       type: "action",
       group: "create",
       i18n_title: "power_k.creation_actions.create_page",
-      icon: FileText,
+      icon: DocumentationOutline,
       keySequence: "nd",
       action: () => toggleCreatePageModal({ isOpen: true }),
       isEnabled: (ctx) => Boolean(getProjectDetails(ctx)?.page_view && hasProjectMemberLevelPermissions(ctx)),
@@ -88,7 +100,7 @@ export const usePowerKCreationCommandsRecord = (): Record<TPowerKCreationCommand
       type: "action",
       group: "create",
       i18n_title: "power_k.creation_actions.create_view",
-      icon: Layers,
+      icon: WorkItemsOutline,
       keySequence: "nv",
       action: () => toggleCreateViewModal(true),
       isEnabled: (ctx) => Boolean(getProjectDetails(ctx)?.issue_views_view && hasProjectMemberLevelPermissions(ctx)),
@@ -103,7 +115,7 @@ export const usePowerKCreationCommandsRecord = (): Record<TPowerKCreationCommand
       type: "action",
       group: "create",
       i18n_title: "power_k.creation_actions.create_cycle",
-      icon: ContrastIcon,
+      icon: CyclesOutline,
       keySequence: "nc",
       action: () => toggleCreateCycleModal(true),
       isEnabled: (ctx) => Boolean(getProjectDetails(ctx)?.cycle_view && hasProjectMemberLevelPermissions(ctx)),
@@ -116,7 +128,7 @@ export const usePowerKCreationCommandsRecord = (): Record<TPowerKCreationCommand
       type: "action",
       group: "create",
       i18n_title: "power_k.creation_actions.create_module",
-      icon: DiceIcon,
+      icon: ModuleOutline,
       keySequence: "nm",
       action: () => toggleCreateModuleModal(true),
       isEnabled: (ctx) => Boolean(getProjectDetails(ctx)?.module_view && hasProjectMemberLevelPermissions(ctx)),
@@ -129,7 +141,7 @@ export const usePowerKCreationCommandsRecord = (): Record<TPowerKCreationCommand
       type: "action",
       group: "create",
       i18n_title: "power_k.creation_actions.create_project",
-      icon: FolderPlus,
+      icon: CreateFolderOutline,
       keySequence: "np",
       action: () => toggleCreateProjectModal(true),
       isEnabled: () => Boolean(canCreateProject),

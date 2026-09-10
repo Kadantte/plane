@@ -1,10 +1,16 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { EIssueFilterType, ISSUE_LAYOUTS, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { CalendarLayoutIcon, BoardLayoutIcon, ListLayoutIcon, ChevronDownIcon } from "@plane/propel/icons";
+import { BoardOutline, CalendarOutline, ChevronDownOutline, ListOutline } from "@makeplane/propel/icons";
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, EIssueLayoutTypes } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
@@ -18,9 +24,9 @@ import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 
 const SUPPORTED_LAYOUTS = [
-  { key: "list", titleTranslationKey: "issue.layouts.list", icon: ListLayoutIcon },
-  { key: "kanban", titleTranslationKey: "issue.layouts.kanban", icon: BoardLayoutIcon },
-  { key: "calendar", titleTranslationKey: "issue.layouts.calendar", icon: CalendarLayoutIcon },
+  { key: "list", titleTranslationKey: "issue.layouts.list", icon: ListOutline },
+  { key: "kanban", titleTranslationKey: "issue.layouts.kanban", icon: BoardOutline },
+  { key: "calendar", titleTranslationKey: "issue.layouts.calendar", icon: CalendarOutline },
 ];
 
 export const CycleIssuesMobileHeader = observer(function CycleIssuesMobileHeader() {
@@ -90,13 +96,13 @@ export const CycleIssuesMobileHeader = observer(function CycleIssuesMobileHeader
         onClose={() => setAnalyticsModal(false)}
         cycleDetails={cycleDetails ?? undefined}
       />
-      <div className="flex justify-evenly py-2 border-b border-subtle md:hidden bg-surface-1">
+      <div className="flex justify-evenly border-b border-subtle bg-surface-1 py-2 md:hidden">
         <CustomMenu
           maxHeight={"md"}
-          className="flex flex-grow justify-center text-secondary text-13"
+          className="flex flex-grow justify-center text-13 text-secondary"
           placement="bottom-start"
           customButton={
-            <span className="flex flex-grow justify-center text-secondary text-13">{t("common.layout")}</span>
+            <span className="flex flex-grow justify-center text-13 text-secondary">{t("common.layout")}</span>
           }
           customButtonClassName="flex flex-grow justify-center text-secondary text-13"
           closeOnSelect
@@ -109,19 +115,19 @@ export const CycleIssuesMobileHeader = observer(function CycleIssuesMobileHeader
               }}
               className="flex items-center gap-2"
             >
-              <IssueLayoutIcon layout={ISSUE_LAYOUTS[index].key} className="w-3 h-3" />
+              <IssueLayoutIcon layout={ISSUE_LAYOUTS[index].key} className="h-3 w-3" />
               <div className="text-tertiary">{t(layout.titleTranslationKey)}</div>
             </CustomMenu.MenuItem>
           ))}
         </CustomMenu>
-        <div className="flex flex-grow justify-center border-l border-subtle items-center text-secondary text-13">
+        <div className="flex flex-grow items-center justify-center border-l border-subtle text-13 text-secondary">
           <FiltersDropdown
             title={t("common.display")}
             placement="bottom-end"
             menuButton={
-              <span className="flex items-center text-secondary text-13">
+              <span className="flex items-center text-13 text-secondary">
                 {t("common.display")}
-                <ChevronDownIcon className="text-secondary h-4 w-4 ml-2" />
+                <ChevronDownOutline className="ml-2 h-4 w-4 text-secondary" />
               </span>
             }
           >
@@ -142,7 +148,7 @@ export const CycleIssuesMobileHeader = observer(function CycleIssuesMobileHeader
 
         <span
           onClick={() => setAnalyticsModal(true)}
-          className="flex flex-grow justify-center text-secondary text-13 border-l border-subtle"
+          className="flex flex-grow justify-center border-l border-subtle text-13 text-secondary"
         >
           {t("common.analytics")}
         </span>

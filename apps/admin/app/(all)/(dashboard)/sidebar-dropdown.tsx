@@ -1,12 +1,18 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Fragment, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useTheme as useNextTheme } from "next-themes";
-import { LogOut, UserCog2, Palette } from "lucide-react";
+import { AccessAndRolesOutline, LogOutOutline, PaletteOutline } from "@makeplane/propel/icons";
 import { Menu, Transition } from "@headlessui/react";
 // plane internal packages
 import { API_BASE_URL } from "@plane/constants";
+import { WorkspaceAvatar } from "@makeplane/propel/components/workspace-avatar";
 import { AuthService } from "@plane/services";
-import { Avatar } from "@plane/ui";
 import { getFileURL, cn } from "@plane/utils";
 // hooks
 import { useTheme, useUser } from "@/hooks/store";
@@ -33,14 +39,14 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
   const getSidebarMenuItems = () => (
     <Menu.Items
       className={cn(
-        "absolute left-0 z-20 mt-1.5 flex w-52 flex-col divide-y divide-subtle rounded-md border border-subtle bg-surface-1 px-1 py-2 text-11 shadow-lg outline-none",
+        "shadow-lg absolute left-0 z-20 mt-1.5 flex w-52 flex-col divide-y divide-subtle rounded-md border border-subtle bg-surface-1 px-1 py-2 text-11 outline-none",
         {
           "left-4": isSidebarCollapsed,
         }
       )}
     >
       <div className="flex flex-col gap-2.5 pb-2">
-        <span className="px-2 text-secondary truncate">{currentUser?.email}</span>
+        <span className="truncate px-2 text-secondary">{currentUser?.email}</span>
       </div>
       <div className="py-2">
         <Menu.Item
@@ -49,7 +55,7 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
           className="flex w-full items-center gap-2 rounded-sm px-2 py-1 hover:bg-layer-1-hover"
           onClick={handleThemeSwitch}
         >
-          <Palette className="h-4 w-4 stroke-[1.5]" />
+          <PaletteOutline className="h-4 w-4 stroke-[1.5]" />
           Switch to {resolvedTheme === "dark" ? "light" : "dark"} mode
         </Menu.Item>
       </div>
@@ -61,7 +67,7 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
             type="submit"
             className="flex w-full items-center gap-2 rounded-sm px-2 py-1 hover:bg-layer-1-hover"
           >
-            <LogOut className="h-4 w-4 stroke-[1.5]" />
+            <LogOutOutline className="h-4 w-4 stroke-[1.5]" />
             Sign out
           </Menu.Item>
         </form>
@@ -89,7 +95,7 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
               })}
             >
               <div className="flex size-8 flex-shrink-0 items-center justify-center rounded-sm bg-layer-1">
-                <UserCog2 className="size-5 text-primary" />
+                <AccessAndRolesOutline className="size-5 text-primary" />
               </div>
             </Menu.Button>
             {isSidebarCollapsed && (
@@ -118,12 +124,11 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
       {!isSidebarCollapsed && currentUser && (
         <Menu as="div" className="relative flex-shrink-0">
           <Menu.Button className="grid place-items-center outline-none">
-            <Avatar
-              name={currentUser.display_name}
+            <WorkspaceAvatar
+              alt={currentUser.display_name ?? "Admin user"}
+              fallback={currentUser.display_name?.[0]?.toUpperCase()}
               src={getFileURL(currentUser.avatar_url)}
-              size={24}
-              shape="square"
-              className="!text-body-sm-medium"
+              size="sm"
             />
           </Menu.Button>
 

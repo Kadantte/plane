@@ -1,14 +1,24 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { add } from "date-fns";
 import { Controller, useForm } from "react-hook-form";
-import { Calendar } from "lucide-react";
+import { CalendarOutline } from "@makeplane/propel/icons";
 // types
+import { Field } from "@makeplane/propel/components/field";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { TextArea, TextAreaGroup } from "@makeplane/propel/components/text-area";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IApiToken } from "@plane/types";
 // ui
-import { CustomSelect, Input, TextArea, ToggleSwitch } from "@plane/ui";
+import { Switch } from "@makeplane/propel/components/switch";
+import { CustomSelect } from "@plane/ui";
 import { cn, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";
@@ -137,14 +147,18 @@ export function CreateApiTokenForm(props: Props) {
                 validate: (val) => val.trim() !== "" || t("title_is_required"),
               }}
               render={({ field: { value, onChange } }) => (
-                <Input
-                  type="text"
-                  value={value}
-                  onChange={onChange}
-                  hasError={Boolean(errors.label)}
-                  placeholder={t("title")}
-                  className="w-full text-14"
-                />
+                <Field name="input" invalid={Boolean(errors.label)}>
+                  <InputGroup size="2xl">
+                    <Input
+                      size="2xl"
+                      type="text"
+                      value={value}
+                      onChange={onChange}
+                      placeholder={t("title")}
+                      aria-label={t("title")}
+                    />
+                  </InputGroup>
+                </Field>
               )}
             />
             {errors.label && <span className="text-11 text-danger-primary">{errors.label.message}</span>}
@@ -153,13 +167,19 @@ export function CreateApiTokenForm(props: Props) {
             control={control}
             name="description"
             render={({ field: { value, onChange } }) => (
-              <TextArea
-                value={value}
-                onChange={onChange}
-                hasError={Boolean(errors.description)}
-                placeholder={t("description")}
-                className="w-full text-14 resize-none min-h-24"
-              />
+              <Field name="description" invalid={Boolean(errors.description)}>
+                <TextAreaGroup resize="none">
+                  <TextArea
+                    size="lg"
+                    surface="field"
+                    autoResize
+                    maxRows={8}
+                    value={value}
+                    onChange={onChange}
+                    placeholder={t("description")}
+                  />
+                </TextAreaGroup>
+              </Field>
             )}
           />
           <div className="flex items-center justify-between gap-2">
@@ -175,13 +195,13 @@ export function CreateApiTokenForm(props: Props) {
                       customButton={
                         <div
                           className={cn(
-                            "h-7 flex items-center gap-2 rounded-sm border-[0.5px] border-strong px-2 py-0.5",
+                            "flex h-7 items-center gap-2 rounded-sm border-[0.5px] border-strong px-2 py-0.5",
                             {
                               "text-placeholder": neverExpires,
                             }
                           )}
                         >
-                          <Calendar className="h-3 w-3" />
+                          <CalendarOutline className="h-3 w-3" />
                           {value === "custom"
                             ? "Custom date"
                             : selectedOption
@@ -209,7 +229,7 @@ export function CreateApiTokenForm(props: Props) {
                     value={customDate}
                     onChange={(date) => setCustomDate(date)}
                     minDate={tomorrow}
-                    icon={<Calendar className="h-3 w-3" />}
+                    icon={<CalendarOutline className="h-3 w-3" />}
                     buttonVariant="border-with-text"
                     placeholder="Set date"
                     disabled={neverExpires}
@@ -231,10 +251,15 @@ export function CreateApiTokenForm(props: Props) {
           </div>
         </div>
       </div>
-      <div className="px-5 py-4 flex items-center justify-between gap-2 border-t-[0.5px] border-subtle">
+      <div className="flex items-center justify-between gap-2 border-t-[0.5px] border-subtle px-5 py-4">
         <div className="flex cursor-pointer items-center gap-1.5" onClick={toggleNeverExpires}>
           <div className="flex cursor-pointer items-center justify-center">
-            <ToggleSwitch value={neverExpires} onChange={() => {}} size="sm" />
+            <Switch
+              size="sm"
+              checked={neverExpires}
+              onCheckedChange={() => {}}
+              aria-label={t("workspace_settings.settings.api_tokens.never_expires")}
+            />
           </div>
           <span className="text-11">{t("workspace_settings.settings.api_tokens.never_expires")}</span>
         </div>

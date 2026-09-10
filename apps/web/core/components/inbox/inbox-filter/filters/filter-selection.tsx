@@ -1,18 +1,21 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { SearchIcon, CloseIcon } from "@plane/propel/icons";
+import { CloseOutline, SearchOutline } from "@makeplane/propel/icons";
 // hooks
 import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";
-import { useProjectState } from "@/hooks/store/use-project-state";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local imports
 import { FilterDate } from "./date";
 import { FilterLabels } from "./labels";
 import { FilterMember } from "./members";
 import { FilterPriority } from "./priority";
-import { FilterState } from "./state";
 import { FilterStatus } from "./status";
 
 export const InboxIssueFilterSelection = observer(function InboxIssueFilterSelection() {
@@ -22,7 +25,6 @@ export const InboxIssueFilterSelection = observer(function InboxIssueFilterSelec
     project: { projectMemberIds },
   } = useMember();
   const { projectLabels } = useLabel();
-  const { projectStates } = useProjectState();
   // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
 
@@ -30,7 +32,7 @@ export const InboxIssueFilterSelection = observer(function InboxIssueFilterSelec
     <div className="flex h-full w-full flex-col overflow-hidden">
       <div className="bg-surface-1 p-2.5 pb-0">
         <div className="flex items-center gap-1.5 rounded-sm border-[0.5px] border-subtle bg-surface-2 px-1.5 py-1 text-11">
-          <SearchIcon className="text-placeholder" width={12} height={12} strokeWidth={2} />
+          <SearchOutline className="text-placeholder" width={12} height={12} />
           <input
             type="text"
             className="w-full bg-surface-2 outline-none placeholder:text-placeholder"
@@ -41,13 +43,13 @@ export const InboxIssueFilterSelection = observer(function InboxIssueFilterSelec
           />
           {filtersSearchQuery !== "" && (
             <button type="button" className="grid place-items-center" onClick={() => setFiltersSearchQuery("")}>
-              <CloseIcon className="text-tertiary" height={12} width={12} strokeWidth={2} />
+              <CloseOutline className="text-tertiary" height={12} width={12} />
             </button>
           )}
         </div>
       </div>
 
-      <div className="h-full w-full divide-y divide-subtle-1 overflow-y-auto px-2.5 vertical-scrollbar scrollbar-sm">
+      <div className="vertical-scrollbar scrollbar-sm h-full w-full divide-y divide-subtle-1 overflow-y-auto px-2.5">
         {/* status */}
         <div className="py-2">
           <FilterStatus searchQuery={filtersSearchQuery} />

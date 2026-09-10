@@ -1,9 +1,17 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useState } from "react";
 import { TwitterPicker } from "react-color";
+import { Field } from "@makeplane/propel/components/field";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { TextArea, TextAreaGroup } from "@makeplane/propel/components/text-area";
 import { Button } from "@plane/propel/button";
 import type { IState } from "@plane/types";
-import { Popover, Input, TextArea } from "@plane/ui";
-
+import { Popover } from "@plane/ui";
 type TStateForm = {
   data: Partial<IState>;
   onSubmit: (formData: Partial<IState>) => Promise<{ status: string }>;
@@ -15,7 +23,7 @@ type TStateForm = {
 function PopoverButton({ color }: { color?: string }) {
   return (
     <div
-      className="group inline-flex items-center text-14 font-medium focus:outline-none h-5 w-5 rounded-sm transition-all"
+      className="group inline-flex h-5 w-5 items-center rounded-sm text-14 font-medium transition-all focus:outline-none"
       style={{
         backgroundColor: color ?? "black",
       }}
@@ -57,9 +65,9 @@ export function StateForm(props: TStateForm) {
   };
 
   return (
-    <div className="relative flex space-x-2 bg-surface-1 p-3 rounded-sm">
+    <div className="relative flex space-x-2 rounded-sm bg-surface-1 p-3">
       {/* color */}
-      <div className="flex-shrink-0 h-full mt-2">
+      <div className="mt-2 h-full flex-shrink-0">
         <Popover button={<PopoverButton color={formData?.color} />} panelClassName="mt-4 -ml-3">
           <TwitterPicker color={formData?.color} onChange={(value) => handleFormData("color", value.hex)} />
         </Popover>
@@ -67,31 +75,40 @@ export function StateForm(props: TStateForm) {
 
       <div className="w-full space-y-2">
         {/* title */}
-        <Input
-          id="name"
-          type="text"
-          name="name"
-          placeholder="Name"
-          value={formData?.name}
-          onChange={(e) => handleFormData("name", e.target.value)}
-          hasError={(errors && Boolean(errors.name)) || false}
-          className="w-full"
-          maxLength={100}
-          autoFocus
-        />
+        <Field name="name" invalid={(errors && Boolean(errors.name)) || false}>
+          <InputGroup size="2xl">
+            <Input
+              size="2xl"
+              id="name"
+              type="text"
+              name="name"
+              placeholder="Name"
+              value={formData?.name}
+              onChange={(e) => handleFormData("name", e.target.value)}
+              maxLength={100}
+              autoFocus
+            />
+          </InputGroup>
+        </Field>
 
         {/* description */}
-        <TextArea
-          id="description"
-          name="description"
-          placeholder="Describe this state for your members."
-          value={formData?.description}
-          onChange={(e) => handleFormData("description", e.target.value)}
-          hasError={(errors && Boolean(errors.description)) || false}
-          className="w-full text-13 min-h-14 resize-none"
-        />
+        <Field name="description" invalid={(errors && Boolean(errors.description)) || false}>
+          <TextAreaGroup resize="none">
+            <TextArea
+              size="lg"
+              surface="field"
+              autoResize
+              maxRows={8}
+              id="description"
+              name="description"
+              placeholder="Describe this state for your members."
+              value={formData?.description ?? ""}
+              onChange={(e) => handleFormData("description", e.target.value)}
+            />
+          </TextAreaGroup>
+        </Field>
 
-        <div className="flex space-x-2 items-center">
+        <div className="flex items-center space-x-2">
           <Button onClick={formSubmit} variant="primary" size="lg" disabled={buttonDisabled}>
             {buttonTitle}
           </Button>

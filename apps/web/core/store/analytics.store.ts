@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { ANALYTICS_DURATION_FILTER_OPTIONS } from "@plane/constants";
 import type { TAnalyticsTabsBase } from "@plane/types";
@@ -25,7 +31,7 @@ export interface IBaseAnalyticsStore {
   updateIsEpic: (isEpic: boolean) => void;
 }
 
-export abstract class BaseAnalyticsStore implements IBaseAnalyticsStore {
+export class BaseAnalyticsStore implements IBaseAnalyticsStore {
   //observables
   currentTab: TAnalyticsTabsBase = "overview";
   selectedProjects: string[] = [];

@@ -1,14 +1,19 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useEffect, useRef, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
-import { Component, Loader } from "lucide-react";
+import { GroupOutline, LabelsOutline, LoadingOutline, SearchOutline, TickOutline } from "@makeplane/propel/icons";
 import { Combobox } from "@headlessui/react";
 import { getRandomLabelColor } from "@plane/constants";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { CheckIcon, SearchIcon, LabelPropertyIcon } from "@plane/propel/icons";
 import type { IIssueLabel } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
@@ -151,7 +156,7 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
       tabIndex={tabIndex}
       value={value}
       onChange={dropdownOnChange}
-      className="relative flex-shrink-0 h-full"
+      className="relative h-full flex-shrink-0"
       multiple
       disabled={disabled}
       onKeyDown={handleKeyDown}
@@ -159,13 +164,13 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
       <button
         type="button"
         ref={setReferenceElement}
-        className={cn("h-full flex cursor-pointer items-center gap-2 text-11", buttonContainerClassName)}
+        className={cn("flex h-full cursor-pointer items-center gap-2 text-11", buttonContainerClassName)}
         onClick={handleOnClick}
       >
         {label ? (
           label
         ) : value && value.length > 0 ? (
-          <span className={cn("flex items-center justify-center gap-2 text-11 h-full", buttonClassName)}>
+          <span className={cn("flex h-full items-center justify-center gap-2 text-11", buttonClassName)}>
             <IssueLabelsList
               labels={value.map((v) => labelsList?.find((l) => l.id === v)) ?? []}
               length={3}
@@ -175,18 +180,17 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
         ) : (
           <div
             className={cn(
-              "h-full flex items-center justify-center gap-1 rounded-sm border-[0.5px] border-strong px-2 py-1 text-11 hover:bg-layer-1",
+              "flex h-full items-center justify-center gap-1 rounded-sm border-[0.5px] border-strong px-2 py-1 text-11 hover:bg-layer-1",
               buttonClassName
             )}
           >
-            <LabelPropertyIcon className="h-3 w-3 flex-shrink-0" />
+            <LabelsOutline className="h-3 w-3 flex-shrink-0" />
             <span>{t("labels")}</span>
           </div>
         )}
       </button>
-
       {isDropdownOpen && (
-        <Combobox.Options className="fixed z-10" static>
+        <Combobox.Options as="ul" className="fixed z-10" static>
           <div
             className="my-1 w-48 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200 focus:outline-none"
             ref={setPopperElement}
@@ -194,7 +198,7 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
             {...attributes.popper}
           >
             <div className="flex items-center gap-1.5 rounded-sm border border-subtle bg-surface-2 px-2">
-              <SearchIcon className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
+              <SearchOutline className="h-3.5 w-3.5 text-placeholder" />
               <Combobox.Input
                 as="input"
                 ref={inputRef}
@@ -205,83 +209,87 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
                 onKeyDown={searchInputKeyDown}
               />
             </div>
-            <div className="mt-2 max-h-48 space-y-1 overflow-y-scroll">
+            <div className="mt-2 max-h-48 overflow-y-scroll">
               {labelsList && filteredOptions ? (
                 filteredOptions.length > 0 ? (
-                  filteredOptions.map((label) => {
-                    const children = labelsList?.filter((l) => l.parent === label.id);
+                  <ul className="space-y-1">
+                    {filteredOptions.map((label) => {
+                      const children = labelsList?.filter((l) => l.parent === label.id);
 
-                    if (children.length === 0) {
-                      if (!label.parent)
-                        return (
-                          <Combobox.Option
-                            key={label.id}
-                            className={({ active }) =>
-                              `${
-                                active ? "bg-layer-1" : ""
-                              } group flex w-full cursor-pointer select-none items-center gap-2 truncate rounded-sm px-1 py-1.5 text-secondary`
-                            }
-                            value={label.id}
-                          >
-                            {({ selected }) => (
-                              <div className="flex w-full justify-between gap-2 rounded-sm">
-                                <div className="flex items-center justify-start gap-2 truncate">
-                                  <span
-                                    className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
-                                    style={{
-                                      backgroundColor: label.color,
-                                    }}
-                                  />
-                                  <span className="truncate">{label.name}</span>
-                                </div>
-                                <div className="flex shrink-0 items-center justify-center rounded-sm p-1">
-                                  <CheckIcon className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`} />
-                                </div>
-                              </div>
-                            )}
-                          </Combobox.Option>
-                        );
-                    } else
-                      return (
-                        <div key={label.id} className="border-y border-subtle">
-                          <div className="flex select-none items-center gap-2 truncate p-2 text-primary">
-                            <Component className="h-3 w-3" /> {label.name}
-                          </div>
-                          <div>
-                            {children.map((child) => (
-                              <Combobox.Option
-                                key={child.id}
-                                className={({ active }) =>
-                                  `${
-                                    active ? "bg-layer-1" : ""
-                                  } group flex min-w-[14rem] cursor-pointer select-none items-center gap-2 truncate rounded-sm px-1 py-1.5 text-secondary`
-                                }
-                                value={child.id}
-                              >
-                                {({ selected }) => (
-                                  <div className="flex w-full justify-between gap-2 rounded-sm">
-                                    <div className="flex items-center justify-start gap-2">
-                                      <span
-                                        className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
-                                        style={{
-                                          backgroundColor: child?.color,
-                                        }}
-                                      />
-                                      <span>{child.name}</span>
-                                    </div>
-                                    <div className="flex items-center justify-center rounded-sm p-1">
-                                      <CheckIcon className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`} />
-                                    </div>
+                      if (children.length === 0) {
+                        if (!label.parent)
+                          return (
+                            <Combobox.Option
+                              as="li"
+                              key={label.id}
+                              className={({ active }) =>
+                                `${
+                                  active ? "bg-layer-1" : ""
+                                } group flex w-full cursor-pointer items-center gap-2 truncate rounded-sm px-1 py-1.5 text-secondary select-none`
+                              }
+                              value={label.id}
+                            >
+                              {({ selected }) => (
+                                <div className="flex w-full justify-between gap-2 rounded-sm">
+                                  <div className="flex items-center justify-start gap-2 truncate">
+                                    <span
+                                      className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
+                                      style={{
+                                        backgroundColor: label.color,
+                                      }}
+                                    />
+                                    <span className="truncate">{label.name}</span>
                                   </div>
-                                )}
-                              </Combobox.Option>
-                            ))}
-                          </div>
-                        </div>
-                      );
-                  })
+                                  <div className="flex shrink-0 items-center justify-center rounded-sm p-1">
+                                    <TickOutline className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`} />
+                                  </div>
+                                </div>
+                              )}
+                            </Combobox.Option>
+                          );
+                      } else
+                        return (
+                          <li key={label.id} className="border-y border-subtle">
+                            <div className="flex items-center gap-2 truncate p-2 text-primary select-none">
+                              <GroupOutline className="h-3 w-3" /> {label.name}
+                            </div>
+                            <ul>
+                              {children.map((child) => (
+                                <Combobox.Option
+                                  as="li"
+                                  key={child.id}
+                                  className={({ active }) =>
+                                    `${
+                                      active ? "bg-layer-1" : ""
+                                    } group flex min-w-[14rem] cursor-pointer items-center gap-2 truncate rounded-sm px-1 py-1.5 text-secondary select-none`
+                                  }
+                                  value={child.id}
+                                >
+                                  {({ selected }) => (
+                                    <div className="flex w-full justify-between gap-2 rounded-sm">
+                                      <div className="flex items-center justify-start gap-2">
+                                        <span
+                                          className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
+                                          style={{
+                                            backgroundColor: child?.color,
+                                          }}
+                                        />
+                                        <span>{child.name}</span>
+                                      </div>
+                                      <div className="flex items-center justify-center rounded-sm p-1">
+                                        <TickOutline className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`} />
+                                      </div>
+                                    </div>
+                                  )}
+                                </Combobox.Option>
+                              ))}
+                            </ul>
+                          </li>
+                        );
+                    })}
+                  </ul>
                 ) : submitting ? (
-                  <Loader className="animate-spin h-3.5 w-3.5" />
+                  <LoadingOutline className="h-3.5 w-3.5 animate-spin" />
                 ) : createLabelEnabled ? (
                   <p
                     onClick={() => {
@@ -300,10 +308,10 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
                     )}
                   </p>
                 ) : (
-                  <p className="text-placeholder italic py-1 px-1.5">{t("no_matching_results")}</p>
+                  <p className="px-1.5 py-1 text-placeholder italic">{t("no_matching_results")}</p>
                 )
               ) : (
-                <p className="text-placeholder italic py-1 px-1.5">{t("loading")}</p>
+                <p className="px-1.5 py-1 text-placeholder italic">{t("loading")}</p>
               )}
             </div>
           </div>

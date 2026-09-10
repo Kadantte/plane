@@ -1,9 +1,16 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
 import { ENotificationFilterType, FILTER_TYPE_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { CloseIcon } from "@plane/propel/icons";
-import { Header, EHeaderVariant, Tag } from "@plane/ui";
+import { PillButton } from "@makeplane/propel/components/pill";
+import { CloseOutline } from "@makeplane/propel/icons";
+import { Header, EHeaderVariant } from "@plane/ui";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 
@@ -41,24 +48,25 @@ export const AppliedFilters = observer(function AppliedFilters(props: TAppliedFi
           const isSelected = filters?.type?.[filter?.value] || false;
           if (!isSelected) return <></>;
           return (
-            <Tag
+            <PillButton
               key={filter.value}
-              className="flex flex-wrap flex-start"
+              type="button"
+              size="md"
+              variant="outline"
+              label={t(filter.i18n_label)}
+              endIcon={<CloseOutline className="h-3 w-3" />}
               onClick={() => handleFilterTypeChange(filter?.value, !isSelected)}
-            >
-              <div className="whitespace-nowrap text-secondary">{t(filter.i18n_label)}</div>
-              <div className="w-4 h-4 flex justify-center items-center transition-all rounded-xs text-secondary hover:text-primary">
-                <CloseIcon className="h-3 w-3" />
-              </div>
-            </Tag>
+            />
           );
         })}
-        <button type="button" onClick={handleClearFilters}>
-          <Tag>
-            {t("common.clear_all")}
-            <CloseIcon height={12} width={12} strokeWidth={2} />
-          </Tag>
-        </button>
+        <PillButton
+          type="button"
+          size="md"
+          variant="outline"
+          label={t("common.clear_all")}
+          endIcon={<CloseOutline height={12} width={12} />}
+          onClick={handleClearFilters}
+        />
       </Header.LeftItem>
     </Header>
   );

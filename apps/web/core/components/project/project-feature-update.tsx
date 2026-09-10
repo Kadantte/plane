@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useTranslation } from "@plane/i18n";
@@ -9,7 +15,7 @@ import { Row } from "@plane/ui";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 // plane web imports
-import { ProjectFeaturesList } from "@/plane-web/components/projects/settings/features-list";
+import { ProjectFeaturesList } from "@/components/project/settings/features-list";
 
 type Props = {
   workspaceSlug: string;
@@ -32,13 +38,14 @@ export const ProjectFeatureUpdate = observer(function ProjectFeatureUpdate(props
       <Row className="py-6">
         <ProjectFeaturesList workspaceSlug={workspaceSlug} projectId={projectId} isAdmin />
       </Row>
-      <div className="flex items-center justify-between gap-2 mt-4 px-6 py-4 border-t border-subtle">
-        <div className="flex gap-1 text-13 text-tertiary font-medium">
+      <div className="mt-4 flex items-center justify-between gap-2 border-t border-subtle px-6 py-4">
+        <div className="flex gap-1 text-13 font-medium text-tertiary">
           {t("congrats")}
           <Logo logo={currentProjectDetails.logo_props} /> <p className="break-all">{currentProjectDetails.name}</p>{" "}
           {t("created").toLowerCase()}.
         </div>
         <div className="flex gap-2">
+          {/* eslint-disable-next-line jsx-a11y/tabindex-no-positive */}
           <Button variant="secondary" size="lg" onClick={onClose} tabIndex={1}>
             {t("close")}
           </Button>
@@ -46,6 +53,7 @@ export const ProjectFeatureUpdate = observer(function ProjectFeatureUpdate(props
             href={`/${workspaceSlug}/projects/${projectId}/issues`}
             onClick={onClose}
             className={getButtonStyling("primary", "lg")}
+            // oxlint-disable-next-line jsx-a11y/tabindex-no-positive
             tabIndex={2}
           >
             {t("open_project")}

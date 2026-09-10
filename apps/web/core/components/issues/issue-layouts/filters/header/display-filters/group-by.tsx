@@ -1,10 +1,17 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import type { IIssueDisplayFilterOptions, TIssueGroupByOptions } from "@plane/types";
+// helpers
+import { useGroupByOptions } from "../../../utils";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
-import { useGroupByOptions } from "@/plane-web/components/issues/issue-layouts/utils";
 
 type Props = {
   displayFilters: IIssueDisplayFilterOptions | undefined;
@@ -45,7 +52,7 @@ export const FilterGroupBy = observer(function FilterGroupBy(props: Props) {
             return (
               <FilterOption
                 key={groupBy?.key}
-                isChecked={selectedGroupBy === groupBy?.key ? true : false}
+                isChecked={selectedGroupBy === groupBy?.key}
                 onClick={() => handleUpdate(groupBy.key)}
                 title={t(groupBy.titleTranslationKey)}
                 multiple={false}

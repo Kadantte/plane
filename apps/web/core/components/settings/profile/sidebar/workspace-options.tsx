@@ -1,4 +1,10 @@
-import { CirclePlus, Mails } from "lucide-react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { MailOutline, PlusCircleOutline } from "@makeplane/propel/icons";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -16,7 +22,7 @@ export const ProfileSettingsSidebarWorkspaceOptions = observer(function ProfileS
 
   return (
     <div className="shrink-0">
-      <div className="p-2 text-caption-md-medium text-tertiary capitalize">{t("workspace")}</div>
+      <div className="p-2 text-caption-md-medium text-tertiary capitalize">{t("common.workspace")}</div>
       <div className="flex flex-col">
         {Object.values(workspaces).map((workspace) => (
           <SettingsSidebarItem
@@ -32,14 +38,14 @@ export const ProfileSettingsSidebarWorkspaceOptions = observer(function ProfileS
           <SettingsSidebarItem
             as="link"
             href="/create-workspace/"
-            icon={CirclePlus}
+            icon={PlusCircleOutline}
             label={t("create_workspace")}
             isActive={false}
           />
           <SettingsSidebarItem
             as="link"
             href="/invitations/"
-            icon={Mails}
+            icon={MailOutline}
             label={t("workspace_invites")}
             isActive={false}
           />

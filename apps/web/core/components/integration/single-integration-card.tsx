@@ -1,12 +1,18 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR, { mutate } from "swr";
-import { CheckCircle } from "lucide-react";
+import { TickCircleOutline } from "@makeplane/propel/icons";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IAppIntegration, IWorkspaceIntegration } from "@plane/types";
 // ui
 import { Loader } from "@plane/ui";
@@ -14,7 +20,7 @@ import { Loader } from "@plane/ui";
 import GithubLogo from "@/app/assets/services/github.png?url";
 import SlackLogo from "@/app/assets/services/slack.png?url";
 // constants
-import { WORKSPACE_INTEGRATIONS } from "@/constants/fetch-keys";
+import { WORKSPACE_INTEGRATIONS } from "@plane/constants";
 // hooks
 import { useInstance } from "@/hooks/store/use-instance";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -67,7 +73,9 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
   const handleRemoveIntegration = async () => {
     if (!workspaceSlug || !integration || !workspaceIntegrations) return;
 
-    const workspaceIntegrationId = workspaceIntegrations?.find((i) => i.integration === integration.id)?.id;
+    const workspaceIntegrationId = Array.isArray(workspaceIntegrations)
+      ? workspaceIntegrations.find((i) => i.integration === integration.id)?.id
+      : undefined;
 
     setDeletingIntegration(true);
 
@@ -98,7 +106,9 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
       });
   };
 
-  const isInstalled = workspaceIntegrations?.find((i: any) => i.integration_detail.id === integration.id);
+  const isInstalled = Array.isArray(workspaceIntegrations)
+    ? workspaceIntegrations.find((i: IWorkspaceIntegration) => i.integration_detail.id === integration.id)
+    : undefined;
 
   return (
     <div className="flex items-center justify-between gap-2 border-b border-subtle bg-surface-1 px-4 py-6">
@@ -106,7 +116,7 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
         <div className="h-10 w-10 flex-shrink-0">
           <img
             src={integrationDetails[integration.provider].logo}
-            className="w-full h-full object-cover"
+            className="h-full w-full object-cover"
             alt={`${integration.title} Logo`}
           />
         </div>
@@ -114,7 +124,7 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
           <h3 className="flex items-center gap-2 text-body-xs-medium">
             {integration.title}
             {workspaceIntegrations
-              ? isInstalled && <CheckCircle className="h-3.5 w-3.5 fill-transparent text-success-primary" />
+              ? isInstalled && <TickCircleOutline className="h-3.5 w-3.5 fill-transparent text-success-primary" />
               : null}
           </h3>
           <p className="text-body-xs-regular text-secondary">
@@ -130,9 +140,9 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
       {workspaceIntegrations ? (
         isInstalled ? (
           <Tooltip
-            isMobile={isMobile}
-            disabled={isUserAdmin}
-            tooltipContent={!isUserAdmin ? "You don't have permission to perform this" : null}
+            label={!isUserAdmin ? "You don't have permission to perform this" : ""}
+            layout="stacked"
+            disabled={isUserAdmin || isMobile}
           >
             <Button
               className={`${!isUserAdmin ? "hover:cursor-not-allowed" : ""}`}
@@ -149,9 +159,9 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
           </Tooltip>
         ) : (
           <Tooltip
-            isMobile={isMobile}
-            disabled={isUserAdmin}
-            tooltipContent={!isUserAdmin ? "You don't have permission to perform this" : null}
+            label={!isUserAdmin ? "You don't have permission to perform this" : ""}
+            layout="stacked"
+            disabled={isUserAdmin || isMobile}
           >
             <Button
               className={`${!isUserAdmin ? "hover:cursor-not-allowed" : ""}`}

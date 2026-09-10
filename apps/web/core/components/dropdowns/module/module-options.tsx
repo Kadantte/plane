@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useRef, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
@@ -5,9 +11,9 @@ import { usePopper } from "react-popper";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { CheckIcon, SearchIcon, ModuleIcon } from "@plane/propel/icons";
+import { ModuleOutline, SearchOutline, TickOutline } from "@makeplane/propel/icons";
 import type { IModule } from "@plane/types";
-import { cn } from "@plane/utils";
+import { cn, sortBySelectedFirst } from "@plane/utils";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
@@ -27,10 +33,11 @@ interface Props {
   onDropdownOpen?: () => void;
   placement: Placement | undefined;
   referenceElement: HTMLButtonElement | null;
+  value?: string[] | string | null;
 }
 
 export const ModuleOptions = observer(function ModuleOptions(props: Props) {
-  const { getModuleById, isOpen, moduleIds, multiple, onDropdownOpen, placement, referenceElement } = props;
+  const { getModuleById, isOpen, moduleIds, multiple, onDropdownOpen, placement, referenceElement, value } = props;
   // refs
   const inputRef = useRef<HTMLInputElement | null>(null);
   // states
@@ -82,7 +89,7 @@ export const ModuleOptions = observer(function ModuleOptions(props: Props) {
       query: `${moduleDetails?.name}`,
       content: (
         <div className="flex items-center gap-2">
-          <ModuleIcon className="h-3 w-3 flex-shrink-0" />
+          <ModuleOutline className="h-3 w-3 flex-shrink-0" />
           <span className="flex-grow truncate">{moduleDetails?.name}</span>
         </div>
       ),
@@ -94,17 +101,19 @@ export const ModuleOptions = observer(function ModuleOptions(props: Props) {
       query: t("module.no_module"),
       content: (
         <div className="flex items-center gap-2">
-          <ModuleIcon className="h-3 w-3 flex-shrink-0" />
+          <ModuleOutline className="h-3 w-3 flex-shrink-0" />
           <span className="flex-grow truncate">{t("module.no_module")}</span>
         </div>
       ),
     });
 
-  const filteredOptions =
-    query === "" ? options : options?.filter((o) => o.query.toLowerCase().includes(query.toLowerCase()));
+  const filteredOptions = sortBySelectedFirst(
+    query === "" ? options : options?.filter((o) => o.query.toLowerCase().includes(query.toLowerCase())),
+    value
+  );
 
   return (
-    <Combobox.Options className="fixed z-10" static>
+    <Combobox.Options as="ul" className="fixed z-10" static>
       <div
         className="my-1 w-48 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200 focus:outline-none"
         ref={setPopperElement}
@@ -112,7 +121,7 @@ export const ModuleOptions = observer(function ModuleOptions(props: Props) {
         {...attributes.popper}
       >
         <div className="flex items-center gap-1.5 rounded-sm border border-subtle bg-surface-2 px-2">
-          <SearchIcon className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
+          <SearchOutline className="h-3.5 w-3.5 text-placeholder" />
           <Combobox.Input
             as="input"
             ref={inputRef}
@@ -129,11 +138,12 @@ export const ModuleOptions = observer(function ModuleOptions(props: Props) {
             filteredOptions.length > 0 ? (
               filteredOptions.map((option) => (
                 <Combobox.Option
+                  as="li"
                   key={option.value}
                   value={option.value}
                   className={({ active, selected }) =>
                     cn(
-                      "flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5",
+                      "flex w-full cursor-pointer items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 select-none",
                       {
                         "bg-layer-transparent-hover": active,
                         "text-primary": selected,
@@ -145,16 +155,16 @@ export const ModuleOptions = observer(function ModuleOptions(props: Props) {
                   {({ selected }) => (
                     <>
                       <span className="flex-grow truncate">{option.content}</span>
-                      {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
+                      {selected && <TickOutline className="h-3.5 w-3.5 flex-shrink-0" />}
                     </>
                   )}
                 </Combobox.Option>
               ))
             ) : (
-              <p className="px-1.5 py-1 italic text-placeholder">{t("common.search.no_matching_results")}</p>
+              <p className="px-1.5 py-1 text-placeholder italic">{t("common.search.no_matching_results")}</p>
             )
           ) : (
-            <p className="px-1.5 py-1 italic text-placeholder">{t("common.loading")}</p>
+            <p className="px-1.5 py-1 text-placeholder italic">{t("common.loading")}</p>
           )}
         </div>
       </div>

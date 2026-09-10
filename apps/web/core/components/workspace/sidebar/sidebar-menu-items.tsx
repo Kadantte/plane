@@ -1,6 +1,12 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useMemo } from "react";
 import { observer } from "mobx-react";
-import { Ellipsis } from "lucide-react";
+import { ChevronRightOutline, MoreHorizontalOutline } from "@makeplane/propel/icons";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import {
@@ -10,7 +16,6 @@ import {
   WORKSPACE_SIDEBAR_STATIC_PINNED_NAVIGATION_ITEMS_LINKS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ChevronRightIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 // components
 import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
@@ -21,8 +26,7 @@ import {
   usePersonalNavigationPreferences,
   useWorkspaceNavigationPreferences,
 } from "@/hooks/use-navigation-preferences";
-// plane-web imports
-import { SidebarItem } from "@/plane-web/components/workspace/sidebar/sidebar-item";
+import { SidebarItemBase } from "./sidebar-item";
 
 export const SidebarMenuItems = observer(function SidebarMenuItems() {
   // routers
@@ -78,6 +82,7 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
 
   const sortedNavigationItems = useMemo(
     () =>
+      // oxlint-disable-next-line oxc/no-map-spread
       WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS.map((item) => {
         const preference = workspacePreferences.items[item.key];
         return {
@@ -92,15 +97,16 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
     <>
       <div className="flex flex-col gap-0.5">
         {filteredStaticNavigationItems.map((item, _index) => (
-          <SidebarItem key={`static_${_index}`} item={item} />
+          // oxlint-disable-next-line react/no-array-index-key
+          <SidebarItemBase key={`static_${_index}`} item={item} />
         ))}
       </div>
       <Disclosure as="div" className="flex flex-col" defaultOpen={!!isWorkspaceMenuOpen}>
-        <div className="group w-full flex items-center justify-between px-2 py-1.5 rounded-sm text-placeholder hover:bg-layer-transparent-hover">
+        <div className="group flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-placeholder hover:bg-layer-transparent-hover">
           <Disclosure.Button
             as="button"
             type="button"
-            className="w-full flex items-center gap-1 whitespace-nowrap text-left text-13 font-semibold text-placeholder"
+            className="flex w-full items-center gap-1 text-left text-13 font-semibold whitespace-nowrap text-placeholder"
             onClick={() => toggleListDisclosure(!isWorkspaceMenuOpen)}
             aria-label={t(
               isWorkspaceMenuOpen
@@ -108,13 +114,13 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
                 : "aria_labels.app_sidebar.open_workspace_menu"
             )}
           >
-            <span className="text-13 font-semibold">{t("workspace")}</span>
+            <span className="text-13 font-semibold">{t("common.workspace")}</span>
           </Disclosure.Button>
-          <div className="flex items-center opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto">
+          <div className="pointer-events-none flex items-center opacity-0 group-hover:pointer-events-auto group-hover:opacity-100">
             <Disclosure.Button
               as="button"
               type="button"
-              className="p-0.5 rounded-sm hover:bg-layer-1 flex-shrink-0"
+              className="flex-shrink-0 rounded-sm p-0.5 hover:bg-layer-1"
               onClick={() => toggleListDisclosure(!isWorkspaceMenuOpen)}
               aria-label={t(
                 isWorkspaceMenuOpen
@@ -122,8 +128,8 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
                   : "aria_labels.app_sidebar.open_workspace_menu"
               )}
             >
-              <ChevronRightIcon
-                className={cn("flex-shrink-0 size-3 transition-all", {
+              <ChevronRightOutline
+                className={cn("size-3 flex-shrink-0 transition-all", {
                   "rotate-90": isWorkspaceMenuOpen,
                 })}
               />
@@ -131,6 +137,7 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
           </div>
         </div>
         <Transition
+          as="div"
           show={!!isWorkspaceMenuOpen}
           enter="transition duration-100 ease-out"
           enterFrom="transform scale-95 opacity-0"
@@ -143,16 +150,18 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
             <Disclosure.Panel as="div" className="flex flex-col gap-0.5" static>
               <>
                 {WORKSPACE_SIDEBAR_STATIC_PINNED_NAVIGATION_ITEMS_LINKS.map((item, _index) => (
-                  <SidebarItem key={`static_${_index}`} item={item} />
+                  // oxlint-disable-next-line react/no-array-index-key
+                  <SidebarItemBase key={`static_${_index}`} item={item} />
                 ))}
                 {sortedNavigationItems.map((item, _index) => (
-                  <SidebarItem key={`dynamic_${_index}`} item={item} />
+                  // oxlint-disable-next-line react/no-array-index-key
+                  <SidebarItemBase key={`dynamic_${_index}`} item={item} />
                 ))}
                 <SidebarNavItem>
                   <button
                     type="button"
                     onClick={() => toggleExtendedSidebar()}
-                    className="flex items-center gap-1.5 text-13 font-medium flex-grow text-tertiary"
+                    className="flex flex-grow items-center gap-1.5 text-13 font-medium text-tertiary"
                     id="extended-sidebar-toggle"
                     aria-label={t(
                       isExtendedSidebarOpened
@@ -160,7 +169,7 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
                         : "aria_labels.app_sidebar.open_extended_sidebar"
                     )}
                   >
-                    <Ellipsis className="flex-shrink-0 size-4" />
+                    <MoreHorizontalOutline className="size-4 flex-shrink-0" />
                     <span>{isExtendedSidebarOpened ? "Hide" : "More"}</span>
                   </button>
                 </SidebarNavItem>

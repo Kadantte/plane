@@ -1,16 +1,23 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FormEvent } from "react";
 import { useState } from "react";
 import type { LucideIcon } from "lucide-react";
 
 // plane imports
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { ETabIndices, EPageAccess } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
-import { GlobeIcon, LockIcon, PageIcon } from "@plane/propel/icons";
+import { GlobeOutline, LockOutline, PagesOutline } from "@makeplane/propel/icons";
 import type { ISvgIcons } from "@plane/propel/icons";
 import type { TPage } from "@plane/types";
-import { Input } from "@plane/ui";
+
 import { getTabIndex } from "@plane/utils";
 // components
 import { AccessField } from "@/components/common/access-field";
@@ -29,8 +36,8 @@ const PAGE_ACCESS_SPECIFIERS: {
   i18n_label: string;
   icon: LucideIcon | React.FC<ISvgIcons>;
 }[] = [
-  { key: EPageAccess.PUBLIC, i18n_label: "common.access.public", icon: GlobeIcon },
-  { key: EPageAccess.PRIVATE, i18n_label: "common.access.private", icon: LockIcon },
+  { key: EPageAccess.PUBLIC, i18n_label: "common.access.public", icon: GlobeOutline },
+  { key: EPageAccess.PRIVATE, i18n_label: "common.access.private", icon: LockOutline },
 ];
 
 export function PageForm(props: Props) {
@@ -63,11 +70,11 @@ export function PageForm(props: Props) {
     <form onSubmit={handlePageFormSubmit}>
       <div className="space-y-5 p-5">
         <h3 className="text-18 font-medium text-secondary">Create page</h3>
-        <div className="flex items-start gap-2 h-9 w-full">
+        <div className="flex h-9 w-full items-start gap-2">
           <EmojiPicker
             isOpen={isOpen}
             handleToggle={(val: boolean) => setIsOpen(val)}
-            className="flex items-center justify-center flex-shrink0"
+            className="flex-shrink0 flex items-center justify-center"
             buttonClassName="flex items-center justify-center bg-layer-2 hover:bg-layer-2-hover rounded-md"
             label={
               <span className="grid h-9 w-9 place-items-center rounded-md">
@@ -75,7 +82,7 @@ export function PageForm(props: Props) {
                   {formData?.logo_props?.in_use ? (
                     <Logo logo={formData?.logo_props} size={18} type="lucide" />
                   ) : (
-                    <PageIcon className="h-4 w-4 text-tertiary" />
+                    <PagesOutline className="h-4 w-4 text-tertiary" />
                   )}
                 </>
               </span>
@@ -107,18 +114,20 @@ export function PageForm(props: Props) {
                 : EmojiIconPickerTypes.ICON
             }
           />
-          <div className="space-y-1 flew-grow w-full">
-            <Input
-              id="name"
-              type="text"
-              value={formData.name}
-              onChange={(e) => handleFormData("name", e.target.value)}
-              placeholder="Title"
-              className="w-full resize-none text-14"
-              tabIndex={getIndex("name")}
-              required
-              autoFocus
-            />
+          <div className="flew-grow w-full space-y-1">
+            <InputGroup size="2xl">
+              <Input
+                size="2xl"
+                id="name"
+                type="text"
+                value={formData.name}
+                onChange={(e) => handleFormData("name", e.target.value)}
+                placeholder="Title"
+                tabIndex={getIndex("name")}
+                required
+                autoFocus
+              />
+            </InputGroup>
             {isTitleLengthMoreThan255Character && (
               <span className="text-11 text-danger-primary">
                 Max length of the name should be less than 255 characters
@@ -127,7 +136,7 @@ export function PageForm(props: Props) {
           </div>
         </div>
       </div>
-      <div className="px-5 py-4 flex items-center justify-between gap-2 border-t-[0.5px] border-subtle">
+      <div className="flex items-center justify-between gap-2 border-t-[0.5px] border-subtle px-5 py-4">
         <div className="flex items-center gap-2">
           <AccessField
             onChange={(access) => handleFormData("access", access)}

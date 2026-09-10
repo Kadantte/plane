@@ -1,7 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState, useRef, forwardRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontalOutline } from "@makeplane/propel/icons";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 import { Popover } from "@plane/propel/popover";
@@ -16,8 +22,8 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+// components
+import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 // local components
 import { WorkItemPreviewCard } from "../../preview-card";
 import type { TRenderQuickActions } from "../list/list-view-types";
@@ -52,24 +58,30 @@ export const CalendarIssueBlock = observer(
     const projectIdentifier = getProjectIdentifierById(issue?.project_id);
 
     // handlers
-    const handleIssuePeekOverview = (issue: TIssue) => handleRedirection(workspaceSlug.toString(), issue, isMobile);
+    const handleIssuePeekOverview = (peekIssue: TIssue) =>
+      handleRedirection(workspaceSlug?.toString(), peekIssue, isMobile);
 
     useOutsideClickDetector(menuActionRef, () => setIsMenuActive(false));
 
     const customActionButton = (
+      // CustomMenu renders this inside its own <button>, which already carries the
+      // interactive semantics and keyboard handling — this div is presentational.
       <div
+        role="presentation"
         ref={menuActionRef}
         className={`w-full cursor-pointer rounded-sm p-1 text-placeholder hover:bg-layer-1 ${
           isMenuActive ? "bg-layer-1-active text-primary" : "text-secondary"
         }`}
         onClick={() => setIsMenuActive(!isMenuActive)}
       >
-        <MoreHorizontal className="h-3.5 w-3.5" />
+        <MoreHorizontalOutline className="h-3.5 w-3.5" />
       </div>
     );
 
     const isMenuActionRefAboveScreenBottom =
-      menuActionRef?.current && menuActionRef?.current?.getBoundingClientRect().bottom < window.innerHeight - 220;
+      typeof window !== "undefined" &&
+      menuActionRef?.current &&
+      menuActionRef?.current?.getBoundingClientRect().bottom < window.innerHeight - 220;
 
     const placement = isMenuActionRefAboveScreenBottom ? "bottom-end" : "top-end";
 
@@ -92,21 +104,21 @@ export const CalendarIssueBlock = observer(
               id={`issue-${issue.id}`}
               href={workItemLink}
               onClick={() => handleIssuePeekOverview(issue)}
-              className="block w-full text-13 text-primary rounded-sm border-b md:border-[1px] border-subtle hover:border-subtle-1"
+              className="block w-full rounded-sm border-b border-subtle text-13 text-primary hover:border-subtle-1 md:border-[1px]"
               disabled={!!issue?.tempId || isMobile}
               ref={ref}
             >
               <>
                 {issue?.tempId !== undefined && (
-                  <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-surface-1/20" />
+                  <div className="absolute top-0 left-0 z-[99999] h-full w-full animate-pulse bg-surface-1/20" />
                 )}
 
                 <div
                   ref={blockRef}
                   className={cn(
-                    "group/calendar-block flex h-10 md:h-8 w-full items-center justify-between gap-1.5 rounded-sm  md:px-1 px-4 py-1.5 ",
+                    "group/calendar-block flex h-10 w-full items-center justify-between gap-1.5 rounded-sm px-4 py-1.5 md:h-8 md:px-1",
                     {
-                      "bg-surface-2 shadow-raised-200 border-accent-strong": isDragging,
+                      "border-accent-strong bg-surface-2 shadow-raised-200": isDragging,
                       "bg-surface-1 hover:bg-surface-2": !isDragging,
                       "border border-accent-strong hover:border-accent-strong": getIsIssuePeeked(issue.id),
                     }
@@ -128,10 +140,13 @@ export const CalendarIssueBlock = observer(
                         displayProperties={issuesFilter?.issueFilters?.displayProperties}
                       />
                     )}
-                    <div className="truncate text-13 font-medium md:font-regular md:text-11">{issue.name}</div>
+                    <div className="truncate text-13 font-medium md:text-11 md:font-regular">{issue.name}</div>
                   </div>
+                  {/* Wrapper exists only to stop clicks reaching the ControlLink; the
+                      quick-action menu inside carries its own interactive semantics. */}
                   <div
-                    className={cn("flex-shrink-0 size-5", {
+                    role="presentation"
+                    className={cn("size-5 flex-shrink-0", {
                       "hidden group-hover/calendar-block:block": !isMobile,
                       block: isMenuActive,
                     })}

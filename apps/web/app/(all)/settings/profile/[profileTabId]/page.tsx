@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
 import { PROFILE_SETTINGS_TABS } from "@plane/constants";
@@ -27,7 +33,7 @@ function ProfileSettingsPage(props: Route.ComponentProps) {
 
   if (!currentUser || !isAValidTab)
     return (
-      <div className="size-full grid place-items-center px-4">
+      <div className="grid size-full place-items-center px-4">
         <LogoSpinner />
       </div>
     );
@@ -36,7 +42,7 @@ function ProfileSettingsPage(props: Route.ComponentProps) {
     <>
       <PageHead title={`${t("profile.label")} - ${t("general_settings")}`} />
       <div className="relative size-full">
-        <div className="size-full flex">
+        <div className="flex size-full">
           <ProfileSettingsSidebarRoot
             activeTab={profileTabId as TProfileSettingsTabs}
             className="w-[250px]"
@@ -44,7 +50,7 @@ function ProfileSettingsPage(props: Route.ComponentProps) {
           />
           <ProfileSettingsContent
             activeTab={profileTabId as TProfileSettingsTabs}
-            className="grow py-20 px-page-x mx-auto w-fit max-w-225"
+            className="mx-auto w-fit max-w-225 grow px-page-x py-20"
           />
         </div>
       </div>

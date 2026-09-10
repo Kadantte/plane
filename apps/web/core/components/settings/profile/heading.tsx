@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane imports
 import { cn } from "@plane/ui";
 
@@ -10,7 +16,7 @@ type Props = {
 
 export function ProfileSettingsHeading({ className, control, description, title }: Props) {
   return (
-    <div className={cn("flex flex-col md:flex-row gap-4 items-start md:items-center justify-between", className)}>
+    <div className={cn("flex flex-col items-start justify-between gap-4 md:flex-row md:items-center", className)}>
       <div className="flex flex-col items-start gap-1">
         {title && <h6 className="text-h6-medium text-primary">{title}</h6>}
         {description && <p className="text-body-xs-regular text-tertiary">{description}</p>}

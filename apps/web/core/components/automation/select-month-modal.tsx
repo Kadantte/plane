@@ -1,11 +1,18 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useParams } from "next/navigation";
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
+import { Field } from "@makeplane/propel/components/field";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { Button } from "@plane/propel/button";
 import type { IProject } from "@plane/types";
 // ui
-import { Input, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
-
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // types
 type Props = {
   isOpen: boolean;
@@ -42,7 +49,7 @@ export function SelectMonthModal({ type, initialValues, isOpen, handleClose, han
     <ModalCore isOpen={isOpen} handleClose={onClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
-          <h3 className="text-16 font-medium leading-6 text-primary">Customize time range</h3>
+          <h3 className="text-16 leading-6 font-medium text-primary">Customize time range</h3>
           <div className="mt-8 flex items-center gap-2">
             <div className="flex w-full flex-col justify-center gap-1">
               {type === "auto-close" ? (
@@ -57,20 +64,23 @@ export function SelectMonthModal({ type, initialValues, isOpen, handleClose, han
                     }}
                     render={({ field: { value, onChange, ref } }) => (
                       <div className="relative flex w-full flex-col justify-center gap-1">
-                        <Input
-                          id="close_in"
-                          name="close_in"
-                          type="number"
-                          value={value?.toString()}
-                          onChange={onChange}
-                          ref={ref}
-                          hasError={Boolean(errors.close_in)}
-                          placeholder="Enter Months"
-                          className="w-full border-subtle"
-                          min={1}
-                          max={12}
-                        />
-                        <span className="absolute right-8 top-2.5 text-13 text-secondary">Months</span>
+                        <Field name="close_in" invalid={Boolean(errors.close_in)}>
+                          <InputGroup size="2xl">
+                            <Input
+                              size="2xl"
+                              id="close_in"
+                              name="close_in"
+                              type="number"
+                              value={value?.toString()}
+                              onChange={onChange}
+                              ref={ref}
+                              placeholder="Enter Months"
+                              min={1}
+                              max={12}
+                            />
+                          </InputGroup>
+                        </Field>
+                        <span className="absolute top-2.5 right-8 text-13 text-secondary">Months</span>
                       </div>
                     )}
                   />
@@ -91,20 +101,23 @@ export function SelectMonthModal({ type, initialValues, isOpen, handleClose, han
                     }}
                     render={({ field: { value, onChange, ref } }) => (
                       <div className="relative flex w-full flex-col justify-center gap-1">
-                        <Input
-                          id="archive_in"
-                          name="archive_in"
-                          type="number"
-                          value={value?.toString()}
-                          onChange={onChange}
-                          ref={ref}
-                          hasError={Boolean(errors.archive_in)}
-                          placeholder="Enter Months"
-                          className="w-full border-subtle"
-                          min={1}
-                          max={12}
-                        />
-                        <span className="absolute right-8 top-2.5 text-13 text-secondary">Months</span>
+                        <Field name="archive_in" invalid={Boolean(errors.archive_in)}>
+                          <InputGroup size="2xl">
+                            <Input
+                              size="2xl"
+                              id="archive_in"
+                              name="archive_in"
+                              type="number"
+                              value={value?.toString()}
+                              onChange={onChange}
+                              ref={ref}
+                              placeholder="Enter Months"
+                              min={1}
+                              max={12}
+                            />
+                          </InputGroup>
+                        </Field>
+                        <span className="absolute top-2.5 right-8 text-13 text-secondary">Months</span>
                       </div>
                     )}
                   />

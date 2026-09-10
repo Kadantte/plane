@@ -1,4 +1,10 @@
-import { MoreVertical } from "lucide-react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { MoreVerticalOutline } from "@makeplane/propel/icons";
 import React, { forwardRef } from "react";
 // helpers
 import { cn } from "./utils";
@@ -15,21 +21,21 @@ export const DragHandle = forwardRef(function DragHandle(
   const { className, disabled = false } = props;
 
   if (disabled) {
-    return <div className="w-[14px] h-[18px]" />;
+    return <div className="h-[18px] w-[14px]" />;
   }
 
   return (
     <button
       type="button"
-      className={cn("p-0.5 flex flex-shrink-0 rounded-sm bg-surface-2 text-secondary cursor-grab", className)}
+      className={cn("flex flex-shrink-0 cursor-grab rounded-sm bg-surface-2 p-0.5 text-secondary", className)}
       onContextMenu={(e) => {
         e.preventDefault();
         e.stopPropagation();
       }}
       ref={ref}
     >
-      <MoreVertical className="h-3.5 w-3.5 stroke-placeholder" />
-      <MoreVertical className="-ml-5 h-3.5 w-3.5 stroke-placeholder" />
+      <MoreVerticalOutline className="h-3.5 w-3.5 text-placeholder" />
+      <MoreVerticalOutline className="-ml-5 h-3.5 w-3.5 text-placeholder" />
     </button>
   );
 });

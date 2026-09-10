@@ -1,9 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, useSearchParams } from "next/navigation";
 import { mutate } from "swr";
 // constants
-import { EXPORT_SERVICES_LIST } from "@/constants/fetch-keys";
+import { EXPORT_SERVICES_LIST } from "@plane/constants";
 // local imports
 import { ExportForm } from "./export-form";
 import { PrevExports } from "./prev-exports";
@@ -19,7 +25,7 @@ export const ExportGuide = observer(function ExportGuide() {
 
   return (
     <>
-      <div className="size-full flex flex-col gap-y-13">
+      <div className="flex size-full flex-col gap-y-13">
         <ExportForm
           workspaceSlug={workspaceSlug}
           provider={provider}

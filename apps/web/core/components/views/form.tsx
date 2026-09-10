@@ -1,12 +1,21 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
+import { Field } from "@makeplane/propel/components/field";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { TextArea, TextAreaGroup } from "@makeplane/propel/components/text-area";
 import { ETabIndices, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
-import { ViewsIcon } from "@plane/propel/icons";
+import { ViewsOutline } from "@makeplane/propel/icons";
 import type {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
@@ -15,7 +24,6 @@ import type {
   IIssueFilters,
 } from "@plane/types";
 import { EViewAccess, EIssuesStoreType } from "@plane/types";
-import { Input, TextArea } from "@plane/ui";
 import { getComputedDisplayFilters, getComputedDisplayProperties, getTabIndex } from "@plane/utils";
 // components
 import { DisplayFiltersSelection, FiltersDropdown } from "@/components/issues/issue-layouts/filters";
@@ -23,8 +31,6 @@ import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web imports
-import { AccessController } from "@/plane-web/components/views/access-controller";
 // local imports
 import { LayoutDropDown } from "../dropdowns/layout";
 import { ProjectLevelWorkItemFiltersHOC } from "../work-item-filters/filters-hoc/project-level";
@@ -104,12 +110,12 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
       <div className="space-y-5 p-5">
         <h3 className="text-18 font-medium text-secondary">{data ? t("view.update.label") : t("view.create.label")}</h3>
         <div className="space-y-3">
-          <div className="flex items-start gap-2 w-full">
+          <div className="flex w-full items-start gap-2">
             <EmojiPicker
               iconType="lucide"
               isOpen={isOpen}
               handleToggle={(val: boolean) => setIsOpen(val)}
-              className="flex items-center justify-center flex-shrink0"
+              className="flex-shrink0 flex items-center justify-center"
               buttonClassName="flex items-center justify-center"
               label={
                 <span className="grid h-9 w-9 place-items-center rounded-md bg-surface-2">
@@ -117,13 +123,14 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
                     {logoValue?.in_use ? (
                       <Logo logo={logoValue} size={18} type="lucide" />
                     ) : (
-                      <ViewsIcon className="h-4 w-4 text-tertiary" />
+                      <ViewsOutline className="h-4 w-4 text-tertiary" />
                     )}
                   </>
                 </span>
               }
               // TODO: fix types
               onChange={(val: any) => {
+                // oxlint-disable-next-line no-shadow
                 let logoValue = {};
 
                 if (val?.type === "emoji")
@@ -145,7 +152,7 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
                   : EmojiIconPickerTypes.ICON
               }
             />
-            <div className="space-y-1 flew-grow w-full">
+            <div className="flew-grow w-full space-y-1">
               <Controller
                 control={control}
                 name="name"
@@ -157,18 +164,22 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
                   },
                 }}
                 render={({ field: { value, onChange } }) => (
-                  <Input
-                    id="name"
-                    type="name"
-                    name="name"
-                    value={value}
-                    onChange={onChange}
-                    hasError={Boolean(errors.name)}
-                    placeholder={t("common.title")}
-                    className="w-full text-14"
-                    tabIndex={getIndex("name")}
-                    autoFocus
-                  />
+                  <Field name="name" invalid={Boolean(errors.name)}>
+                    <InputGroup size="2xl">
+                      <Input
+                        size="2xl"
+                        id="name"
+                        type="name"
+                        name="name"
+                        value={value}
+                        onChange={onChange}
+                        placeholder={t("common.title")}
+                        tabIndex={getIndex("name")}
+                        // oxlint-disable-next-line jsx_a11y/no-autofocus
+                        autoFocus
+                      />
+                    </InputGroup>
+                  </Field>
                 )}
               />
               <span className="text-11 text-danger-primary">{errors?.name?.message?.toString()}</span>
@@ -179,21 +190,26 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
               name="description"
               control={control}
               render={({ field: { value, onChange } }) => (
-                <TextArea
-                  id="description"
-                  name="description"
-                  placeholder={t("common.description")}
-                  className="w-full text-14 resize-none min-h-24"
-                  hasError={Boolean(errors?.description)}
-                  value={value}
-                  onChange={onChange}
-                  tabIndex={getIndex("descriptions")}
-                />
+                <Field name="description" invalid={Boolean(errors?.description)}>
+                  <TextAreaGroup resize="none">
+                    <TextArea
+                      size="lg"
+                      surface="field"
+                      autoResize
+                      maxRows={8}
+                      id="description"
+                      name="description"
+                      placeholder={t("common.description")}
+                      value={value}
+                      onChange={onChange}
+                      tabIndex={getIndex("descriptions")}
+                    />
+                  </TextAreaGroup>
+                </Field>
               )}
             />
           </div>
           <div className="flex gap-2">
-            <AccessController control={control} />
             <Controller
               control={control}
               name="display_filters"
@@ -273,7 +289,7 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
           </div>
         </div>
       </div>
-      <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle">
+      <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle px-5 py-4">
         <Button variant="secondary" size="lg" onClick={handleClose} tabIndex={getIndex("cancel")}>
           {t("common.cancel")}
         </Button>

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
@@ -12,8 +18,6 @@ import { SettingsHeading } from "@/components/settings/heading";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
-// plane web imports
-import { CustomAutomationsRoot } from "@/plane-web/components/automations/root";
 // local imports
 import type { Route } from "./+types/page";
 import { AutomationsProjectSettingsHeader } from "./header";
@@ -64,7 +68,6 @@ function AutomationSettingsPage({ params }: Route.ComponentProps) {
           <AutoCloseAutomation handleChange={handleChange} />
         </div>
       </section>
-      <CustomAutomationsRoot projectId={projectId} workspaceSlug={workspaceSlug} />
     </SettingsContentWrapper>
   );
 }

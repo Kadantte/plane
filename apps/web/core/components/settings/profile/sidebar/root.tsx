@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane imports
 import { ScrollArea } from "@plane/propel/scrollarea";
 import type { TProfileSettingsTabs } from "@plane/types";
@@ -20,7 +26,7 @@ export function ProfileSettingsSidebarRoot(props: Props) {
       scrollType="hover"
       orientation="vertical"
       size="sm"
-      rootClassName={cn("shrink-0 py-4 px-3 bg-surface-2 border-r border-r-subtle overflow-y-scroll", className)}
+      rootClassName={cn("shrink-0 overflow-y-scroll border-r border-r-subtle bg-surface-2 px-3 py-4", className)}
     >
       <ProfileSettingsSidebarHeader />
       <ProfileSettingsSidebarItemCategories activeTab={activeTab} updateActiveTab={updateActiveTab} />

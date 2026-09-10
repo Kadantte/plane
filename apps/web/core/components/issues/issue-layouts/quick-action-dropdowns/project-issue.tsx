@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { omit } from "lodash-es";
 import { observer } from "mobx-react";
@@ -13,8 +19,6 @@ import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useUserPermissions } from "@/hooks/store/user";
-// plane-web imports
-import { DuplicateWorkItemModal } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns/duplicate-modal";
 // helper
 import { ArchiveIssueModal } from "../../archive-issue-modal";
 import { DeleteIssueModal } from "../../delete-issue-modal";
@@ -42,7 +46,7 @@ export const ProjectIssueQuickActions = observer(function ProjectIssueQuickActio
   const [issueToEdit, setIssueToEdit] = useState<TIssue | undefined>(undefined);
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   const [archiveIssueModal, setArchiveIssueModal] = useState(false);
-  const [duplicateWorkItemModal, setDuplicateWorkItemModal] = useState(false);
+  const [_, setDuplicateWorkItemModal] = useState(false);
   // store hooks
   const { allowPermissions } = useUserPermissions();
   const { issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
@@ -133,15 +137,6 @@ export const ProjectIssueQuickActions = observer(function ProjectIssueQuickActio
         }}
         storeType={EIssuesStoreType.PROJECT}
       />
-      {issue.project_id && workspaceSlug && (
-        <DuplicateWorkItemModal
-          workItemId={issue.id}
-          isOpen={duplicateWorkItemModal}
-          onClose={() => setDuplicateWorkItemModal(false)}
-          workspaceSlug={workspaceSlug.toString()}
-          projectId={issue.project_id}
-        />
-      )}
 
       <ContextMenu parentRef={parentRef} items={CONTEXT_MENU_ITEMS} />
       <CustomMenu
@@ -167,7 +162,7 @@ export const ProjectIssueQuickActions = observer(function ProjectIssueQuickActio
                     <h5>{item.title}</h5>
                     {item.description && (
                       <p
-                        className={cn("text-tertiary whitespace-pre-line", {
+                        className={cn("whitespace-pre-line text-tertiary", {
                           "text-placeholder": item.disabled,
                         })}
                       >
@@ -205,7 +200,7 @@ export const ProjectIssueQuickActions = observer(function ProjectIssueQuickActio
                       <h5>{nestedItem.title}</h5>
                       {nestedItem.description && (
                         <p
-                          className={cn("text-tertiary whitespace-pre-line", {
+                          className={cn("whitespace-pre-line text-tertiary", {
                             "text-placeholder": nestedItem.disabled,
                           })}
                         >
@@ -240,7 +235,7 @@ export const ProjectIssueQuickActions = observer(function ProjectIssueQuickActio
                 <h5>{item.title}</h5>
                 {item.description && (
                   <p
-                    className={cn("text-tertiary whitespace-pre-line", {
+                    className={cn("whitespace-pre-line text-tertiary", {
                       "text-placeholder": item.disabled,
                     })}
                   >

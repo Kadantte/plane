@@ -1,8 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
+import { Avatar } from "@makeplane/propel/components/avatar";
 import { useTranslation } from "@plane/i18n";
 import type { TDescriptionVersion } from "@plane/types";
-import { Avatar, CustomMenu } from "@plane/ui";
+import { CustomMenu } from "@plane/ui";
 import { calculateTimeAgo, getFileURL } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
@@ -25,12 +32,13 @@ export const DescriptionVersionsDropdownItem = observer(function DescriptionVers
     <CustomMenu.MenuItem key={version.id} className="flex items-center gap-1" onClick={() => onClick(version.id)}>
       <span className="flex-shrink-0">
         <Avatar
-          name={versionCreator?.display_name ?? t("common.deactivated_user")}
-          size="sm"
+          alt={versionCreator?.display_name ?? t("common.deactivated_user")}
+          fallback={(versionCreator?.display_name ?? t("common.deactivated_user"))?.[0]?.toUpperCase()}
+          size="2xs"
           src={getFileURL(versionCreator?.avatar_url ?? "")}
         />
       </span>
-      <p className="text-11 text-secondary flex items-center gap-1.5">
+      <p className="flex items-center gap-1.5 text-11 text-secondary">
         <span className="font-medium">{versionCreator?.display_name ?? t("common.deactivated_user")}</span>
         <span>{calculateTimeAgo(version.last_saved_at)}</span>
       </p>

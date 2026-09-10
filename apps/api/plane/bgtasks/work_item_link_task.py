@@ -1,5 +1,10 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 # Python imports
 import logging
+import socket
 
 # Third party imports
 from celery import shared_task
@@ -8,10 +13,12 @@ from bs4 import BeautifulSoup
 from urllib.parse import urlparse, urljoin
 import base64
 import ipaddress
-from typing import Dict, Any
+from typing import Dict, Any, Tuple
 from typing import Optional
 from plane.db.models import IssueLink
 from plane.utils.exception_logger import log_exception
+from plane.utils.ip_address import is_blocked_ip
+from plane.utils.url_security import pinned_fetch, pinned_fetch_following_redirects
 
 logger = logging.getLogger("plane.worker")
 
@@ -22,7 +29,7 @@ DEFAULT_FAVICON = "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoP
 def validate_url_ip(url: str) -> None:
     """
     Validate that a URL doesn't point to a private/internal IP address.
-    Only checks if the hostname is a direct IP address.
+    Resolves hostnames to IPs before checking.
 
     Args:
         url: The URL to validate
@@ -31,20 +38,68 @@ def validate_url_ip(url: str) -> None:
         ValueError: If the URL points to a private/internal IP
     """
     parsed = urlparse(url)
-    hostname = parsed.hostname
 
+    # Only allow HTTP and HTTPS to prevent file://, gopher://, etc.
+    if parsed.scheme not in ("http", "https"):
+        raise ValueError("Invalid URL scheme. Only HTTP and HTTPS are allowed")
+
+    hostname = parsed.hostname
     if not hostname:
-        return
+        raise ValueError("Invalid URL: No hostname found")
+
+    # Resolve hostname to IP addresses — this catches domain names that
+    # point to internal IPs (e.g. attacker.com -> 169.254.169.254)
 
     try:
-        ip = ipaddress.ip_address(hostname)
-    except ValueError:
-        # Not an IP address (it's a domain name), nothing to check here
-        return
+        addr_info = socket.getaddrinfo(hostname, None)
+    except (socket.gaierror, UnicodeError):
+        # UnicodeError covers IDNA failures raised before the address lookup.
+        raise ValueError("Hostname could not be resolved")
 
-    # It IS an IP address - check if it's private/internal
-    if ip.is_private or ip.is_loopback or ip.is_reserved:
-        raise ValueError("Access to private/internal networks is not allowed")
+    if not addr_info:
+        raise ValueError("No IP addresses found for the hostname")
+
+    # Check every resolved IP against blocked ranges to prevent SSRF. The
+    # actual fetch is pinned to the validated IP (see safe_get), so this acts
+    # as an early, fail-closed pre-filter.
+    for addr in addr_info:
+        ip = ipaddress.ip_address(addr[4][0].split("%")[0])
+        if is_blocked_ip(ip):
+            raise ValueError("Access to private/internal networks is not allowed")
+
+
+MAX_REDIRECTS = 5
+
+
+def safe_get(
+    url: str,
+    headers: Optional[Dict[str, str]] = None,
+    timeout: int = 1,
+) -> Tuple[requests.Response, str]:
+    """
+    Perform a GET request that resolves, validates and pins every hop to its
+    validated IP. Prevents SSRF via private/internal targets, DNS rebinding
+    (TOCTOU) and redirects that bounce to internal addresses.
+
+    Args:
+        url: The URL to fetch
+        headers: Optional request headers
+        timeout: Request timeout in seconds
+
+    Returns:
+        A tuple of (final Response object, final URL after redirects)
+
+    Raises:
+        ValueError: If any URL in the redirect chain points to a private IP
+        requests.RequestException: On network errors (incl. TooManyRedirects)
+    """
+    return pinned_fetch_following_redirects(
+        "GET",
+        url,
+        headers=headers,
+        timeout=timeout,
+        max_redirects=MAX_REDIRECTS,
+    )
 
 
 def crawl_work_item_link_title_and_favicon(url: str) -> Dict[str, Any]:
@@ -67,14 +122,8 @@ def crawl_work_item_link_title_and_favicon(url: str) -> Dict[str, Any]:
         title = None
         final_url = url
 
-        validate_url_ip(final_url)
-
         try:
-            response = requests.get(final_url, headers=headers, timeout=1)
-            final_url = response.url  # Get the final URL after any redirects
-
-            # check for redirected url also
-            validate_url_ip(final_url)
+            response, final_url = safe_get(url, headers=headers)
 
             soup = BeautifulSoup(response.content, "html.parser")
             title_tag = soup.find("title")
@@ -82,8 +131,10 @@ def crawl_work_item_link_title_and_favicon(url: str) -> Dict[str, Any]:
 
         except requests.RequestException as e:
             logger.warning(f"Failed to fetch HTML for title: {str(e)}")
+        except (ValueError, RuntimeError) as e:
+            logger.warning(f"URL validation failed: {str(e)}")
 
-        # Fetch and encode favicon using final URL (after redirects)
+        # Fetch and encode favicon using final URL (after redirects) for correct relative href resolution
         favicon_base64 = fetch_and_encode_favicon(headers, soup, final_url)
 
         # Prepare result
@@ -130,18 +181,21 @@ def find_favicon_url(soup: Optional[BeautifulSoup], base_url: str) -> Optional[s
         for selector in favicon_selectors:
             favicon_tag = soup.select_one(selector)
             if favicon_tag and favicon_tag.get("href"):
-                return urljoin(base_url, favicon_tag["href"])
+                favicon_href = urljoin(base_url, favicon_tag["href"])
+                validate_url_ip(favicon_href)
+                return favicon_href
 
     # Fallback to /favicon.ico
     parsed_url = urlparse(base_url)
     fallback_url = f"{parsed_url.scheme}://{parsed_url.netloc}/favicon.ico"
 
-    # Check if fallback exists
+    # Check if fallback exists (pinned to the validated IP).
     try:
-        response = requests.head(fallback_url, timeout=2)
+        response = pinned_fetch("HEAD", fallback_url, timeout=2)
+
         if response.status_code == 200:
             return fallback_url
-    except requests.RequestException as e:
+    except (requests.RequestException, ValueError) as e:
         log_exception(e, warning=True)
         return None
 
@@ -169,7 +223,7 @@ def fetch_and_encode_favicon(
                 "favicon_base64": f"data:image/svg+xml;base64,{DEFAULT_FAVICON}",
             }
 
-        response = requests.get(favicon_url, headers=headers, timeout=1)
+        response, _ = safe_get(favicon_url, headers=headers)
 
         # Get content type
         content_type = response.headers.get("content-type", "image/x-icon")

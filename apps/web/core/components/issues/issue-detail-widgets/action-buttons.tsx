@@ -1,12 +1,14 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
-import { Paperclip } from "lucide-react";
+import { AttachOutline, LinkOutline, RelationsOutline, ViewsOutline } from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
-import { LinkIcon, ViewsIcon, RelationPropertyIcon } from "@plane/propel/icons";
 // plane imports
 import type { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
-// plane web imports
-import { WorkItemAdditionalWidgetActionButtons } from "@/plane-web/components/issues/issue-detail-widgets/action-buttons";
 // local imports
 import { IssueAttachmentActionButton } from "./attachments";
 import { IssueLinksActionButton } from "./links";
@@ -29,14 +31,14 @@ export function IssueDetailWidgetActionButtons(props: Props) {
   const { t } = useTranslation();
 
   return (
-    <div className="flex items-center flex-wrap gap-2">
+    <div className="flex flex-wrap items-center gap-2">
       {!hideWidgets?.includes("sub-work-items") && (
         <SubIssuesActionButton
           issueId={issueId}
           customButton={
             <IssueDetailWidgetButton
               title={t("issue.add.sub_issue")}
-              icon={<ViewsIcon className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />}
+              icon={<ViewsOutline className="h-3.5 w-3.5 flex-shrink-0" />}
               disabled={disabled}
             />
           }
@@ -50,7 +52,7 @@ export function IssueDetailWidgetActionButtons(props: Props) {
           customButton={
             <IssueDetailWidgetButton
               title={t("issue.add.relation")}
-              icon={<RelationPropertyIcon className="h-3.5 w-3.5 flex-shrink-0" />}
+              icon={<RelationsOutline className="h-3.5 w-3.5 flex-shrink-0" />}
               disabled={disabled}
             />
           }
@@ -63,7 +65,7 @@ export function IssueDetailWidgetActionButtons(props: Props) {
           customButton={
             <IssueDetailWidgetButton
               title={t("issue.add.link")}
-              icon={<LinkIcon className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />}
+              icon={<LinkOutline className="h-3.5 w-3.5 flex-shrink-0" />}
               disabled={disabled}
             />
           }
@@ -79,7 +81,7 @@ export function IssueDetailWidgetActionButtons(props: Props) {
           customButton={
             <IssueDetailWidgetButton
               title={t("common.attach")}
-              icon={<Paperclip className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />}
+              icon={<AttachOutline className="h-3.5 w-3.5 flex-shrink-0" />}
               disabled={disabled}
             />
           }
@@ -87,14 +89,6 @@ export function IssueDetailWidgetActionButtons(props: Props) {
           issueServiceType={issueServiceType}
         />
       )}
-      <WorkItemAdditionalWidgetActionButtons
-        disabled={disabled}
-        hideWidgets={hideWidgets ?? []}
-        issueServiceType={issueServiceType}
-        projectId={projectId}
-        workItemId={issueId}
-        workspaceSlug={workspaceSlug}
-      />
     </div>
   );
 }

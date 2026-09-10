@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import type {
@@ -10,21 +16,22 @@ import type {
 } from "react-hook-form";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { usePopper } from "react-popper";
-import { XCircle } from "lucide-react";
+import { AddOutline, ChevronDownOutline, CloseCircleOutline, TickOutline } from "@makeplane/propel/icons";
 import { Listbox } from "@headlessui/react";
 // plane imports
+import { Field } from "@makeplane/propel/components/field";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import type { EUserPermissions } from "@plane/constants";
 import { ROLE, ROLE_DETAILS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { PlusIcon, CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EOnboardingSteps } from "@plane/types";
-import { Input, Spinner } from "@plane/ui";
+import { Spinner } from "@plane/ui";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // services
-import { WorkspaceService } from "@/plane-web/services";
+import { WorkspaceService } from "@/services/workspace.service";
 // components
 import { CommonOnboardingHeader } from "../common";
 
@@ -143,21 +150,24 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
               },
             }}
             render={({ field: { value, onChange, ref } }) => (
-              <Input
-                id={`emails.${index}.email`}
-                name={`emails.${index}.email`}
-                type="text"
-                value={value}
-                onChange={(event) => {
-                  emailOnChange(event);
-                  onChange(event);
-                }}
-                ref={ref}
-                hasError={Boolean(errors.emails?.[index]?.email)}
-                placeholder={placeholderEmails[index % placeholderEmails.length]}
-                className="w-full border-strong text-11 placeholder:text-placeholder sm:text-13"
-                autoComplete="off"
-              />
+              <Field name="input" invalid={Boolean(errors.emails?.[index]?.email)}>
+                <InputGroup size="2xl">
+                  <Input
+                    size="2xl"
+                    id={`emails.${index}.email`}
+                    name={`emails.${index}.email`}
+                    type="text"
+                    value={value}
+                    onChange={(event) => {
+                      emailOnChange(event);
+                      onChange(event);
+                    }}
+                    ref={ref}
+                    placeholder={placeholderEmails[index % placeholderEmails.length]}
+                    autoComplete="off"
+                  />
+                </InputGroup>
+              </Field>
             )}
           />
         </div>
@@ -179,7 +189,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
                 <Listbox.Button
                   type="button"
                   ref={setReferenceElement}
-                  className="flex w-full items-center justify-between gap-1 rounded-md px-2.5 py-2 text-13 border-[0.5px] border-strong"
+                  className="flex w-full items-center justify-between gap-1 rounded-md border-[0.5px] border-strong px-2.5 py-2 text-13"
                 >
                   <span
                     className={`text-13 ${
@@ -189,16 +199,16 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
                     {ROLE[value]}
                   </span>
 
-                  <ChevronDownIcon
+                  <ChevronDownOutline
                     className={`size-3 ${
-                      !getValues(`emails.${index}.role_active`) ? "stroke-placeholder" : "stroke-primary"
+                      !getValues(`emails.${index}.role_active`) ? "text-placeholder" : "text-primary"
                     }`}
                   />
                 </Listbox.Button>
 
                 <Listbox.Options as="div">
                   <div
-                    className="p-2 absolute space-y-1 z-10 mt-1 h-fit w-48 sm:w-60 rounded-md border border-strong bg-surface-1 shadow-sm focus:outline-none"
+                    className="shadow-sm absolute z-10 mt-1 h-fit w-48 space-y-1 rounded-md border border-strong bg-surface-1 p-2 focus:outline-none sm:w-60"
                     ref={setPopperElement}
                     style={styles.popper}
                     {...attributes.popper}
@@ -209,18 +219,18 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
                         key={key}
                         value={parseInt(key)}
                         className={({ active, selected }) =>
-                          `cursor-pointer select-none truncate rounded-sm px-1 py-1.5 ${
+                          `cursor-pointer truncate rounded-sm px-1 py-1.5 select-none ${
                             active || selected ? "bg-onboarding-background-400/40" : ""
                           } ${selected ? "text-primary" : "text-secondary"}`
                         }
                       >
                         {({ selected }) => (
-                          <div className="flex items-center text-wrap gap-2 p-1">
+                          <div className="flex items-center gap-2 p-1 text-wrap">
                             <div className="flex flex-col">
                               <div className="text-13 font-medium">{t(value.i18n_title)}</div>
                               <div className="flex text-11 text-tertiary">{t(value.i18n_description)}</div>
                             </div>
-                            {selected && <CheckIcon className="h-4 w-4 shrink-0" />}
+                            {selected && <TickOutline className="h-4 w-4 shrink-0" />}
                           </div>
                         )}
                       </Listbox.Option>
@@ -237,7 +247,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
             className="absolute right-0 hidden place-items-center self-center rounded-sm group-hover:grid"
             onClick={() => remove(index)}
           >
-            <XCircle className="h-5 w-5 pl-0.5 text-placeholder" />
+            <CloseCircleOutline className="h-5 w-5 pl-0.5 text-placeholder" />
           </button>
         )}
       </div>
@@ -339,10 +349,10 @@ export const InviteTeamStep = observer(function InviteTeamStep(props: Props) {
         title="Invite your teammates"
         description="Work in plane happens best with your team. Invite them now to use Plane to its potential."
       />
-      <div className="w-full text-13 py-4">
-        <div className="group relative grid grid-cols-10 gap-4 mx-8 py-2">
-          <div className="col-span-6 px-1 text-13 text-secondary font-medium">Email</div>
-          <div className="col-span-4 px-1 text-13 text-secondary font-medium">Role</div>
+      <div className="w-full py-4 text-13">
+        <div className="group relative mx-8 grid grid-cols-10 gap-4 py-2">
+          <div className="col-span-6 px-1 text-13 font-medium text-secondary">Email</div>
+          <div className="col-span-4 px-1 text-13 font-medium text-secondary">Role</div>
         </div>
         <div className="mb-3 space-y-3 sm:space-y-4">
           {fields.map((field, index) => (
@@ -364,14 +374,14 @@ export const InviteTeamStep = observer(function InviteTeamStep(props: Props) {
         </div>
         <button
           type="button"
-          className="flex items-center mx-8 gap-1.5 bg-transparent text-13 font-medium text-accent-primary outline-accent-strong"
+          className="mx-8 flex items-center gap-1.5 bg-transparent text-13 font-medium text-accent-primary outline-accent-strong"
           onClick={appendField}
         >
-          <PlusIcon className="h-4 w-4" strokeWidth={2} />
+          <AddOutline className="h-4 w-4" />
           Add another
         </button>
       </div>
-      <div className="flex flex-col mx-auto px-8 sm:px-2 items-center justify-center gap-4 w-full">
+      <div className="mx-auto flex w-full flex-col items-center justify-center gap-4 px-8 sm:px-2">
         <Button
           variant="primary"
           type="submit"

@@ -1,6 +1,12 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
-import { Tooltip } from "@plane/propel/tooltip";
-import { CircularProgressIndicator } from "@plane/ui";
+import { CircularProgress } from "@makeplane/propel/components/circular-progress";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { getFileExtension, truncateText } from "@plane/utils";
 // ui
 // icons
@@ -26,12 +32,12 @@ export const IssueAttachmentsUploadDetails = observer(function IssueAttachmentsU
   const { isMobile } = usePlatformOS();
 
   return (
-    <div className="flex h-[60px] items-center justify-between gap-1 rounded-md border-[2px] border-subtle bg-surface-2 px-4 py-2 text-13 pointer-events-none">
-      <div className="flex-shrink-0 flex items-center gap-3">
+    <div className="pointer-events-none flex h-[60px] items-center justify-between gap-1 rounded-md border-[2px] border-subtle bg-surface-2 px-4 py-2 text-13">
+      <div className="flex flex-shrink-0 items-center gap-3">
         <div className="h-7 w-7">{fileIcon}</div>
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
-            <Tooltip tooltipContent={fileName} isMobile={isMobile}>
+            <Tooltip label={fileName} layout="stacked" disabled={isMobile}>
               <span className="text-13">{truncateText(`${fileName}`, 10)}</span>
             </Tooltip>
           </div>
@@ -41,9 +47,9 @@ export const IssueAttachmentsUploadDetails = observer(function IssueAttachmentsU
           </div>
         </div>
       </div>
-      <div className="flex-shrink-0 flex items-center gap-2">
+      <div className="flex flex-shrink-0 items-center gap-2">
         <span className="flex-shrink-0">
-          <CircularProgressIndicator size={20} strokeWidth={3} percentage={uploadStatus.progress} />
+          <CircularProgress value={uploadStatus.progress} size="md" variant="brand" aria-label="Upload progress" />
         </span>
         <div className="flex-shrink-0 text-13 font-medium">{uploadStatus.progress}% done</div>
       </div>

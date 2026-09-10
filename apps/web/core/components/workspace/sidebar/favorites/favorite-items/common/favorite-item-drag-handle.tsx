@@ -1,7 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
 // ui
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { DragHandle } from "@plane/ui";
 // helper
 import { cn } from "@plane/utils";
@@ -20,14 +26,13 @@ export const FavoriteItemDragHandle = observer(function FavoriteItemDragHandle(p
 
   return (
     <Tooltip
-      isMobile={isMobile}
-      tooltipContent={sort_order === null ? "Join the project to rearrange" : "Drag to rearrange"}
-      position="top-end"
-      disabled={isDragging}
+      label={sort_order === null ? "Join the project to rearrange" : "Drag to rearrange"}
+      align="end"
+      disabled={isDragging || isMobile}
     >
       <div
         className={cn(
-          "hidden group-hover/project-item:flex items-center justify-center absolute top-1/2 -left-3 -translate-y-1/2 rounded-sm text-placeholder cursor-grab",
+          "absolute top-1/2 -left-3 hidden -translate-y-1/2 cursor-grab items-center justify-center rounded-sm text-placeholder group-hover/project-item:flex",
           {
             "cursor-not-allowed opacity-60": sort_order === null,
             "cursor-grabbing": isDragging,

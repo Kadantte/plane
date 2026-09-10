@@ -1,11 +1,19 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
+import { Field } from "@makeplane/propel/components/field";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Input, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { cn } from "@plane/utils";
 // helpers
 import { authErrorHandler } from "@/helpers/authentication.helper";
@@ -55,8 +63,8 @@ export const ChangeEmailModal = observer(function ChangeEmailModal(props: Props)
     await signOut().catch(() =>
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: t("sign_out.toast.error.title"),
-        message: t("sign_out.toast.error.message"),
+        title: t("auth.sign_out.toast.error.title"),
+        message: t("auth.sign_out.toast.error.message"),
       })
     );
   };
@@ -127,8 +135,8 @@ export const ChangeEmailModal = observer(function ChangeEmailModal(props: Props)
 
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
-      <div className="py-4 space-y-0 px-4">
-        <h3 className="text-16 font-medium leading-6 text-primary">{changeEmailT("title")}</h3>
+      <div className="space-y-0 px-4 py-4">
+        <h3 className="text-16 leading-6 font-medium text-primary">{changeEmailT("title")}</h3>
         <p className="my-4 text-13 text-secondary">{changeEmailT("description")}</p>
       </div>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 px-4" noValidate>
@@ -145,21 +153,22 @@ export const ChangeEmailModal = observer(function ChangeEmailModal(props: Props)
               },
             }}
             render={({ field: { value, onChange, ref } }) => (
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                value={value}
-                onChange={onChange}
-                ref={ref}
-                hasError={Boolean(errors.email)}
-                placeholder={changeEmailT("form.email.placeholder")}
-                className={cn(
-                  { "border-danger-strong": errors.email },
-                  { "cursor-not-allowed !bg-surface-2": secondStep }
-                )}
-                disabled={secondStep}
-              />
+              <Field name="email" invalid={Boolean(errors.email)}>
+                <InputGroup size="2xl">
+                  <Input
+                    size="2xl"
+                    id="email"
+                    name="email"
+                    type="email"
+                    value={value}
+                    onChange={onChange}
+                    ref={ref}
+                    placeholder={changeEmailT("form.email.placeholder")}
+                    autoComplete="off"
+                    disabled={secondStep}
+                  />
+                </InputGroup>
+              </Field>
             )}
           />
           {errors?.email && <span className="text-11 text-danger-primary">{errors?.email?.message}</span>}
@@ -173,16 +182,19 @@ export const ChangeEmailModal = observer(function ChangeEmailModal(props: Props)
               name="code"
               rules={{ required: changeEmailT("form.code.errors.required") }}
               render={({ field: { value, onChange, ref } }) => (
-                <Input
-                  id="code"
-                  name="code"
-                  value={value}
-                  onChange={onChange}
-                  ref={ref}
-                  placeholder={changeEmailT("form.code.placeholder")}
-                  className={cn({ "border-danger-strong": errors.code })}
-                  autoFocus
-                />
+                <InputGroup size="2xl">
+                  <Input
+                    size="2xl"
+                    id="code"
+                    name="code"
+                    value={value}
+                    onChange={onChange}
+                    ref={ref}
+                    placeholder={changeEmailT("form.code.placeholder")}
+                    autoComplete="off"
+                    autoFocus
+                  />
+                </InputGroup>
               )}
             />
             {errors?.code ? (

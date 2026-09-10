@@ -1,12 +1,20 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { AlertTriangle } from "lucide-react";
+import { WarningTriangleOutline } from "@makeplane/propel/icons";
 // Plane Imports
+import { Field } from "@makeplane/propel/components/field";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspace } from "@plane/types";
-import { Input } from "@plane/ui";
+
 import { cn } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -76,47 +84,50 @@ export const DeleteWorkspaceForm = observer(function DeleteWorkspaceForm(props: 
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 p-6">
-      <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
+      <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
         <span
           className={cn(
-            "shrink-0 grid place-items-center rounded-full size-12 sm:size-10 bg-danger-subtle text-danger-primary"
+            "grid size-12 shrink-0 place-items-center rounded-full bg-danger-subtle text-danger-primary sm:size-10"
           )}
         >
-          <AlertTriangle className="size-5 text-danger-primary" aria-hidden="true" />
+          <WarningTriangleOutline className="size-5 text-danger-primary" aria-hidden="true" />
         </span>
         <div>
           <div className="text-center sm:text-left">
             <h3 className="text-h5-medium">{t("workspace_settings.settings.general.delete_modal.title")}</h3>
             <p className="mt-1 text-body-xs-regular text-secondary">
               You are about to delete the workspace{" "}
-              <span className="break-words text-body-xs-semibold">{data?.name}</span>. If you confirm, you will lose
+              <span className="text-body-xs-semibold break-words">{data?.name}</span>. If you confirm, you will lose
               access to all your work data in this workspace without any way to restore it. Tread very carefully.
             </p>
           </div>
 
-          <div className="text-secondary mt-4">
-            <p className="break-words text-body-xs-regular ">Type in this workspace&apos;s name to continue.</p>
+          <div className="mt-4 text-secondary">
+            <p className="text-body-xs-regular break-words">Type in this workspace&apos;s name to continue.</p>
             <Controller
               control={control}
               name="workspaceName"
               render={({ field: { value, onChange, ref } }) => (
-                <Input
-                  id="workspaceName"
-                  name="workspaceName"
-                  type="text"
-                  value={value}
-                  onChange={onChange}
-                  ref={ref}
-                  hasError={Boolean(errors.workspaceName)}
-                  placeholder={data?.name}
-                  className="mt-2 w-full"
-                  autoComplete="off"
-                />
+                <Field name="workspaceName" invalid={Boolean(errors.workspaceName)}>
+                  <InputGroup size="2xl">
+                    <Input
+                      size="2xl"
+                      id="workspaceName"
+                      name="workspaceName"
+                      type="text"
+                      value={value}
+                      onChange={onChange}
+                      ref={ref}
+                      placeholder={data?.name}
+                      autoComplete="off"
+                    />
+                  </InputGroup>
+                </Field>
               )}
             />
           </div>
 
-          <div className="text-secondary mt-4">
+          <div className="mt-4 text-secondary">
             <p className="text-body-xs-regular">
               For final confirmation, type{" "}
               <span className="text-body-xs-medium text-primary">delete my workspace </span>
@@ -126,18 +137,21 @@ export const DeleteWorkspaceForm = observer(function DeleteWorkspaceForm(props: 
               control={control}
               name="confirmDelete"
               render={({ field: { value, onChange, ref } }) => (
-                <Input
-                  id="confirmDelete"
-                  name="confirmDelete"
-                  type="text"
-                  value={value}
-                  onChange={onChange}
-                  ref={ref}
-                  hasError={Boolean(errors.confirmDelete)}
-                  placeholder=""
-                  className="mt-2 w-full"
-                  autoComplete="off"
-                />
+                <Field name="confirmDelete" invalid={Boolean(errors.confirmDelete)}>
+                  <InputGroup size="2xl">
+                    <Input
+                      size="2xl"
+                      id="confirmDelete"
+                      name="confirmDelete"
+                      type="text"
+                      value={value}
+                      onChange={onChange}
+                      ref={ref}
+                      placeholder=""
+                      autoComplete="off"
+                    />
+                  </InputGroup>
+                </Field>
               )}
             />
           </div>

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -105,68 +111,64 @@ export const ModuleDropdownBase = observer(function ModuleDropdownBase(props: TM
     }
   }, [isOpen, isMobile]);
 
-  const comboButton = (
-    <>
-      {button ? (
-        <button
-          ref={setReferenceElement}
-          type="button"
-          className={cn("clickable block h-full w-full outline-none hover:bg-layer-1", buttonContainerClassName)}
-          onClick={handleOnClick}
-          disabled={disabled}
-          tabIndex={tabIndex}
-        >
-          {button}
-        </button>
-      ) : (
-        <button
-          ref={setReferenceElement}
-          type="button"
-          className={cn(
-            "clickable block h-full max-w-full outline-none hover:bg-layer-1",
-            {
-              "cursor-not-allowed text-secondary": disabled,
-              "cursor-pointer": !disabled,
-            },
-            buttonContainerClassName
-          )}
-          onClick={handleOnClick}
-          disabled={disabled}
-          tabIndex={tabIndex}
-        >
-          <DropdownButton
-            className={buttonClassName}
-            isActive={isOpen}
-            tooltipHeading={t("common.module")}
-            tooltipContent={
-              Array.isArray(value)
-                ? `${value
-                    .map((moduleId) => getModuleById(moduleId)?.name)
-                    .toString()
-                    .replaceAll(",", ", ")}`
-                : ""
-            }
-            showTooltip={showTooltip}
-            variant={buttonVariant}
-            renderToolTipByDefault={renderByDefault}
-          >
-            <ModuleButtonContent
-              disabled={disabled}
-              dropdownArrow={dropdownArrow}
-              dropdownArrowClassName={dropdownArrowClassName}
-              hideIcon={hideIcon}
-              hideText={BUTTON_VARIANTS_WITHOUT_TEXT.includes(buttonVariant)}
-              placeholder={placeholder}
-              showCount={showCount}
-              showTooltip={showTooltip}
-              value={value}
-              onChange={onChange as any}
-              className={itemClassName}
-            />
-          </DropdownButton>
-        </button>
+  const comboButton = button ? (
+    <button
+      ref={setReferenceElement}
+      type="button"
+      className={cn("clickable block h-full w-full outline-none hover:bg-layer-1", buttonContainerClassName)}
+      onClick={handleOnClick}
+      disabled={disabled}
+      tabIndex={tabIndex}
+    >
+      {button}
+    </button>
+  ) : (
+    <button
+      ref={setReferenceElement}
+      type="button"
+      className={cn(
+        "clickable block h-full max-w-full outline-none hover:bg-layer-1",
+        {
+          "cursor-not-allowed text-secondary": disabled,
+          "cursor-pointer": !disabled,
+        },
+        buttonContainerClassName
       )}
-    </>
+      onClick={handleOnClick}
+      disabled={disabled}
+      tabIndex={tabIndex}
+    >
+      <DropdownButton
+        className={buttonClassName}
+        isActive={isOpen}
+        tooltipHeading={t("common.module")}
+        tooltipContent={
+          Array.isArray(value)
+            ? `${value
+                .map((moduleId) => getModuleById(moduleId)?.name)
+                .toString()
+                .replaceAll(",", ", ")}`
+            : ""
+        }
+        showTooltip={showTooltip}
+        variant={buttonVariant}
+        renderToolTipByDefault={renderByDefault}
+      >
+        <ModuleButtonContent
+          disabled={disabled}
+          dropdownArrow={dropdownArrow}
+          dropdownArrowClassName={dropdownArrowClassName}
+          hideIcon={hideIcon}
+          hideText={BUTTON_VARIANTS_WITHOUT_TEXT.includes(buttonVariant)}
+          placeholder={placeholder}
+          showCount={showCount}
+          showTooltip={showTooltip}
+          value={value}
+          onChange={onChange as any}
+          className={itemClassName}
+        />
+      </DropdownButton>
+    </button>
   );
 
   return (
@@ -187,6 +189,7 @@ export const ModuleDropdownBase = observer(function ModuleDropdownBase(props: TM
           multiple={multiple}
           getModuleById={getModuleById}
           moduleIds={moduleIds}
+          value={value}
         />
       )}
     </ComboDropDown>

@@ -1,9 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useParams } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 // plane imports
 import { allTimeIn30MinutesInterval12HoursFormat } from "@plane/constants";
 import { Button } from "@plane/propel/button";
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseOutline } from "@makeplane/propel/icons";
 import { CustomSelect, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // components
 import { getDate, cn } from "@plane/utils";
@@ -114,7 +120,7 @@ export function NotificationSnoozeModal(props: TNotificationSnoozeModal) {
 
           <div>
             <button type="button" onClick={handleClose}>
-              <CloseIcon className="h-5 w-5 text-primary" />
+              <CloseOutline className="h-5 w-5 text-primary" />
             </button>
           </div>
         </div>

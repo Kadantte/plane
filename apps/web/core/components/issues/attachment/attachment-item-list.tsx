@@ -1,9 +1,14 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import type { FileRejection } from "react-dropzone";
 import { useDropzone } from "react-dropzone";
-import { UploadCloud } from "lucide-react";
+import { UploadOutline } from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssueServiceType } from "@plane/types";
@@ -11,7 +16,7 @@ import { EIssueServiceType } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web hooks
-import { useFileSize } from "@/plane-web/hooks/use-file-size";
+import { useFileSize } from "@/hooks/use-file-size";
 // types
 import type { TAttachmentHelpers } from "../issue-detail-widgets/attachments/helper";
 // components
@@ -127,10 +132,10 @@ export const IssueAttachmentItemList = observer(function IssueAttachmentItemList
           >
             <input {...getInputProps()} />
             {isDragActive && (
-              <div className="absolute flex items-center justify-center left-0 top-0 h-full w-full bg-surface-2/75 z-30 ">
-                <div className="flex items-center justify-center p-1 rounded-md bg-surface-1">
-                  <div className="flex flex-col justify-center items-center px-5 py-6 rounded-md border border-dashed border-strong">
-                    <UploadCloud className="size-7" />
+              <div className="absolute top-0 left-0 z-30 flex h-full w-full items-center justify-center bg-surface-2/75">
+                <div className="flex items-center justify-center rounded-md bg-surface-1 p-1">
+                  <div className="flex flex-col items-center justify-center rounded-md border border-dashed border-strong px-5 py-6">
+                    <UploadOutline className="size-7" />
                     <span className="text-13 text-tertiary">{t("attachment.drag_and_drop")}</span>
                   </div>
                 </div>

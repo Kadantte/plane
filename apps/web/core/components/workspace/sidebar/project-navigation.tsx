@@ -1,10 +1,23 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { EUserPermissionsLevel, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { CycleIcon, IntakeIcon, ModuleIcon, PageIcon, ViewsIcon, WorkItemsIcon } from "@plane/propel/icons";
+import {
+  CyclesOutline,
+  IntakeOutline,
+  ModuleOutline,
+  PagesOutline,
+  ViewsOutline,
+  WorkItemsOutline,
+} from "@makeplane/propel/icons";
 import type { EUserProjectRoles } from "@plane/types";
 // plane ui
 // components
@@ -37,7 +50,7 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
   const { workItem: workItemIdentifierFromRoute } = useParams();
   // store hooks
   const { t } = useTranslation();
-  const { toggleSidebar } = useAppTheme();
+  const { isExtendedProjectSidebarOpened, toggleExtendedProjectSidebar, toggleSidebar } = useAppTheme();
   const { getPartialProjectById } = useProject();
   const { allowPermissions } = useUserPermissions();
   const {
@@ -56,6 +69,10 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
     if (window.innerWidth < 768) {
       toggleSidebar();
     }
+    // close the extended sidebar if it is open
+    if (isExtendedProjectSidebarOpened) {
+      toggleExtendedProjectSidebar(false);
+    }
   };
 
   const baseNavigation = useCallback(
@@ -65,7 +82,7 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
         key: "work_items",
         name: "Work items",
         href: `/${workspaceSlug}/projects/${projectId}/issues`,
-        icon: WorkItemsIcon,
+        icon: WorkItemsOutline,
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
         shouldRender: true,
         sortOrder: 1,
@@ -75,7 +92,7 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
         key: "cycles",
         name: "Cycles",
         href: `/${workspaceSlug}/projects/${projectId}/cycles`,
-        icon: CycleIcon,
+        icon: CyclesOutline,
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
         shouldRender: project?.cycle_view ?? false,
         sortOrder: 2,
@@ -85,7 +102,7 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
         key: "modules",
         name: "Modules",
         href: `/${workspaceSlug}/projects/${projectId}/modules`,
-        icon: ModuleIcon,
+        icon: ModuleOutline,
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
         shouldRender: project?.module_view ?? false,
         sortOrder: 3,
@@ -95,7 +112,7 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
         key: "views",
         name: "Views",
         href: `/${workspaceSlug}/projects/${projectId}/views`,
-        icon: ViewsIcon,
+        icon: ViewsOutline,
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
         shouldRender: project?.issue_views_view ?? false,
         sortOrder: 4,
@@ -105,7 +122,7 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
         key: "pages",
         name: "Pages",
         href: `/${workspaceSlug}/projects/${projectId}/pages`,
-        icon: PageIcon,
+        icon: PagesOutline,
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
         shouldRender: project?.page_view ?? false,
         sortOrder: 5,
@@ -115,7 +132,7 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
         key: "intake",
         name: "Intake",
         href: `/${workspaceSlug}/projects/${projectId}/intake`,
-        icon: IntakeIcon,
+        icon: IntakeOutline,
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
         shouldRender: project?.inbox_view ?? false,
         sortOrder: 6,
@@ -171,12 +188,19 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
         const hasAccess = allowPermissions(item.access, EUserPermissionsLevel.PROJECT, workspaceSlug, project.id);
         if (!hasAccess) return null;
 
+        const shouldShowCount = item.key === "intake" && (project.intake_count ?? 0) > 0;
+
         return (
           <Link key={item.key} href={item.href} onClick={handleProjectClick}>
             <SidebarNavItem isActive={!!isActive(item)}>
-              <div className="flex items-center gap-1.5 py-[1px]">
-                <item.icon className={`flex-shrink-0 size-4 ${item.name === "Intake" ? "stroke-1" : "stroke-[1.5]"}`} />
-                <span className="text-11 font-medium">{t(item.i18n_key)}</span>
+              <div className="flex w-full items-center justify-between gap-1.5 py-[1px]">
+                <div className="flex items-center gap-1.5">
+                  <item.icon
+                    className={`size-4 flex-shrink-0 ${item.name === "Intake" ? "stroke-1" : "stroke-[1.5]"}`}
+                  />
+                  <span className="text-11 font-medium">{t(item.i18n_key)}</span>
+                </div>
+                {shouldShowCount && <span className="text-11 font-medium text-tertiary">{project.intake_count}</span>}
               </div>
             </SidebarNavItem>
           </Link>

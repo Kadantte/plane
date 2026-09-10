@@ -1,6 +1,12 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
-import { ListFilter } from "lucide-react";
+import { FilterOutline } from "@makeplane/propel/icons";
 // plane imports
 import type { TButtonSize, TButtonVariant } from "@plane/propel/button";
 import { getButtonStyling } from "@plane/propel/button";
@@ -41,7 +47,7 @@ export const AddFilterButton = observer(function AddFilterButton<P extends TFilt
     isDisabled = false,
   } = buttonConfig || {};
   // derived values
-  const FilterIcon = iconConfig.iconComponent || ListFilter;
+  const FilterIcon = iconConfig.iconComponent || FilterOutline;
 
   const handleFilterSelect = (property: P, operator: TSupportedOperators, isNegation: boolean) => {
     filter.addCondition(

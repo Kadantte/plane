@@ -1,8 +1,14 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // constants
 import { NETWORK_CHOICES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseOutline } from "@makeplane/propel/icons";
 
 type Props = {
   handleRemove: (val: string) => void;
@@ -19,7 +25,7 @@ export const AppliedAccessFilters = observer(function AppliedAccessFilters(props
       {values.map((status) => {
         const accessDetails = NETWORK_CHOICES.find((s) => `${s.key}` === status);
         return (
-          <div key={status} className="flex items-center gap-1 rounded-sm px-1.5 py-1 text-11 bg-layer-1">
+          <div key={status} className="flex items-center gap-1 rounded-sm bg-layer-1 px-1.5 py-1 text-11">
             {accessDetails && t(accessDetails?.i18n_label)}
             {editable && (
               <button
@@ -27,7 +33,7 @@ export const AppliedAccessFilters = observer(function AppliedAccessFilters(props
                 className="grid place-items-center text-tertiary hover:text-secondary"
                 onClick={() => handleRemove(status)}
               >
-                <CloseIcon height={10} width={10} strokeWidth={2} />
+                <CloseOutline height={10} width={10} />
               </button>
             )}
           </div>

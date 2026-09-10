@@ -1,10 +1,21 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router";
-import { LogOut, MoreHorizontal, Settings, Share2, ArchiveIcon } from "lucide-react";
+import {
+  ArchiveOutline,
+  LinkOutline,
+  LogOutOutline,
+  MoreHorizontalOutline,
+  SettingsOutline,
+  ShareAltOutline,
+} from "@makeplane/propel/icons";
 // plane imports
-import { MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { LinkIcon } from "@plane/propel/icons";
 import { CustomMenu } from "@plane/ui";
 
 type Props = {
@@ -42,10 +53,10 @@ export function ProjectActionsMenu({
       customButton={
         <span
           ref={actionSectionRef}
-          className="grid place-items-center p-0.5 text-placeholder hover:bg-layer-1 rounded-sm"
+          className="grid place-items-center rounded-sm p-0.5 text-placeholder hover:bg-layer-1"
           onClick={() => setIsMenuActive(!isMenuActive)}
         >
-          <MoreHorizontal className="size-4" />
+          <MoreHorizontalOutline className="size-4" />
         </span>
       }
       className="flex-shrink-0"
@@ -61,7 +72,7 @@ export function ProjectActionsMenu({
         <CustomMenu.MenuItem onClick={onPublishModal}>
           <div className="relative flex flex-shrink-0 items-center justify-start gap-2">
             <div className="flex h-4 w-4 cursor-pointer items-center justify-center rounded-sm text-secondary transition-all duration-300 hover:bg-layer-1">
-              <Share2 className="h-3.5 w-3.5 stroke-[1.5]" />
+              <ShareAltOutline className="h-3.5 w-3.5 stroke-[1.5]" />
             </div>
             <div>{t("publish_project")}</div>
           </div>
@@ -69,7 +80,7 @@ export function ProjectActionsMenu({
       )}
       <CustomMenu.MenuItem onClick={onCopyText}>
         <span className="flex items-center justify-start gap-2">
-          <LinkIcon className="h-3.5 w-3.5 stroke-[1.5]" />
+          <LinkOutline className="h-3.5 w-3.5 stroke-[1.5]" />
           <span>{t("copy_link")}</span>
         </span>
       </CustomMenu.MenuItem>
@@ -79,8 +90,8 @@ export function ProjectActionsMenu({
             navigate(`/${workspaceSlug}/projects/${project?.id}/archives/issues`);
           }}
         >
-          <div className="flex items-center justify-start gap-2 cursor-pointer">
-            <ArchiveIcon className="h-3.5 w-3.5 stroke-[1.5]" />
+          <div className="flex cursor-pointer items-center justify-start gap-2">
+            <ArchiveOutline className="h-3.5 w-3.5 stroke-[1.5]" />
             <span>{t("archives")}</span>
           </div>
         </CustomMenu.MenuItem>
@@ -90,19 +101,16 @@ export function ProjectActionsMenu({
           navigate(`/${workspaceSlug}/settings/projects/${project?.id}`);
         }}
       >
-        <div className="flex items-center justify-start gap-2 cursor-pointer">
-          <Settings className="h-3.5 w-3.5 stroke-[1.5]" />
+        <div className="flex cursor-pointer items-center justify-start gap-2">
+          <SettingsOutline className="h-3.5 w-3.5 stroke-[1.5]" />
           <span>{t("settings")}</span>
         </div>
       </CustomMenu.MenuItem>
       {/* Leave project */}
       {!isAuthorized && (
-        <CustomMenu.MenuItem
-          onClick={onLeaveProject}
-          data-ph-element={MEMBER_TRACKER_ELEMENTS.SIDEBAR_PROJECT_QUICK_ACTIONS}
-        >
+        <CustomMenu.MenuItem onClick={onLeaveProject}>
           <div className="flex items-center justify-start gap-2">
-            <LogOut className="h-3.5 w-3.5 stroke-[1.5]" />
+            <LogOutOutline className="h-3.5 w-3.5 stroke-[1.5]" />
             <span>{t("leave_project")}</span>
           </div>
         </CustomMenu.MenuItem>

@@ -1,10 +1,16 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { ROLE, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { LinkIcon, TrashIcon, ChevronDownIcon } from "@plane/propel/icons";
+import { ChevronDownOutline, DeleteOutline, LinkOutline } from "@makeplane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TContextMenuItem } from "@plane/ui";
 import { CustomSelect, CustomMenu } from "@plane/ui";
@@ -88,7 +94,7 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
       key: "copy-link",
       action: () => void handleCopyText(),
       title: t("common.actions.copy_link"),
-      icon: LinkIcon,
+      icon: LinkOutline,
       shouldRender: !!invitationDetails.invite_link,
     },
     {
@@ -97,7 +103,7 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
         setRemoveMemberModal(true);
       },
       title: t("common.remove"),
-      icon: TrashIcon,
+      icon: DeleteOutline,
       shouldRender: isAdmin,
       className: "text-danger-primary",
       iconClassName: "text-danger-primary",
@@ -115,9 +121,9 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
         }}
         onSubmit={handleRemoveInvitation}
       />
-      <div className="group flex items-center justify-between px-3 py-4 hover:bg-layer-transparent-hover w-full h-full">
+      <div className="group flex h-full w-full items-center justify-between px-3 py-4 hover:bg-layer-transparent-hover">
         <div className="flex items-center gap-x-4 gap-y-2">
-          <span className="relative flex h-10 w-10 items-center justify-center rounded-sm bg-layer-3 p-4 capitalize text-tertiary">
+          <span className="relative flex h-10 w-10 items-center justify-center rounded-sm bg-layer-3 p-4 text-tertiary capitalize">
             {(invitationDetails.email ?? "?")[0]}
           </span>
           <div>
@@ -140,7 +146,7 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
                 </span>
                 {hasRoleChangeAccess && (
                   <span className="grid place-items-center">
-                    <ChevronDownIcon className="h-3 w-3" />
+                    <ChevronDownOutline className="h-3 w-3" />
                   </span>
                 )}
               </div>
@@ -202,7 +208,7 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
                       <h5>{item.title}</h5>
                       {item.description && (
                         <p
-                          className={cn("text-tertiary whitespace-pre-line", {
+                          className={cn("whitespace-pre-line text-tertiary", {
                             "text-placeholder": item.disabled,
                           })}
                         >

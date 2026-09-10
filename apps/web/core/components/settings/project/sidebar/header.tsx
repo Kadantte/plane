@@ -1,4 +1,10 @@
-import { ArrowLeft } from "lucide-react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { ArrowNarrowLeftOutline } from "@makeplane/propel/icons";
 import { observer } from "mobx-react";
 // plane imports
 import { ROLE_DETAILS } from "@plane/constants";
@@ -35,22 +41,22 @@ export const ProjectSettingsSidebarHeader = observer(function ProjectSettingsSid
 
   return (
     <div className="shrink-0">
-      <div className="py-3 pl-4 pr-5 flex items-center gap-1 text-body-md-medium">
+      <div className="flex items-center gap-1 py-3 pr-5 pl-4 text-body-md-medium">
         <IconButton
           variant="ghost"
           size="base"
-          icon={ArrowLeft}
+          icon={ArrowNarrowLeftOutline}
           onClick={() => router.push(`/${currentWorkspace?.slug}/projects/${projectId}/issues/`)}
         />
         <p>Project settings</p>
       </div>
-      <div className="mt-1.5 flex items-center gap-2 py-0.5 px-5 truncate">
-        <div className="shrink-0 size-8 grid place-items-center bg-layer-2 rounded">
+      <div className="mt-1.5 flex items-center gap-2 truncate px-5 py-0.5">
+        <div className="grid size-8 shrink-0 place-items-center rounded bg-layer-2">
           <Logo logo={projectDetails?.logo_props} size={20} />
         </div>
         <div className="truncate">
-          <p className="text-body-sm-medium truncate">{projectDetails?.name}</p>
-          <p className="text-caption-md-regular truncate">{t(ROLE_DETAILS[currentProjectRole].i18n_title)}</p>
+          <p className="truncate text-body-sm-medium">{projectDetails?.name}</p>
+          <p className="truncate text-caption-md-regular">{t(ROLE_DETAILS[currentProjectRole].i18n_title)}</p>
         </div>
       </div>
     </div>

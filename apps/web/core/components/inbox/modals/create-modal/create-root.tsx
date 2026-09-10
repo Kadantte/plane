@@ -1,3 +1,11 @@
+// oxlint-disable jsx_a11y/prefer-tag-over-role
+// oxlint-disable jsx_a11y/click-events-have-key-events
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FormEvent } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -8,19 +16,14 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue } from "@plane/types";
-import { ToggleSwitch } from "@plane/ui";
+import { Switch } from "@makeplane/propel/components/switch";
 import { renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
 // hooks
-import { useProject } from "@/hooks/store/use-project";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useKeypress from "@/hooks/use-keypress";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web imports
-import { DeDupeButtonRoot } from "@/plane-web/components/de-dupe/de-dupe-button";
-import { DuplicateModalRoot } from "@/plane-web/components/de-dupe/duplicate-modal";
-import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
 // services
 import { FileService } from "@/services/file.service";
 // local imports
@@ -51,7 +54,7 @@ export const defaultIssueData: Partial<TIssue> = {
 };
 
 export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props: TInboxIssueCreateRoot) {
-  const { workspaceSlug, projectId, handleModalClose, isDuplicateModalOpen, handleDuplicateIssueModal } = props;
+  const { workspaceSlug, projectId, handleModalClose } = props;
   // states
   const [uploadedAssetIds, setUploadedAssetIds] = useState<string[]>([]);
   // router
@@ -66,7 +69,6 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
   const { getWorkspaceBySlug } = useWorkspace();
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id;
   const { isMobile } = usePlatformOS();
-  const { getProjectById } = useProject();
   const { t } = useTranslation();
   // states
   const [createMore, setCreateMore] = useState<boolean>(false);
@@ -82,21 +84,7 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
     [formData]
   );
 
-  // derived values
-  const projectDetails = projectId ? getProjectById(projectId) : undefined;
-
   const { getIndex } = getTabIndex(ETabIndices.INTAKE_ISSUE_FORM, isMobile);
-
-  // debounced duplicate issues swr
-  const { duplicateIssues } = useDebouncedDuplicateIssues(
-    workspaceSlug,
-    projectDetails?.workspace.toString(),
-    projectId,
-    {
-      name: formData?.name,
-      description_html: formData?.description_html,
-    }
-  );
 
   const handleEscKeyDown = (event: KeyboardEvent) => {
     if (descriptionEditorRef.current?.isEditorReadyToDiscard()) {
@@ -154,6 +142,7 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
     setFormSubmitting(true);
 
     await createInboxIssue(workspaceSlug, projectId, payload)
+      // oxlint-disable-next-line promise/always-return
       .then(async (res) => {
         if (uploadedAssetIds.length > 0) {
           await fileService.updateBulkProjectAssetsUploadStatus(workspaceSlug, projectId, res?.issue.id ?? "", {
@@ -187,24 +176,14 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
 
   const isTitleLengthMoreThan255Character = formData?.name ? formData.name.length > 255 : false;
 
-  const shouldRenderDuplicateModal = isDuplicateModalOpen && duplicateIssues?.length > 0;
-
   if (!workspaceSlug || !projectId || !workspaceId) return <></>;
   return (
-    <div className="flex gap-2 bg-transparent w-full">
-      <div className="rounded-lg w-full">
-        <form ref={formRef} onSubmit={handleFormSubmit} className="flex flex-col w-full">
-          <div className="space-y-5 p-5 rounded-t-lg bg-surface-1">
+    <div className="flex w-full gap-2 bg-transparent">
+      <div className="w-full rounded-lg">
+        <form ref={formRef} onSubmit={handleFormSubmit} className="flex w-full flex-col">
+          <div className="space-y-5 rounded-t-lg bg-surface-1 p-5">
             <div className="flex items-center justify-between gap-2">
               <h3 className="text-18 font-medium text-secondary">{t("inbox_issue.modal.title")}</h3>
-              {duplicateIssues?.length > 0 && (
-                <DeDupeButtonRoot
-                  workspaceSlug={workspaceSlug}
-                  isDuplicateModalOpen={isDuplicateModalOpen}
-                  label={`${duplicateIssues.length} duplicate issue${duplicateIssues.length > 1 ? "s" : ""} found!`}
-                  handleOnClick={() => handleDuplicateIssueModal(!isDuplicateModalOpen)}
-                />
-              )}
             </div>
             <div className="space-y-3">
               <InboxIssueTitle
@@ -226,14 +205,14 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
               <InboxIssueProperties projectId={projectId} data={formData} handleData={handleFormData} />
             </div>
           </div>
-          <div className="px-5 py-4 flex items-center justify-between gap-2 border-t-[0.5px] border-subtle rounded-b-lg bg-surface-1">
+          <div className="flex items-center justify-between gap-2 rounded-b-lg border-t-[0.5px] border-subtle bg-surface-1 px-5 py-4">
             <div
-              className="inline-flex items-center gap-1.5 cursor-pointer"
+              className="inline-flex cursor-pointer items-center gap-1.5"
               onClick={() => setCreateMore((prevData) => !prevData)}
               role="button"
               tabIndex={getIndex("create_more")}
             >
-              <ToggleSwitch value={createMore} onChange={() => {}} size="sm" />
+              <Switch size="sm" checked={createMore} onCheckedChange={() => {}} aria-label={t("create_more")} />
               <span className="text-11">{t("create_more")}</span>
             </div>
             <div className="flex items-center gap-3">
@@ -271,19 +250,6 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
           </div>
         </form>
       </div>
-      {shouldRenderDuplicateModal && (
-        <div
-          ref={modalContainerRef}
-          className="relative flex flex-col gap-2.5 px-3 py-4 rounded-lg shadow-xl bg-pi-50"
-          style={{ maxHeight: formRef?.current?.offsetHeight ? `${formRef.current.offsetHeight}px` : "436px" }}
-        >
-          <DuplicateModalRoot
-            workspaceSlug={workspaceSlug.toString()}
-            issues={duplicateIssues}
-            handleDuplicateIssueModal={handleDuplicateIssueModal}
-          />
-        </div>
-      )}
     </div>
   );
 });

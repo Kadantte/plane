@@ -1,9 +1,14 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
 // constants
 import type { IWebhook } from "@plane/types";
-// ui
-import { ToggleSwitch } from "@plane/ui";
+import { Switch } from "@makeplane/propel/components/switch";
 
 interface IWebHookToggle {
   control: Control<IWebhook, any>;
@@ -17,13 +22,7 @@ export function WebhookToggle({ control }: IWebHookToggle) {
         control={control}
         name="is_active"
         render={({ field: { onChange, value } }) => (
-          <ToggleSwitch
-            value={value}
-            onChange={(val: boolean) => {
-              onChange(val);
-            }}
-            size="sm"
-          />
+          <Switch size="sm" checked={value} onCheckedChange={onChange} aria-label="Enable webhook" />
         )}
       />
     </div>

@@ -1,15 +1,22 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import type { SubmitHandler } from "react-hook-form";
 import { Controller, useForm } from "react-hook-form";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 // plane helpers
 // plane ui
 import { FavoriteFolderIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Input } from "@plane/ui";
+
 // hooks
 import { useFavorite } from "@/hooks/store/use-favorite";
 
@@ -132,7 +139,7 @@ export const NewFavoriteFolder = observer(function NewFavoriteFolder(props: TPro
     setCreateNewFolder(false);
   });
   return (
-    <div className="flex items-center gap-1.5 py-[1px] px-2" ref={ref}>
+    <div className="flex items-center gap-1.5 px-2 py-[1px]" ref={ref}>
       <FavoriteFolderIcon className="size-4" />
       <form onSubmit={handleSubmit(actionType === "create" ? handleAddNewFolder : handleRenameFolder)}>
         <Controller
@@ -140,12 +147,14 @@ export const NewFavoriteFolder = observer(function NewFavoriteFolder(props: TPro
           control={control}
           rules={{ required: true }}
           render={({ field }) => (
-            <Input
-              className="w-full"
-              placeholder={t("new_folder")}
-              aria-label={t("aria_labels.projects_sidebar.enter_folder_name")}
-              {...field}
-            />
+            <InputGroup size="2xl">
+              <Input
+                size="2xl"
+                placeholder={t("new_folder")}
+                aria-label={t("aria_labels.projects_sidebar.enter_folder_name")}
+                {...field}
+              />
+            </InputGroup>
           )}
         />
       </form>

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useRef, useState } from "react";
 // Plane
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -9,8 +15,8 @@ import { DEFAULT_BLOCK_WIDTH, SIDEBAR_WIDTH } from "../../constants";
 
 export const useGanttResizable = (
   block: IGanttBlock,
-  resizableRef: React.RefObject<HTMLDivElement>,
-  ganttContainerRef: React.RefObject<HTMLDivElement>,
+  resizableRef: React.RefObject<HTMLDivElement | null>,
+  ganttContainerRef: React.RefObject<HTMLDivElement | null>,
   updateBlockDates?: (updates: IBlockUpdateDependencyData[]) => Promise<void>
 ) => {
   // refs
@@ -19,8 +25,8 @@ export const useGanttResizable = (
     width: 0,
     offsetX: 0,
   });
-  const ganttContainerDimensions = useRef<DOMRect | undefined>();
-  const currMouseEvent = useRef<MouseEvent | undefined>();
+  const ganttContainerDimensions = useRef<DOMRect | undefined>(undefined);
+  const currMouseEvent = useRef<MouseEvent | undefined>(undefined);
   // states
   const { currentViewData, updateBlockPosition, setIsDragging, getUpdatedPositionAfterDrag } = useTimeLineChartStore();
   const [isMoving, setIsMoving] = useState<"left" | "right" | "move" | undefined>();

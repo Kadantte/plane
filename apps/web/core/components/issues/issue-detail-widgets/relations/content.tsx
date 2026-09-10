@@ -1,19 +1,23 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { Collapsible } from "@makeplane/propel/components/collapsible";
 import { useTranslation } from "@plane/i18n";
-import type { TIssue, TIssueServiceType } from "@plane/types";
+import type { TIssue, TIssueServiceType, TIssueRelationTypes } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
-import { Collapsible } from "@plane/ui";
+import { cn } from "@plane/utils";
 // components
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
+import { useTimeLineRelationOptions } from "@/components/relations";
+import { CreateUpdateEpicModal } from "@/components/epic-modal";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-// Plane-web
-import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
-import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
-import type { TIssueRelationTypes } from "@/plane-web/types";
 // helper
 import { DeleteIssueModal } from "../../delete-issue-modal";
 import { RelationIssueList } from "../../relations/issue-list";
@@ -130,28 +134,33 @@ export const RelationsCollapsibleContent = observer(function RelationsCollapsibl
 
   return (
     <>
-      <div className="flex flex-col gap-">
+      <div className="gap- flex flex-col">
         {filteredRelationsArray.map((relation) => (
           <div key={relation.relationKey}>
             <Collapsible
-              buttonClassName="w-full"
-              title={
-                <div className={`flex items-center gap-1 px-2.5 py-1 h-9  w-full ${relation.className}`}>
-                  <span>{relation.icon ? relation.icon(14) : null}</span>
-                  <span className="text-13 font-medium leading-5">{relation.label}</span>
-                </div>
-              }
               defaultOpen
+              icon={
+                relation.icon ? (
+                  <span className={cn("flex items-center justify-center rounded p-0.5", relation.className)}>
+                    {relation.icon(14)}
+                  </span>
+                ) : undefined
+              }
+              trigger={<span className="text-13 leading-5 font-medium">{relation.label}</span>}
             >
-              <RelationIssueList
-                workspaceSlug={workspaceSlug}
-                issueId={issueId}
-                relationKey={relation.relationKey}
-                issueIds={relation.issueIds}
-                disabled={disabled}
-                handleIssueCrudState={handleIssueCrudState}
-                issueServiceType={issueServiceType}
-              />
+              {/* Cancels this nested Collapsible's own panel inset so rows realign under
+                  the outer Relations collapsible's single inset instead of stacking two. */}
+              <div className="-mx-3">
+                <RelationIssueList
+                  workspaceSlug={workspaceSlug}
+                  issueId={issueId}
+                  relationKey={relation.relationKey}
+                  issueIds={relation.issueIds}
+                  disabled={disabled}
+                  handleIssueCrudState={handleIssueCrudState}
+                  issueServiceType={issueServiceType}
+                />
+              </div>
             </Collapsible>
           </div>
         ))}

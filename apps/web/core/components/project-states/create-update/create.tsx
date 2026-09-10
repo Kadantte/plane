@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { STATE_GROUPS } from "@plane/constants";
@@ -8,7 +14,6 @@ import { StateForm } from "@/components/project-states";
 
 type TStateCreate = {
   groupKey: TStateGroups;
-  shouldTrackEvents?: boolean;
   createStateCallback: TStateOperationsCallbacks["createState"];
   handleClose: () => void;
 };
@@ -28,7 +33,7 @@ export const StateCreate = observer(function StateCreate(props: TStateCreate) {
     if (!groupKey) return { status: "error" };
 
     try {
-      const response = await createStateCallback({ ...formData, group: groupKey });
+      await createStateCallback({ ...formData, group: groupKey });
 
       setToast({
         type: TOAST_TYPE.SUCCESS,

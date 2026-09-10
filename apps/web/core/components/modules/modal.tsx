@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useForm } from "react-hook-form";
@@ -52,7 +58,7 @@ export const CreateUpdateModuleModal = observer(function CreateUpdateModuleModal
 
     const selectedProjectId = payload.project_id ?? projectId.toString();
     await createModule(workspaceSlug.toString(), selectedProjectId, payload)
-      .then((res) => {
+      .then((_res) => {
         handleClose();
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -74,7 +80,7 @@ export const CreateUpdateModuleModal = observer(function CreateUpdateModuleModal
 
     const selectedProjectId = payload.project_id ?? projectId.toString();
     await updateModuleDetails(workspaceSlug.toString(), selectedProjectId, data.id, payload)
-      .then((res) => {
+      .then((_res) => {
         handleClose();
 
         setToast({

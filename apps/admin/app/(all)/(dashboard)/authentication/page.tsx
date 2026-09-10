@@ -1,15 +1,22 @@
-import { useCallback, useRef, useState } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane internal packages
-import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { Switch } from "@makeplane/propel/components/switch";
 import type { TInstanceConfigurationKeys, TInstanceAuthenticationModes } from "@plane/types";
-import { Loader, ToggleSwitch } from "@plane/ui";
 import { cn, resolveGeneralTheme } from "@plane/utils";
 // components
 import { PageWrapper } from "@/components/common/page-wrapper";
 import { AuthenticationMethodCard } from "@/components/authentication/authentication-method-card";
+import { Skeleton } from "@/components/common/skeleton";
+import { setPromiseToast, setToast, TOAST_TYPE } from "@/providers/toast";
 // helpers
 import { canDisableAuthMethod } from "@/helpers/authentication";
 // hooks
@@ -99,8 +106,10 @@ const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(
     resolvedTheme,
   });
 
-  // Update ref with latest authentication modes
-  authenticationModesRef.current = authenticationModes;
+  // Update ref with latest authentication modes (updateConfig reads it only from event handlers)
+  useEffect(() => {
+    authenticationModesRef.current = authenticationModes;
+  }, [authenticationModes]);
 
   return (
     <PageWrapper
@@ -111,20 +120,20 @@ const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(
     >
       {formattedConfig ? (
         <div className="space-y-3">
-          <div className={cn("w-full flex items-center gap-14 rounded-sm")}>
+          <div className={cn("flex w-full items-center gap-14 rounded-sm")}>
             <div className="flex grow items-center gap-4">
               <div className="grow">
-                <div className="text-16 font-medium pb-1">Allow anyone to sign up even without an invite</div>
-                <div className={cn("font-regular leading-5 text-tertiary text-11")}>
+                <div className="pb-1 text-16 font-medium">Allow anyone to sign up even without an invite</div>
+                <div className={cn("text-11 leading-5 font-regular text-tertiary")}>
                   Toggling this off will only let users sign up when they are invited.
                 </div>
               </div>
             </div>
             <div className={`shrink-0 pr-4 ${isSubmitting && "opacity-70"}`}>
               <div className="flex items-center gap-4">
-                <ToggleSwitch
-                  value={Boolean(parseInt(enableSignUpConfig))}
-                  onChange={() => {
+                <Switch
+                  checked={Boolean(parseInt(enableSignUpConfig))}
+                  onCheckedChange={() => {
                     if (Boolean(parseInt(enableSignUpConfig)) === true) {
                       updateConfig("ENABLE_SIGNUP", "0");
                     } else {
@@ -137,7 +146,7 @@ const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(
               </div>
             </div>
           </div>
-          <div className="text-lg font-medium pt-6">Available authentication modes</div>
+          <div className="text-lg pt-6 font-medium">Available authentication modes</div>
           {authenticationModes.map((method) => (
             <AuthenticationMethodCard
               key={method.key}
@@ -151,13 +160,13 @@ const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(
           ))}
         </div>
       ) : (
-        <Loader className="space-y-10">
-          <Loader.Item height="50px" width="75%" />
-          <Loader.Item height="50px" width="75%" />
-          <Loader.Item height="50px" width="40%" />
-          <Loader.Item height="50px" width="40%" />
-          <Loader.Item height="50px" width="20%" />
-        </Loader>
+        <Skeleton className="space-y-10">
+          <Skeleton.Item height="50px" width="75%" />
+          <Skeleton.Item height="50px" width="75%" />
+          <Skeleton.Item height="50px" width="40%" />
+          <Skeleton.Item height="50px" width="40%" />
+          <Skeleton.Item height="50px" width="20%" />
+        </Skeleton>
       )}
     </PageWrapper>
   );

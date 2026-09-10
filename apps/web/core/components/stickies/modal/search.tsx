@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useRef, useState } from "react";
 import { debounce } from "lodash-es";
 import { observer } from "mobx-react";
@@ -6,7 +12,7 @@ import { useParams } from "next/navigation";
 import { useOutsideClickDetector } from "@plane/hooks";
 // helpers
 import { useTranslation } from "@plane/i18n";
-import { SearchIcon, CloseIcon } from "@plane/propel/icons";
+import { CloseOutline, SearchOutline } from "@makeplane/propel/icons";
 import { cn } from "@plane/utils";
 import { useSticky } from "@/hooks/use-stickies";
 import { IconButton } from "@plane/propel/icon-button";
@@ -47,13 +53,13 @@ export const StickySearch = observer(function StickySearch() {
   );
 
   return (
-    <div className="flex items-center mr-2 my-auto">
+    <div className="my-auto mr-2 flex items-center">
       {!isSearchOpen && (
         <IconButton
           variant="ghost"
           size="lg"
           className="-mr-2"
-          icon={SearchIcon}
+          icon={SearchOutline}
           onClick={() => {
             setIsSearchOpen(true);
             inputRef.current?.focus();
@@ -62,13 +68,13 @@ export const StickySearch = observer(function StickySearch() {
       )}
       <div
         className={cn(
-          "ml-auto flex items-center justify-start gap-1 rounded-md border border-transparent text-placeholder w-0 transition-[width] ease-linear overflow-hidden opacity-0",
+          "ml-auto flex w-0 items-center justify-start gap-1 overflow-hidden rounded-md border border-transparent text-placeholder opacity-0 transition-[width] ease-linear",
           {
-            "w-30 md:w-64 px-2.5 py-1.5 border-subtle opacity-100": isSearchOpen,
+            "w-30 border-subtle px-2.5 py-1.5 opacity-100 md:w-64": isSearchOpen,
           }
         )}
       >
-        <SearchIcon className="shrink-0 size-3.5" />
+        <SearchOutline className="size-3.5 shrink-0" />
         <input
           ref={inputRef}
           className="w-full max-w-[234px] border-none bg-transparent text-13 text-primary placeholder:text-placeholder focus:outline-none"
@@ -90,7 +96,7 @@ export const StickySearch = observer(function StickySearch() {
               fetchStickies();
             }}
           >
-            <CloseIcon className="h-3 w-3" />
+            <CloseOutline className="h-3 w-3" />
           </button>
         )}
       </div>

@@ -1,4 +1,12 @@
-import type { FC } from "react";
+// oxlint-disable promise/always-return
+// oxlint-disable no-shadow
+// oxlint-disable jsx_a11y/prefer-tag-over-role
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useState, useRef, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -11,14 +19,12 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue, TWorkspaceDraftIssue } from "@plane/types";
-import { EIssuesStoreType } from "@plane/types";
 // hooks
-import { ToggleSwitch } from "@plane/ui";
+import { Switch } from "@makeplane/propel/components/switch";
 import {
   convertWorkItemDataToSearchResponse,
   getUpdateFormDataForReset,
   cn,
-  getTextContent,
   getChangedIssuefields,
   getTabIndex,
 } from "@plane/utils";
@@ -39,12 +45,6 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 import { useWorkspaceDraftIssues } from "@/hooks/store/workspace-draft";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
-// plane web imports
-import { DeDupeButtonRoot } from "@/plane-web/components/de-dupe/de-dupe-button";
-import { DuplicateModalRoot } from "@/plane-web/components/de-dupe/duplicate-modal";
-import { IssueTypeSelect, WorkItemTemplateSelect } from "@/plane-web/components/issues/issue-modal";
-import { WorkItemModalAdditionalProperties } from "@/plane-web/components/issues/issue-modal/modal-additional-properties";
-import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
 
 export interface IssueFormProps {
   data?: Partial<TIssue>;
@@ -90,9 +90,6 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
       default: `${data?.id ? t("update") : isDraft ? t("save_to_drafts") : t("save")}`,
       loading: `${data?.id ? t("updating") : t("saving")}`,
     },
-    isDuplicateModalOpen,
-    handleDuplicateIssueModal,
-    handleDraftAndClose,
     isProjectSelectionDisabled = false,
     showActionButtons = true,
     dataResetProperties = [],
@@ -157,8 +154,6 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
     watch: watch,
   });
 
-  // derived values
-  const projectDetails = projectId ? getProjectById(projectId) : undefined;
   const isDisabled = isSubmitting || isApplyingTemplate;
 
   const { getIndex } = getTabIndex(ETabIndices.ISSUE_FORM, isMobile);
@@ -309,18 +304,6 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
     else onChange(null);
   };
 
-  // debounced duplicate issues swr
-  const { duplicateIssues } = useDebouncedDuplicateIssues(
-    workspaceSlug?.toString(),
-    projectDetails?.workspace.toString(),
-    projectId ?? undefined,
-    {
-      name: watch("name"),
-      description_html: getTextContent(watch("description_html")),
-      issueId: data?.id,
-    }
-  );
-
   // executing this useEffect when the parent_id coming from the component prop
   useEffect(() => {
     const parentId = watch("parent_id") || undefined;
@@ -338,6 +321,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
     setSelectedParentIssue(
       convertWorkItemDataToSearchResponse(workspaceSlug?.toString(), issue, projectDetails, stateDetails)
     );
+    // oxlint-disable-next-line eslint-plugin-react-hooks/exhaustive-deps
   }, [watch, getIssueById, getProjectById, selectedParentIssue, getStateById]);
 
   // executing this useEffect when isDirty changes
@@ -366,21 +350,17 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
     };
   }, [formRef, modalContainerRef]);
 
-  // TODO: Remove this after the de-dupe feature is implemented
-
-  const shouldRenderDuplicateModal = isDuplicateModalOpen && duplicateIssues?.length > 0;
-
   return (
     <FormProvider {...methods}>
       <div className="flex gap-2 bg-transparent">
-        <div className="rounded-lg w-full">
+        <div className="w-full rounded-lg">
           <form
             ref={formRef}
             onSubmit={handleSubmit((data) => handleFormSubmit(data))}
-            className="flex flex-col w-full"
+            className="flex w-full flex-col"
           >
-            <div className="p-5 rounded-t-lg bg-surface-1">
-              <h3 className="text-h4-medium text-secondary pb-2">{modalTitle}</h3>
+            <div className="rounded-t-lg bg-surface-1 p-5">
+              <h3 className="pb-2 text-h4-medium text-secondary">{modalTitle}</h3>
               <div className="flex items-center justify-between pt-2 pb-4">
                 <div className="flex items-center gap-x-1">
                   <IssueProjectSelect
@@ -388,44 +368,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                     disabled={!!data?.id || !!data?.sourceIssueId || isProjectSelectionDisabled}
                     handleFormChange={handleFormChange}
                   />
-                  {projectId && (
-                    <IssueTypeSelect
-                      control={control}
-                      projectId={projectId}
-                      editorRef={editorRef}
-                      disabled={!!data?.sourceIssueId}
-                      handleFormChange={handleFormChange}
-                      renderChevron
-                    />
-                  )}
-                  {projectId && !data?.id && !data?.sourceIssueId && (
-                    <WorkItemTemplateSelect
-                      projectId={projectId}
-                      typeId={watch("type_id")}
-                      handleModalClose={() => {
-                        if (handleDraftAndClose) {
-                          handleDraftAndClose();
-                        } else {
-                          onClose();
-                        }
-                      }}
-                      handleFormChange={handleFormChange}
-                      renderChevron
-                    />
-                  )}
                 </div>
-                {duplicateIssues.length > 0 && (
-                  <DeDupeButtonRoot
-                    workspaceSlug={workspaceSlug?.toString()}
-                    isDuplicateModalOpen={isDuplicateModalOpen}
-                    label={
-                      duplicateIssues.length === 1
-                        ? `${duplicateIssues.length} ${t("duplicate_issue_found")}`
-                        : `${duplicateIssues.length} ${t("duplicate_issues_found")}`
-                    }
-                    handleOnClick={() => handleDuplicateIssueModal(!isDuplicateModalOpen)}
-                  />
-                )}
               </div>
               {watch("parent_id") && selectedParentIssue && (
                 <div className="pb-4">
@@ -448,9 +391,9 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
             </div>
             <div
               className={cn(
-                "pb-4 space-y-3 bg-surface-1",
+                "space-y-3 bg-surface-1 pb-4",
                 activeAdditionalPropertiesLength > 4 &&
-                  "max-h-[45vh] overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-sm"
+                  "vertical-scrollbar scrollbar-sm max-h-[45vh] overflow-hidden overflow-y-auto"
               )}
             >
               <div className="px-5">
@@ -475,16 +418,10 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                   onClose={onClose}
                 />
               </div>
-              <WorkItemModalAdditionalProperties
-                isDraft={isDraft}
-                workItemId={data?.id ?? data?.sourceIssueId}
-                projectId={projectId}
-                workspaceSlug={workspaceSlug?.toString()}
-              />
             </div>
             <div
               className={cn(
-                "px-4 py-3 border-t-[0.5px] border-subtle rounded-b-lg bg-surface-1",
+                "rounded-b-lg border-t-[0.5px] border-subtle bg-surface-1 px-4 py-3",
                 activeAdditionalPropertiesLength > 0 && "shadow-raised-100"
               )}
             >
@@ -505,19 +442,24 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
               </div>
               {showActionButtons && (
                 <div
-                  className="flex items-center justify-end gap-4 pb-3 pt-6 border-t-[0.5px] border-subtle"
+                  className="flex items-center justify-end gap-4 border-t-[0.5px] border-subtle pt-6 pb-3"
                   tabIndex={getIndex("create_more")}
                 >
                   {!data?.id && (
                     <div
-                      className="inline-flex items-center gap-1.5 cursor-pointer"
+                      className="inline-flex cursor-pointer items-center gap-1.5"
                       onClick={() => onCreateMoreToggleChange(!isCreateMoreToggleEnabled)}
                       onKeyDown={(e) => {
                         if (e.key === "Enter") onCreateMoreToggleChange(!isCreateMoreToggleEnabled);
                       }}
                       role="button"
                     >
-                      <ToggleSwitch value={isCreateMoreToggleEnabled} onChange={() => {}} size="sm" />
+                      <Switch
+                        size="sm"
+                        checked={isCreateMoreToggleEnabled}
+                        onCheckedChange={() => {}}
+                        aria-label={t("create_more")}
+                      />
                       <span className="text-caption-sm-regular">{t("create_more")}</span>
                     </div>
                   )}
@@ -572,19 +514,6 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
             </div>
           </form>
         </div>
-        {shouldRenderDuplicateModal && (
-          <div
-            ref={modalContainerRef}
-            className="relative flex flex-col gap-2.5 px-3 py-4 rounded-lg shadow-xl bg-pi-50"
-            style={{ maxHeight: formRef?.current?.offsetHeight ? `${formRef.current.offsetHeight}px` : "436px" }}
-          >
-            <DuplicateModalRoot
-              workspaceSlug={workspaceSlug.toString()}
-              issues={duplicateIssues}
-              handleDuplicateIssueModal={handleDuplicateIssueModal}
-            />
-          </div>
-        )}
       </div>
     </FormProvider>
   );

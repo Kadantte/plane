@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane imports
 import { ScrollArea } from "@plane/propel/scrollarea";
 import { cn } from "@plane/utils";
@@ -18,7 +24,7 @@ export function WorkspaceSettingsSidebarRoot(props: Props) {
       orientation="vertical"
       size="sm"
       rootClassName={cn(
-        "shrink-0 animate-fade-in h-full w-[250px] bg-surface-1 border-r border-r-subtle overflow-y-scroll",
+        "h-full w-[250px] shrink-0 animate-fade-in overflow-y-scroll border-r border-r-subtle bg-surface-1",
         className
       )}
     >

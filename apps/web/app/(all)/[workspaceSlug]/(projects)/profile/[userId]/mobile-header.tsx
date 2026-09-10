@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -6,7 +12,7 @@ import { EIssueFilterType, ISSUE_LAYOUTS, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "
 // plane i18n
 import { useTranslation } from "@plane/i18n";
 // icons
-import { ChevronDownIcon } from "@plane/propel/icons";
+import { ChevronDownOutline } from "@makeplane/propel/icons";
 // types
 import type {
   IIssueDisplayFilterOptions,
@@ -84,9 +90,9 @@ export const ProfileIssuesMobileHeader = observer(function ProfileIssuesMobileHe
         className="flex flex-grow justify-center text-13 text-secondary"
         placement="bottom-start"
         customButton={
-          <div className="flex flex-center text-13 text-secondary">
+          <div className="flex-center flex text-13 text-secondary">
             {t("common.layout")}
-            <ChevronDownIcon className="ml-2  h-4 w-4 text-secondary my-auto" strokeWidth={2} />
+            <ChevronDownOutline className="my-auto ml-2 h-4 w-4 text-secondary" />
           </div>
         }
         customButtonClassName="flex flex-center text-secondary text-13"
@@ -113,9 +119,9 @@ export const ProfileIssuesMobileHeader = observer(function ProfileIssuesMobileHe
           title={t("common.display")}
           placement="bottom-end"
           menuButton={
-            <div className="flex flex-center text-13 text-secondary">
+            <div className="flex-center flex text-13 text-secondary">
               {t("common.display")}
-              <ChevronDownIcon className="ml-2 h-4 w-4 text-secondary" strokeWidth={2} />
+              <ChevronDownOutline className="ml-2 h-4 w-4 text-secondary" />
             </div>
           }
         >

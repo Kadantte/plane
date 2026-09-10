@@ -1,13 +1,20 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane types
 // plane ui
+import { Field } from "@makeplane/propel/components/field";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import type { TLinkEditableFields } from "@plane/types";
-import { Input, ModalCore } from "@plane/ui";
+import { ModalCore } from "@plane/ui";
 import type { TLinkOperations } from "./use-links";
 
 export type TLinkOperationsModal = Exclude<TLinkOperations, "remove">;
@@ -71,9 +78,9 @@ export const LinkCreateUpdateModal = observer(function LinkCreateUpdateModal(pro
           </h3>
           <div className="mt-2 space-y-3">
             <div>
-              <label htmlFor="url" className="mb-2 text-secondary text-14 font-medium">
+              <label htmlFor="url" className="mb-2 text-14 font-medium text-secondary">
                 {t("link.modal.url.text")}
-                <span className="text-10 block">{t("required")}</span>
+                <span className="block text-10">{t("required")}</span>
               </label>
               <Controller
                 control={control}
@@ -82,45 +89,51 @@ export const LinkCreateUpdateModal = observer(function LinkCreateUpdateModal(pro
                   required: t("link.modal.url.required"),
                 }}
                 render={({ field: { value, onChange, ref } }) => (
-                  <Input
-                    id="url"
-                    type="text"
-                    value={value}
-                    onChange={onChange}
-                    ref={ref}
-                    hasError={Boolean(errors.url)}
-                    placeholder={t("link.modal.url.placeholder")}
-                    className="w-full"
-                  />
+                  <Field name="url" invalid={Boolean(errors.url)}>
+                    <InputGroup size="2xl">
+                      <Input
+                        size="2xl"
+                        id="url"
+                        type="text"
+                        value={value}
+                        onChange={onChange}
+                        ref={ref}
+                        placeholder={t("link.modal.url.placeholder")}
+                      />
+                    </InputGroup>
+                  </Field>
                 )}
               />
               {errors.url && <span className="text-11 text-danger-primary">{t("link.modal.url.required")}</span>}
             </div>
             <div>
-              <label htmlFor="title" className="mb-2 text-secondary text-14 font-medium">
+              <label htmlFor="title" className="mb-2 text-14 font-medium text-secondary">
                 {t("link.modal.title.text")}
-                <span className="text-10 block">{t("optional")}</span>
+                <span className="block text-10">{t("optional")}</span>
               </label>
               <Controller
                 control={control}
                 name="title"
                 render={({ field: { value, onChange, ref } }) => (
-                  <Input
-                    id="title"
-                    type="text"
-                    value={value}
-                    onChange={onChange}
-                    ref={ref}
-                    hasError={Boolean(errors.title)}
-                    placeholder={t("link.modal.title.placeholder")}
-                    className="w-full"
-                  />
+                  <Field name="title" invalid={Boolean(errors.title)}>
+                    <InputGroup size="2xl">
+                      <Input
+                        size="2xl"
+                        id="title"
+                        type="text"
+                        value={value}
+                        onChange={onChange}
+                        ref={ref}
+                        placeholder={t("link.modal.title.placeholder")}
+                      />
+                    </InputGroup>
+                  </Field>
                 )}
               />
             </div>
           </div>
         </div>
-        <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle">
+        <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle px-5 py-4">
           <Button variant="secondary" size="lg" onClick={onClose}>
             {t("Cancel")}
           </Button>

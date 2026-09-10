@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -10,8 +16,6 @@ import { SettingsHeading } from "@/components/settings/heading";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useProject } from "@/hooks/store/use-project";
-// plane web components
-import { UpdateEstimateModal } from "@/plane-web/components/estimates";
 // local imports
 import { CreateEstimateModal } from "./create/modal";
 import { DeleteEstimateModal } from "./delete/modal";
@@ -32,6 +36,7 @@ export const EstimateRoot = observer(function EstimateRoot(props: TEstimateRoot)
   const { loader, currentActiveEstimateId, archivedEstimateIds, getProjectEstimates } = useProjectEstimates();
   // states
   const [isEstimateCreateModalOpen, setIsEstimateCreateModalOpen] = useState(false);
+  // oxlint-disable-next-line no-unused-vars
   const [estimateToUpdate, setEstimateToUpdate] = useState<string | undefined>();
   const [estimateToDelete, setEstimateToDelete] = useState<string | undefined>();
 
@@ -128,17 +133,11 @@ export const EstimateRoot = observer(function EstimateRoot(props: TEstimateRoot)
         isOpen={isEstimateCreateModalOpen}
         handleClose={() => setIsEstimateCreateModalOpen(false)}
       />
-      <UpdateEstimateModal
-        workspaceSlug={workspaceSlug}
-        projectId={projectId}
-        estimateId={estimateToUpdate ? estimateToUpdate : undefined}
-        isOpen={estimateToUpdate ? true : false}
-        handleClose={() => setEstimateToUpdate(undefined)}
-      />
       <DeleteEstimateModal
         workspaceSlug={workspaceSlug}
         projectId={projectId}
         estimateId={estimateToDelete ? estimateToDelete : undefined}
+        // oxlint-disable-next-line no-unneeded-ternary
         isOpen={estimateToDelete ? true : false}
         handleClose={() => setEstimateToDelete(undefined)}
       />

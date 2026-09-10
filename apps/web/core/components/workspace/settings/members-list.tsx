@@ -1,12 +1,16 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { Disclosure } from "@headlessui/react";
 // plane imports
+import { Collapsible } from "@makeplane/propel/components/collapsible";
 import { useTranslation } from "@plane/i18n";
-import { ChevronDownIcon } from "@plane/propel/icons";
-import { Collapsible } from "@plane/ui";
 // components
 import { CountChip } from "@/components/common/count-chip";
 import { MembersSettingsLoader } from "@/components/ui/loader/settings/members";
@@ -73,31 +77,24 @@ export const WorkspaceMembersList = observer(function WorkspaceMembersList(props
         )}
       </div>
       {isAdmin && searchedInvitationsIds && searchedInvitationsIds.length > 0 && (
-        <Collapsible
-          isOpen={showPendingInvites}
-          onToggle={() => setShowPendingInvites((prev) => !prev)}
-          buttonClassName="w-full"
-          className=""
-          title={
-            <div className="flex w-full items-center justify-between pt-4">
-              <div className="flex">
-                <h4 className="text-h5-medium pt-2 pb-2">{t("workspace_settings.settings.members.pending_invites")}</h4>
-                {searchedInvitationsIds && (
-                  <CountChip count={searchedInvitationsIds.length} className="h-5  m-auto ml-2" />
-                )}
-              </div>{" "}
-              <ChevronDownIcon className={`h-5 w-5 transition-all ${showPendingInvites ? "rotate-180" : ""}`} />
-            </div>
-          }
-        >
-          <Disclosure.Panel>
+        <div className="pt-4">
+          <Collapsible
+            open={showPendingInvites}
+            onOpenChange={setShowPendingInvites}
+            trigger={
+              <span className="inline-flex items-center gap-2 py-2">
+                <span className="text-h5-medium">{t("workspace_settings.settings.members.pending_invites")}</span>
+                {searchedInvitationsIds && <CountChip count={searchedInvitationsIds.length} className="h-5" />}
+              </span>
+            }
+          >
             <div className="ml-auto items-center gap-1.5 rounded-md bg-surface-1 py-1.5">
               {searchedInvitationsIds?.map((invitationId) => (
                 <WorkspaceInvitationsListItem key={invitationId} invitationId={invitationId} />
               ))}
             </div>
-          </Disclosure.Panel>
-        </Collapsible>
+          </Collapsible>
+        </div>
       )}
     </>
   );

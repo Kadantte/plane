@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
@@ -12,8 +18,6 @@ import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-ro
 // hooks
 import { useHome } from "@/hooks/store/use-home";
 import { useProject } from "@/hooks/store/use-project";
-// plane web components
-import { HomePageHeader } from "@/plane-web/components/home/header";
 // local imports
 import { StickiesWidget } from "../stickies/widget";
 import { HomeLoader, NoProjectsEmptyState, RecentActivityWidget } from "./widgets";
@@ -76,8 +80,7 @@ export const DashboardWidgets = observer(function DashboardWidgets() {
   if (loading || loader !== "loaded") return <HomeLoader />;
 
   return (
-    <div className="h-full w-full relative flex flex-col gap-7">
-      <HomePageHeader />
+    <div className="relative flex h-full w-full flex-col gap-7">
       <ManageWidgetsModal
         workspaceSlug={workspaceSlug.toString()}
         isModalOpen={showWidgetSettings}
@@ -99,7 +102,7 @@ export const DashboardWidgets = observer(function DashboardWidgets() {
           })}
         </div>
       ) : (
-        <div className="h-full w-full grid place-items-center">
+        <div className="grid h-full w-full place-items-center">
           <SimpleEmptyState
             title={t("home.empty.widgets.title")}
             description={t("home.empty.widgets.description")}

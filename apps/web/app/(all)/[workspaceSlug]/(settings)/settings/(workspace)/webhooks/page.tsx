@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -83,7 +89,7 @@ function WebhooksListPage({ params }: Route.ComponentProps) {
           </div>
         ) : (
           <div className="flex h-full w-full flex-col">
-            <div className="h-full w-full flex items-center justify-center">
+            <div className="flex h-full w-full items-center justify-center">
               <EmptyStateCompact
                 assetKey="webhook"
                 title={t("settings_empty_state.webhooks.title")}

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Dispatch, SetStateAction } from "react";
 import { useEffect, useMemo, useRef } from "react";
 import { observer } from "mobx-react";
@@ -6,7 +12,6 @@ import type { EditorRefApi } from "@plane/editor";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue, TNameDescriptionLoader } from "@plane/types";
 import { EFileAssetType, EInboxIssueSource, EInboxIssueStatus } from "@plane/types";
-import { getTextContent } from "@plane/utils";
 // components
 import { DescriptionVersionsRoot } from "@/components/core/description-versions";
 import { DescriptionInput } from "@/components/editor/rich-text/description-input";
@@ -19,13 +24,9 @@ import { IssueTitleInput } from "@/components/issues/title-input";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
-import { useProject } from "@/hooks/store/use-project";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { useUser } from "@/hooks/store/user";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
-// store types
-import { DeDupeIssuePopoverRoot } from "@/plane-web/components/de-dupe/duplicate-popover";
-import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
 // services
 import { IntakeWorkItemVersionService } from "@/services/inbox";
 // stores
@@ -52,38 +53,24 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
   const { data: currentUser } = useUser();
   const { getUserDetails } = useMember();
   const { loader } = useProjectInbox();
-  const { getProjectById } = useProject();
   const { removeIssue, archiveIssue } = useIssueDetail();
   // reload confirmation
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
 
   useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
     if (isSubmitting === "submitted") {
       setShowAlert(false);
-      setTimeout(async () => {
-        setIsSubmitting("saved");
-      }, 3000);
+      timer = setTimeout(() => setIsSubmitting("saved"), 3000);
     } else if (isSubmitting === "submitting") {
       setShowAlert(true);
     }
+    return () => clearTimeout(timer);
   }, [isSubmitting, setShowAlert, setIsSubmitting]);
 
   // derived values
   const issue = inboxIssue.issue;
-  const projectDetails = issue?.project_id ? getProjectById(issue?.project_id) : undefined;
   const isIntakeAccepted = inboxIssue.status === EInboxIssueStatus.ACCEPTED;
-
-  // debounced duplicate issues swr
-  const { duplicateIssues } = useDebouncedDuplicateIssues(
-    workspaceSlug,
-    projectDetails?.workspace.toString(),
-    projectId,
-    {
-      name: issue?.name,
-      description_html: getTextContent(issue?.description_html),
-      issueId: issue?.id,
-    }
-  );
 
   const issueOperations: TIssueOperations = useMemo(
     () => ({
@@ -111,7 +98,7 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
       update: async (_workspaceSlug: string, _projectId: string, _issueId: string, data: Partial<TIssue>) => {
         try {
           await inboxIssue.updateIssue(data);
-        } catch (error) {
+        } catch (_error) {
           setToast({
             title: "Work item update failed",
             type: TOAST_TYPE.ERROR,
@@ -119,6 +106,7 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
           });
         }
       },
+      // oxlint-disable-next-line no-shadow
       archive: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
           await archiveIssue(workspaceSlug, projectId, issueId);
@@ -127,6 +115,7 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
         }
       },
     }),
+    // oxlint-disable-next-line eslint-plugin-react-hooks/exhaustive-deps
     [inboxIssue]
   );
 
@@ -137,16 +126,6 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
   return (
     <>
       <div className="space-y-4 pb-4">
-        {duplicateIssues.length > 0 && (
-          <DeDupeIssuePopoverRoot
-            workspaceSlug={workspaceSlug}
-            projectId={issue.project_id}
-            rootIssueId={issue.id}
-            issues={duplicateIssues}
-            issueOperations={issueOperations}
-            isIntakeIssue
-          />
-        )}
         <IssueTitleInput
           workspaceSlug={workspaceSlug}
           projectId={issue.project_id}
@@ -156,7 +135,6 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
           issueOperations={issueOperations}
           disabled={!isEditable}
           value={issue.name}
-          containerClassName="-ml-3"
         />
 
         {loader === "issue-loading" || issue.description_html === undefined ? (
@@ -170,16 +148,16 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
             entityId={issue.id}
             fileAssetType={EFileAssetType.ISSUE_DESCRIPTION}
             initialValue={issue.description_html ?? "<p></p>"}
+            key={issue.id}
             onSubmit={async (value, isMigrationUpdate) => {
               if (!issue.id || !issue.project_id) return;
               await issueOperations.update(workspaceSlug, issue.project_id, issue.id, {
-                description_html: value,
+                description_html: value.description_html,
                 ...(isMigrationUpdate ? { skip_activity: "true" } : {}),
               });
             }}
             projectId={issue.project_id}
             setIsSubmitting={(value) => setIsSubmitting(value)}
-            swrDescription={issue.description_html ?? "<p></p>"}
             workspaceSlug={workspaceSlug}
           />
         )}

@@ -1,7 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // helpers
 import { DATE_AFTER_FILTER_OPTIONS } from "@plane/constants";
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseOutline } from "@makeplane/propel/icons";
 import { renderFormattedDate, capitalizeFirstLetter } from "@plane/utils";
 // constants
 
@@ -36,7 +42,7 @@ export const AppliedDateFilters = observer(function AppliedDateFilters(props: Pr
   return (
     <>
       {values.map((date) => (
-        <div key={date} className="flex items-center gap-1 rounded-sm bg-layer-3 py-1 px-1.5 text-11">
+        <div key={date} className="flex items-center gap-1 rounded-sm bg-layer-3 px-1.5 py-1 text-11">
           <span className="normal-case">{getDateLabel(date)}</span>
           {editable && (
             <button
@@ -44,7 +50,7 @@ export const AppliedDateFilters = observer(function AppliedDateFilters(props: Pr
               className="grid place-items-center text-tertiary hover:text-secondary"
               onClick={() => handleRemove(date)}
             >
-              <CloseIcon height={10} width={10} strokeWidth={2} />
+              <CloseOutline height={10} width={10} />
             </button>
           )}
         </div>

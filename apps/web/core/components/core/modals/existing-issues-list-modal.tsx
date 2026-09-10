@@ -1,26 +1,31 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useState, useRef } from "react";
-import { Rocket } from "lucide-react";
+import { CloseOutline, RocketOutline, SearchOutline } from "@makeplane/propel/icons";
 import { Combobox } from "@headlessui/react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
 import { Button } from "@plane/propel/button";
-import { SearchIcon, CloseIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 // ui
-import { Loader, ToggleSwitch, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { Switch } from "@makeplane/propel/components/switch";
+import { Loader, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { generateWorkItemLink, getTabIndex } from "@plane/utils";
 // helpers
 // hooks
 import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // services
 import { ProjectService } from "@/services/project";
 // components
+import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 import { IssueSearchModalEmptyState } from "./issue-search-modal-empty-state";
 
 type Props = {
@@ -134,19 +139,20 @@ export function ExistingIssuesListModal(props: Props) {
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
       <Combobox
         as="div"
-        onChange={(val: ISearchIssueResponse) => {
+        onChange={(val: ISearchIssueResponse | null) => {
+          if (val === null) return;
           if (selectedIssues.some((i) => i.id === val.id))
             setSelectedIssues((prevData) => prevData.filter((i) => i.id !== val.id));
           else setSelectedIssues((prevData) => [...prevData, val]);
         }}
       >
         <div className="relative m-1">
-          <SearchIcon
-            className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-primary text-opacity-40"
+          <SearchOutline
+            className="text-opacity-40 pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-primary"
             aria-hidden="true"
           />
           <Combobox.Input
-            className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-13 text-primary outline-none placeholder:text-placeholder focus:ring-0"
+            className="h-12 w-full border-0 bg-transparent pr-4 pl-11 text-13 text-primary outline-none placeholder:text-placeholder focus:ring-0"
             placeholder={t("common.search.placeholder")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -160,7 +166,7 @@ export function ExistingIssuesListModal(props: Props) {
               {selectedIssues.map((issue) => (
                 <div
                   key={issue.id}
-                  className="flex items-center gap-1 whitespace-nowrap rounded-md border border-subtle bg-layer-1 py-1 pl-2 text-11 text-primary"
+                  className="flex items-center gap-1 rounded-md border border-subtle bg-layer-1 py-1 pl-2 text-11 whitespace-nowrap text-primary"
                 >
                   <IssueIdentifier
                     projectId={issue.project_id}
@@ -175,24 +181,29 @@ export function ExistingIssuesListModal(props: Props) {
                     className="group p-1"
                     onClick={() => setSelectedIssues((prevData) => prevData.filter((i) => i.id !== issue.id))}
                   >
-                    <CloseIcon className="h-3 w-3 text-secondary group-hover:text-primary" />
+                    <CloseOutline className="h-3 w-3 text-secondary group-hover:text-primary" />
                   </button>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="w-min whitespace-nowrap rounded-md border border-subtle bg-layer-1 p-2 text-11">
+            <div className="w-min rounded-md border border-subtle bg-layer-1 p-2 text-11 whitespace-nowrap">
               {t("issue.select.empty")}
             </div>
           )}
           {workspaceLevelToggle && (
-            <Tooltip tooltipContent="Toggle workspace level search" isMobile={isMobile}>
+            <Tooltip label="Toggle workspace level search" disabled={isMobile}>
               <div
                 className={`flex flex-shrink-0 cursor-pointer items-center gap-1 text-11 ${
                   isWorkspaceLevel ? "text-primary" : "text-secondary"
                 }`}
               >
-                <ToggleSwitch value={isWorkspaceLevel} onChange={() => setIsWorkspaceLevel((prevData) => !prevData)} />
+                <Switch
+                  size="sm"
+                  checked={isWorkspaceLevel}
+                  onCheckedChange={setIsWorkspaceLevel}
+                  aria-label={t("common.workspace_level")}
+                />
                 <button
                   type="button"
                   onClick={() => setIsWorkspaceLevel((prevData) => !prevData)}
@@ -205,7 +216,11 @@ export function ExistingIssuesListModal(props: Props) {
           )}
         </div>
 
-        <Combobox.Options static className="vertical-scrollbar scrollbar-md max-h-80 scroll-py-2 overflow-y-auto">
+        <Combobox.Options
+          as="ul"
+          static
+          className="vertical-scrollbar scrollbar-md max-h-80 scroll-py-2 overflow-y-auto"
+        >
           {/* TODO: Translate here */}
           {searchTerm !== "" && (
             <h5 className="mx-2 text-13 text-secondary">
@@ -247,7 +262,7 @@ export function ExistingIssuesListModal(props: Props) {
                         htmlFor={`issue-${issue.id}`}
                         value={issue}
                         className={({ active }) =>
-                          `group flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-md px-3 py-2 my-0.5 text-secondary ${
+                          `group my-0.5 flex w-full cursor-pointer items-center justify-between gap-2 rounded-md px-3 py-2 text-secondary select-none ${
                             active ? "bg-layer-1 text-primary" : ""
                           } ${selected ? "text-primary" : ""}`
                         }
@@ -281,11 +296,11 @@ export function ExistingIssuesListModal(props: Props) {
                             sequenceId: issue?.sequence_id,
                           })}
                           target="_blank"
-                          className="z-1 relative hidden flex-shrink-0 text-secondary hover:text-primary group-hover:block"
+                          className="relative z-1 hidden flex-shrink-0 text-secondary group-hover:block hover:text-primary"
                           rel="noopener noreferrer"
                           onClick={(e) => e.stopPropagation()}
                         >
-                          <Rocket className="h-4 w-4" />
+                          <RocketOutline className="h-4 w-4" />
                         </a>
                       </Combobox.Option>
                     );
@@ -296,7 +311,7 @@ export function ExistingIssuesListModal(props: Props) {
           )}
         </Combobox.Options>
       </Combobox>
-      <div className="flex justify-between items-center p-3">
+      <div className="flex items-center justify-between p-3">
         <Button
           variant="link"
           onClick={handleSelectIssues}

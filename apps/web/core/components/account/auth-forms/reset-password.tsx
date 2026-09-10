@@ -1,13 +1,21 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 // icons
-import { Eye, EyeOff } from "lucide-react";
+import { HideOutline, ShowOutline } from "@makeplane/propel/icons";
 // ui
+import { Banner } from "@makeplane/propel/components/banner";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { API_BASE_URL, E_PASSWORD_STRENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { Input, PasswordStrengthIndicator } from "@plane/ui";
+import { PasswordStrengthIndicator } from "@plane/ui";
 // components
 import { getPasswordStrength } from "@plane/utils";
 // helpers
@@ -16,7 +24,6 @@ import { EErrorAlertType, authErrorHandler } from "@/helpers/authentication.help
 // services
 import { AuthService } from "@/services/auth.service";
 // local imports
-import { AuthBanner } from "./auth-banner";
 import { FormContainer } from "./common/container";
 import { AuthFormHeader } from "./common/header";
 
@@ -96,7 +103,13 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
       <AuthFormHeader title="Reset password" description="Create a new password." />
 
       {errorInfo && errorInfo?.type === EErrorAlertType.BANNER_ALERT && (
-        <AuthBanner message={errorInfo.message} handleBannerData={(value) => setErrorInfo(value)} />
+        <Banner
+          placement="inline"
+          variant="accent"
+          role="alert"
+          description={errorInfo.message}
+          onDismiss={() => setErrorInfo(undefined)}
+        />
       )}
       <form
         className="space-y-4"
@@ -105,83 +118,84 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
       >
         <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
         <div className="space-y-1">
-          <label className="text-13 text-tertiary font-medium" htmlFor="email">
+          <label className="text-13 font-medium text-tertiary" htmlFor="email">
             {t("auth.common.email.label")}
           </label>
-          <div className="relative flex items-center rounded-md bg-surface-1">
+          <InputGroup size="2xl">
             <Input
+              size="2xl"
               id="email"
               name="email"
               type="email"
               value={resetFormData.email}
-              //hasError={Boolean(errors.email)}
               placeholder={t("auth.common.email.placeholder")}
-              className="h-10 w-full border border-strong !bg-surface-1 pr-12 text-placeholder cursor-not-allowed"
-              autoComplete="on"
+              autoComplete="off"
               disabled
             />
-          </div>
+          </InputGroup>
         </div>
         <div className="space-y-1">
-          <label className="text-13 text-tertiary font-medium" htmlFor="password">
+          <label className="text-13 font-medium text-tertiary" htmlFor="password">
             {t("auth.common.password.label")}
           </label>
-          <div className="relative flex items-center rounded-md bg-surface-1">
+          <InputGroup size="2xl">
             <Input
+              size="2xl"
               type={showPassword.password ? "text" : "password"}
               name="password"
+              id="password"
               value={resetFormData.password}
               onChange={(e) => handleFormChange("password", e.target.value)}
-              //hasError={Boolean(errors.password)}
               placeholder={t("auth.common.password.placeholder")}
-              className="h-10 w-full border border-strong !bg-surface-1 pr-12 placeholder:text-placeholder"
               minLength={8}
               onFocus={() => setIsPasswordInputFocused(true)}
               onBlur={() => setIsPasswordInputFocused(false)}
-              autoComplete="on"
+              autoComplete="new-password"
               autoFocus
             />
-            {showPassword.password ? (
-              <EyeOff
-                className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
-                onClick={() => handleShowPassword("password")}
-              />
-            ) : (
-              <Eye
-                className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
-                onClick={() => handleShowPassword("password")}
-              />
-            )}
-          </div>
+            <button
+              type="button"
+              onClick={() => handleShowPassword("password")}
+              className="grid size-5 place-items-center"
+            >
+              {showPassword.password ? (
+                <HideOutline className="size-5 text-placeholder" />
+              ) : (
+                <ShowOutline className="size-5 text-placeholder" />
+              )}
+            </button>
+          </InputGroup>
           <PasswordStrengthIndicator password={resetFormData.password} isFocused={isPasswordInputFocused} />
         </div>
         <div className="space-y-1">
-          <label className="text-13 text-tertiary font-medium" htmlFor="confirm_password">
+          <label className="text-13 font-medium text-tertiary" htmlFor="confirm_password">
             {t("auth.common.password.confirm_password.label")}
           </label>
-          <div className="relative flex items-center rounded-md bg-surface-1">
+          <InputGroup size="2xl">
             <Input
+              size="2xl"
               type={showPassword.retypePassword ? "text" : "password"}
               name="confirm_password"
+              id="confirm_password"
               value={resetFormData.confirm_password}
               onChange={(e) => handleFormChange("confirm_password", e.target.value)}
               placeholder={t("auth.common.password.confirm_password.placeholder")}
-              className="h-10 w-full border border-strong !bg-surface-1 pr-12 placeholder:text-placeholder"
               onFocus={() => setIsRetryPasswordInputFocused(true)}
               onBlur={() => setIsRetryPasswordInputFocused(false)}
+              autoComplete="new-password"
             />
-            {showPassword.retypePassword ? (
-              <EyeOff
-                className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
-                onClick={() => handleShowPassword("retypePassword")}
-              />
-            ) : (
-              <Eye
-                className="absolute right-3 h-5 w-5 stroke-placeholder hover:cursor-pointer"
-                onClick={() => handleShowPassword("retypePassword")}
-              />
-            )}
-          </div>
+            <button
+              type="button"
+              onClick={() => handleShowPassword("retypePassword")}
+              className="grid size-5 place-items-center"
+            >
+              {showPassword.retypePassword ? (
+                <HideOutline className="size-5 text-placeholder" />
+              ) : (
+                <ShowOutline className="size-5 text-placeholder" />
+              )}
+            </button>
+          </InputGroup>
           {!!resetFormData.confirm_password &&
             resetFormData.password !== resetFormData.confirm_password &&
             renderPasswordMatchError && (

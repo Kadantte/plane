@@ -1,10 +1,16 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 
 // plane imports
 import { DEFAULT_GLOBAL_VIEWS_LIST, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { PlusIcon } from "@plane/propel/icons";
+import { AddOutline } from "@makeplane/propel/icons";
 import type { TStaticViewTypes } from "@plane/types";
 import { Header, EHeaderVariant } from "@plane/ui";
 // hooks
@@ -84,11 +90,11 @@ export const GlobalViewsHeader = observer(function GlobalViewsHeader() {
   );
 
   return (
-    <Header variant={EHeaderVariant.SECONDARY} className="min-h-[44px] z-[12] bg-surface-1">
+    <Header variant={EHeaderVariant.SECONDARY} className="z-[12] min-h-[44px] bg-surface-1">
       <CreateUpdateWorkspaceViewModal isOpen={createViewModal} onClose={() => setCreateViewModal(false)} />
       <div
         ref={containerRef}
-        className="flex h-full w-full items-center overflow-y-hidden overflow-x-auto horizontal-scrollbar scrollbar-sm"
+        className="horizontal-scrollbar scrollbar-sm flex h-full w-full items-center overflow-x-auto overflow-y-hidden"
       >
         {DEFAULT_GLOBAL_VIEWS_LIST.map((tab, index) => (
           <DefaultViewTab key={`${tab.key}-${index}`} tab={tab} />
@@ -105,7 +111,7 @@ export const GlobalViewsHeader = observer(function GlobalViewsHeader() {
           className="sticky -right-4 flex flex-shrink-0 items-center justify-center border-transparent bg-surface-1 py-3 hover:border-subtle hover:text-placeholder"
           onClick={() => setCreateViewModal(true)}
         >
-          <PlusIcon className="h-4 w-4 text-accent-secondary" />
+          <AddOutline className="h-4 w-4 text-accent-secondary" />
         </button>
       ) : (
         <></>

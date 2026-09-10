@@ -1,9 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useMemo, useState } from "react";
 import { sortBy } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
-import { ModuleIcon } from "@plane/propel/icons";
+import { ModuleOutline } from "@makeplane/propel/icons";
 import { Loader } from "@plane/ui";
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 import { useModule } from "@/hooks/store/use-module";
@@ -64,7 +70,7 @@ export const FilterModule = observer(function FilterModule(props: Props) {
                     key={cycle.id}
                     isChecked={appliedFilters?.includes(cycle.id) ? true : false}
                     onClick={() => handleUpdate(cycle.id)}
-                    icon={<ModuleIcon className="h-3 w-3 flex-shrink-0" />}
+                    icon={<ModuleOutline className="h-3 w-3 flex-shrink-0" />}
                     title={cycle.name}
                   />
                 ))}
@@ -79,7 +85,7 @@ export const FilterModule = observer(function FilterModule(props: Props) {
                 )}
               </>
             ) : (
-              <p className="text-11 italic text-placeholder">No matches found</p>
+              <p className="text-11 text-placeholder italic">No matches found</p>
             )
           ) : (
             <Loader className="space-y-2">

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useMemo } from "react";
 import { useParams } from "next/navigation";
 import type {
@@ -9,13 +15,13 @@ import type {
   TWorkspaceNavigationItemState,
   TAppRailPreferences,
   TAppRailDisplayMode,
-} from "@/types/navigation-preferences";
+} from "@plane/types";
 import {
   DEFAULT_PERSONAL_PREFERENCES,
   DEFAULT_PROJECT_PREFERENCES,
   DEFAULT_WORKSPACE_PREFERENCES,
   DEFAULT_APP_RAIL_PREFERENCES,
-} from "@/types/navigation-preferences";
+} from "@plane/types";
 import { useWorkspace } from "./store/use-workspace";
 import useLocalStorage from "./use-local-storage";
 

@@ -1,10 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useState, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 // plane imports
-import { Button } from "@plane/propel/button";
+import { Button } from "@makeplane/propel/components/button";
+import { Input } from "@makeplane/propel/components/input";
 import { InstanceService } from "@plane/services";
-// ui
-import { Input } from "@plane/ui";
 
 type Props = {
   isOpen: boolean;
@@ -85,8 +90,8 @@ export function SendTestEmailModal(props: Props) {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg bg-surface-1 p-5 px-4 text-left shadow-raised-200 transition-all w-full sm:max-w-xl">
-                <h3 className="text-16 font-medium leading-6 text-primary">
+              <Dialog.Panel className="relative w-full transform rounded-lg bg-surface-1 p-5 px-4 text-left shadow-raised-200 transition-all sm:max-w-xl">
+                <h3 className="text-16 leading-6 font-medium text-primary">
                   {sendEmailStep === ESendEmailSteps.SEND_EMAIL
                     ? "Send test email"
                     : sendEmailStep === ESendEmailSteps.SUCCESS
@@ -95,15 +100,17 @@ export function SendTestEmailModal(props: Props) {
                 </h3>
                 <div className="pt-6 pb-2">
                   {sendEmailStep === ESendEmailSteps.SEND_EMAIL && (
-                    <Input
-                      id="receiver_email"
-                      type="email"
-                      value={receiverEmail}
-                      onChange={(e) => setReceiverEmail(e.target.value)}
-                      placeholder="Receiver email"
-                      className="w-full resize-none text-16"
-                      tabIndex={1}
-                    />
+                    <div className="w-full">
+                      <Input
+                        id="receiver_email"
+                        type="email"
+                        size="lg"
+                        value={receiverEmail}
+                        onChange={(e) => setReceiverEmail(e.target.value)}
+                        placeholder="Receiver email"
+                        tabIndex={0}
+                      />
+                    </div>
                   )}
                   {sendEmailStep === ESendEmailSteps.SUCCESS && (
                     <div className="flex flex-col gap-y-4 text-13">
@@ -115,14 +122,25 @@ export function SendTestEmailModal(props: Props) {
                     </div>
                   )}
                   {sendEmailStep === ESendEmailSteps.FAILED && <div className="text-13">{error}</div>}
-                  <div className="flex items-center gap-2 justify-end mt-5">
-                    <Button variant="secondary" size="lg" onClick={handleClose} tabIndex={2}>
-                      {sendEmailStep === ESendEmailSteps.SEND_EMAIL ? "Cancel" : "Close"}
-                    </Button>
+                  <div className="mt-5 flex items-center justify-end gap-2">
+                    <Button
+                      variant="secondary"
+                      size="md"
+                      stretch="auto"
+                      onClick={handleClose}
+                      tabIndex={0}
+                      label={sendEmailStep === ESendEmailSteps.SEND_EMAIL ? "Cancel" : "Close"}
+                    />
                     {sendEmailStep === ESendEmailSteps.SEND_EMAIL && (
-                      <Button variant="primary" size="lg" loading={isLoading} onClick={handleSubmit} tabIndex={3}>
-                        {isLoading ? "Sending email" : "Send email"}
-                      </Button>
+                      <Button
+                        variant="primary"
+                        size="md"
+                        stretch="auto"
+                        loading={isLoading}
+                        onClick={handleSubmit}
+                        tabIndex={0}
+                        label={isLoading ? "Sending email" : "Send email"}
+                      />
                     )}
                   </div>
                 </div>

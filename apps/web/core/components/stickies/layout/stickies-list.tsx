@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useRef, useState } from "react";
 import type {
   DropTargetRecord,
@@ -12,7 +18,7 @@ import Masonry from "react-masonry-component";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { PlusIcon } from "@plane/propel/icons";
+import { AddOutline } from "@makeplane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
 // assets
 import darkStickiesAsset from "@/app/assets/empty-state/stickies/stickies-dark.webp?url";
@@ -108,7 +114,7 @@ export const StickiesList = observer(function StickiesList(props: TProps) {
 
   if (loader === "loaded" && workspaceStickyIds.length === 0) {
     return (
-      <div className="size-full grid place-items-center">
+      <div className="grid size-full place-items-center">
         {isStickiesPage ? (
           <>
             {searchQuery ? (
@@ -123,7 +129,7 @@ export const StickiesList = observer(function StickiesList(props: TProps) {
                 description={t("stickies.empty_state.general.description")}
                 assetPath={stickiesResolvedPath}
                 primaryButton={{
-                  prependIcon: <PlusIcon className="size-4" />,
+                  prependIcon: <AddOutline className="size-4" />,
                   text: t("stickies.empty_state.general.primary_button.text"),
                   onClick: () => {
                     toggleShowNewSticky(true);

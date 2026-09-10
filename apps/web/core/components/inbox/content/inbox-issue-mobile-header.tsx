@@ -1,8 +1,27 @@
-import React from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
-import { CircleCheck, CircleX, Clock, FileStack, PanelLeft, MoveRight } from "lucide-react";
-import { LinkIcon, NewTabIcon, TrashIcon, ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
+import {
+  ArrowNarrowRightOutline,
+  ChevronDownOutline,
+  ChevronUpOutline,
+  ClockOutline,
+  CloseCircleFilled,
+  DeleteOutline,
+  DuplicateOfOutline,
+  LeftSidePaneOutline,
+  LinkOutline,
+  MoreHorizontalOutline,
+  NewTabOutline,
+  TickCircleFilled,
+} from "@makeplane/propel/icons";
+import { IconButton, getIconButtonStyling } from "@plane/propel/icon-button";
 import type { TNameDescriptionLoader } from "@plane/types";
+
 import { Header, CustomMenu, EHeaderVariant } from "@plane/ui";
 import { cn, findHowManyDaysLeft, generateWorkItemLink } from "@plane/utils";
 // components
@@ -12,6 +31,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 // store types
 import type { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
+
 // local imports
 import { InboxIssueStatus } from "../inbox-issue-status";
 
@@ -87,42 +107,46 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
     <Header variant={EHeaderVariant.SECONDARY} className="justify-start">
       {isNotificationEmbed && (
         <button onClick={embedRemoveCurrentNotification}>
-          <MoveRight className="h-4 w-4 text-tertiary hover:text-secondary mr-2" />
+          <ArrowNarrowRightOutline className="mr-2 h-4 w-4 text-tertiary hover:text-secondary" />
         </button>
       )}
-      <PanelLeft
+      <LeftSidePaneOutline
         onClick={() => setIsMobileSidebar(!isMobileSidebar)}
-        className={cn("w-4 h-4 flex-shrink-0 mr-2 my-auto", isMobileSidebar ? "text-accent-primary" : "text-secondary")}
+        className={cn("my-auto mr-2 h-4 w-4 flex-shrink-0", isMobileSidebar ? "text-accent-primary" : "text-secondary")}
       />
-      <div className="flex items-center gap-2 w-full bg-surface-1 z-[15]">
+      <div className="z-[15] flex w-full items-center gap-2 bg-surface-1">
         <div className="flex items-center gap-x-2">
-          <button
-            type="button"
-            className="rounded-sm border border-subtle p-1.5"
+          <IconButton
+            variant="secondary"
+            size="lg"
+            icon={ChevronUpOutline}
+            aria-label="Previous work item"
             onClick={() => handleInboxIssueNavigation("prev")}
-          >
-            <ChevronUpIcon height={14} width={14} strokeWidth={2} />
-          </button>
-          <button
-            type="button"
-            className="rounded-sm border border-subtle p-1.5"
+          />
+          <IconButton
+            variant="secondary"
+            size="lg"
+            icon={ChevronDownOutline}
+            aria-label="Next work item"
             onClick={() => handleInboxIssueNavigation("next")}
-          >
-            <ChevronDownIcon height={14} width={14} strokeWidth={2} />
-          </button>
+          />
         </div>
         <div className="flex items-center gap-4">
           <InboxIssueStatus inboxIssue={inboxIssue} iconSize={12} />
-          <div className="flex items-center justify-end w-full">
+          <div className="flex w-full items-center justify-end">
             <NameDescriptionUpdateStatus isSubmitting={isSubmitting} />
           </div>
         </div>
         <div className="ml-auto">
-          <CustomMenu verticalEllipsis placement="bottom-start">
+          <CustomMenu
+            customButton={<MoreHorizontalOutline className="size-4" />}
+            customButtonClassName={getIconButtonStyling("secondary", "lg")}
+            placement="bottom-start"
+          >
             {isAcceptedOrDeclined && (
               <CustomMenu.MenuItem onClick={handleCopyIssueLink}>
                 <div className="flex items-center gap-2">
-                  <LinkIcon width={14} height={14} strokeWidth={2} />
+                  <LinkOutline width={14} height={14} />
                   Copy work item link
                 </div>
               </CustomMenu.MenuItem>
@@ -130,7 +154,7 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
             {isAcceptedOrDeclined && (
               <CustomMenu.MenuItem onClick={() => router.push(workItemLink)}>
                 <div className="flex items-center gap-2">
-                  <NewTabIcon width={14} height={14} strokeWidth={2} />
+                  <NewTabOutline width={14} height={14} />
                   Open work item
                 </div>
               </CustomMenu.MenuItem>
@@ -146,7 +170,7 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
                 }
               >
                 <div className="flex items-center gap-2">
-                  <Clock size={14} strokeWidth={2} />
+                  <ClockOutline width={14} height={14} />
                   {inboxIssue?.snoozed_till && numberOfDaysLeft && numberOfDaysLeft > 0 ? "Un-snooze" : "Snooze"}
                 </div>
               </CustomMenu.MenuItem>
@@ -162,7 +186,7 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
                 }
               >
                 <div className="flex items-center gap-2">
-                  <FileStack size={14} strokeWidth={2} />
+                  <DuplicateOfOutline width={14} height={14} />
                   Mark as duplicate
                 </div>
               </CustomMenu.MenuItem>
@@ -177,8 +201,8 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
                   )
                 }
               >
-                <div className="flex items-center gap-2 text-success-primary">
-                  <CircleCheck size={14} strokeWidth={2} />
+                <div className="flex items-center gap-2 text-success-secondary">
+                  <TickCircleFilled width={14} height={14} />
                   Accept
                 </div>
               </CustomMenu.MenuItem>
@@ -193,8 +217,8 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
                   )
                 }
               >
-                <div className="flex items-center gap-2 text-danger-primary">
-                  <CircleX size={14} strokeWidth={2} />
+                <div className="flex items-center gap-2 text-danger-secondary">
+                  <CloseCircleFilled width={14} height={14} />
                   Decline
                 </div>
               </CustomMenu.MenuItem>
@@ -202,7 +226,7 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
             {canDelete && !isAcceptedOrDeclined && (
               <CustomMenu.MenuItem onClick={() => setDeleteIssueModal(true)}>
                 <div className="flex items-center gap-2 text-danger-primary">
-                  <TrashIcon width={14} height={14} strokeWidth={2} />
+                  <DeleteOutline height={14} width={14} />
                   Delete
                 </div>
               </CustomMenu.MenuItem>

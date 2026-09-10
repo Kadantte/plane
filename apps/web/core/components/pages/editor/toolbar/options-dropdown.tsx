@@ -1,17 +1,22 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
-import { ArrowUpToLine, Clipboard, History } from "lucide-react";
+import { ClipboardOutline, ExportOutline, HistoryOutline } from "@makeplane/propel/icons";
 // plane imports
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { ToggleSwitch } from "@plane/ui";
-import { copyTextToClipboard } from "@plane/utils";
+import { Switch } from "@makeplane/propel/components/switch";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePageFilters } from "@/hooks/use-page-filters";
 import { useQueryParams } from "@/hooks/use-query-params";
 // plane web imports
-import type { TPageNavigationPaneTab } from "@/plane-web/components/pages/navigation-pane";
-import type { EPageStoreType } from "@/plane-web/hooks/store";
+import type { TPageNavigationPaneTab } from "@/components/pages/navigation-pane/tab-panels";
+import type { EPageStoreType } from "@/hooks/store";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
@@ -50,7 +55,7 @@ export const PageOptionsDropdown = observer(function PageOptionsDropdown(props: 
           customContent: (
             <>
               Full width
-              <ToggleSwitch value={isFullWidth} onChange={() => {}} />
+              <Switch size="sm" checked={isFullWidth} onCheckedChange={() => {}} aria-label="Full width" />
             </>
           ),
           className: "flex items-center justify-between gap-2",
@@ -61,7 +66,12 @@ export const PageOptionsDropdown = observer(function PageOptionsDropdown(props: 
           customContent: (
             <>
               Sticky toolbar
-              <ToggleSwitch value={isStickyToolbarEnabled} onChange={() => {}} />
+              <Switch
+                size="sm"
+                checked={isStickyToolbarEnabled}
+                onCheckedChange={() => {}}
+                aria-label="Sticky toolbar"
+              />
             </>
           ),
           className: "flex items-center justify-between gap-2",
@@ -79,7 +89,7 @@ export const PageOptionsDropdown = observer(function PageOptionsDropdown(props: 
             });
           },
           title: "Copy markdown",
-          icon: Clipboard,
+          icon: ClipboardOutline,
           shouldRender: true,
         },
         {
@@ -94,14 +104,14 @@ export const PageOptionsDropdown = observer(function PageOptionsDropdown(props: 
             router.push(updatedRoute);
           },
           title: "Version history",
-          icon: History,
+          icon: HistoryOutline,
           shouldRender: true,
         },
         {
           key: "export",
           action: () => setIsExportModalOpen(true),
           title: "Export",
-          icon: ArrowUpToLine,
+          icon: ExportOutline,
           shouldRender: true,
         },
       ];
@@ -132,12 +142,12 @@ export const PageOptionsDropdown = observer(function PageOptionsDropdown(props: 
         optionsOrder={[
           "full-screen",
           "sticky-toolbar",
+          "copy-markdown",
+          "version-history",
           "make-a-copy",
-          "toggle-access",
           "archive-restore",
           "delete",
-          "version-history",
-          "copy-markdown",
+          "toggle-access",
           "export",
         ]}
         page={page}

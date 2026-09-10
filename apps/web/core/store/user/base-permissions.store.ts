@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { unset, set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
@@ -11,8 +17,8 @@ import {
 import type { EUserProjectRoles, IUserProjectsRole, IWorkspaceMemberMe, TProjectMembership } from "@plane/types";
 import { EUserWorkspaceRoles } from "@plane/types";
 // plane web imports
-import { WorkspaceService } from "@/plane-web/services";
-import type { RootStore } from "@/plane-web/store/root.store";
+import { WorkspaceService } from "@/services/workspace.service";
+import type { RootStore } from "@/store/root.store";
 // services
 import projectMemberService from "@/services/project/project-member.service";
 import userService from "@/services/user.service";
@@ -58,7 +64,7 @@ export interface IBaseUserPermissionStore {
  * @description This store is used to handle permission layer for the currently logged user.
  * It manages workspace and project level permissions, roles and access control.
  */
-export abstract class BaseUserPermissionStore implements IBaseUserPermissionStore {
+export class BaseUserPermissionStore implements IBaseUserPermissionStore {
   loader: boolean = false;
   // constants
   workspaceUserInfo: Record<string, IWorkspaceMemberMe> = {};
@@ -144,10 +150,10 @@ export abstract class BaseUserPermissionStore implements IBaseUserPermissionStor
    * @param { string } projectId
    * @returns { EUserPermissions | undefined }
    */
-  abstract getProjectRoleByWorkspaceSlugAndProjectId: (
-    workspaceSlug: string,
-    projectId?: string
-  ) => EUserPermissions | undefined;
+  getProjectRoleByWorkspaceSlugAndProjectId = computedFn(
+    (workspaceSlug: string, projectId?: string): EUserPermissions | undefined =>
+      this.getProjectRole(workspaceSlug, projectId)
+  );
 
   /**
    * @description Fetches project-level entities that are not automatically loaded by the project wrapper.
@@ -156,7 +162,9 @@ export abstract class BaseUserPermissionStore implements IBaseUserPermissionStor
    * @param { string } projectId
    * @returns { Promise<void> }
    */
-  abstract fetchWorkspaceLevelProjectEntities: (workspaceSlug: string, projectId: string) => void;
+  fetchWorkspaceLevelProjectEntities = (workspaceSlug: string, projectId: string): void => {
+    void this.store.projectRoot.project.fetchProjectDetails(workspaceSlug, projectId);
+  };
 
   /**
    * @description Returns whether the user has the permission to access a page
@@ -347,3 +355,7 @@ export abstract class BaseUserPermissionStore implements IBaseUserPermissionStor
     }
   };
 }
+
+// Aliases so consumers can keep using UserPermissionStore / IUserPermissionStore
+export type IUserPermissionStore = IBaseUserPermissionStore;
+export { BaseUserPermissionStore as UserPermissionStore };

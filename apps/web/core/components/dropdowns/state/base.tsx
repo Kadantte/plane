@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { ReactNode } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -5,7 +11,8 @@ import { usePopper } from "react-popper";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { SearchIcon, StateGroupIcon, ChevronDownIcon } from "@plane/propel/icons";
+import { StateGroupIcon } from "@plane/propel/icons";
+import { ChevronDownOutline, SearchOutline } from "@makeplane/propel/icons";
 import type { IState } from "@plane/types";
 import { ComboDropDown, Spinner } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -16,7 +23,7 @@ import type { TDropdownProps } from "@/components/dropdowns/types";
 // hooks
 import { useDropdown } from "@/hooks/use-dropdown";
 // plane web imports
-import { StateOption } from "@/plane-web/components/workflow";
+import { StateOption } from "@/components/workflow";
 
 export type TWorkItemStateDropdownBaseProps = TDropdownProps & {
   alwaysAllowStateChange?: boolean;
@@ -130,74 +137,71 @@ export const WorkItemStateDropdownBase = observer(function WorkItemStateDropdown
     handleClose();
   };
 
-  const comboButton = (
-    <>
-      {button ? (
-        <button
-          ref={setReferenceElement}
-          type="button"
-          className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
-          onClick={handleOnClick}
-          disabled={disabled}
-          tabIndex={tabIndex}
-        >
-          {button}
-        </button>
-      ) : (
-        <button
-          tabIndex={tabIndex}
-          ref={setReferenceElement}
-          type="button"
-          className={cn(
-            "clickable block h-full max-w-full outline-none",
-            {
-              "cursor-not-allowed text-secondary": disabled,
-              "cursor-pointer": !disabled,
-            },
-            buttonContainerClassName
-          )}
-          onClick={handleOnClick}
-          disabled={disabled}
-        >
-          <DropdownButton
-            className={buttonClassName}
-            isActive={isOpen}
-            tooltipHeading={t("state")}
-            tooltipContent={selectedState?.name ?? t("state")}
-            showTooltip={showTooltip}
-            variant={buttonVariant}
-            renderToolTipByDefault={renderByDefault}
-          >
-            {isInitializing ? (
-              <Spinner className="h-3.5 w-3.5" />
-            ) : (
-              <>
-                {!hideIcon && (
-                  <StateGroupIcon
-                    stateGroup={selectedState?.group ?? "backlog"}
-                    color={selectedState?.color ?? "var(--text-color-tertiary)"}
-                    className={cn("flex-shrink-0", iconSize)}
-                    percentage={selectedState?.order}
-                  />
-                )}
-                {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-                  <span className="flex-grow truncate text-left">{selectedState?.name ?? t("state")}</span>
-                )}
-                {dropdownArrow && (
-                  <ChevronDownIcon
-                    className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)}
-                    aria-hidden="true"
-                  />
-                )}
-              </>
-            )}
-          </DropdownButton>
-        </button>
+  const comboButton = button ? (
+    <button
+      ref={setReferenceElement}
+      type="button"
+      className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
+      onClick={handleOnClick}
+      disabled={disabled}
+      tabIndex={tabIndex}
+    >
+      {button}
+    </button>
+  ) : (
+    <button
+      tabIndex={tabIndex}
+      ref={setReferenceElement}
+      type="button"
+      className={cn(
+        "clickable block h-full max-w-full outline-none",
+        {
+          "cursor-not-allowed text-secondary": disabled,
+          "cursor-pointer": !disabled,
+        },
+        buttonContainerClassName
       )}
-    </>
+      onClick={handleOnClick}
+      disabled={disabled}
+    >
+      <DropdownButton
+        className={buttonClassName}
+        isActive={isOpen}
+        tooltipHeading={t("state")}
+        tooltipContent={selectedState?.name ?? t("state")}
+        showTooltip={showTooltip}
+        variant={buttonVariant}
+        renderToolTipByDefault={renderByDefault}
+      >
+        {isInitializing ? (
+          <Spinner className="h-3.5 w-3.5" />
+        ) : (
+          <>
+            {!hideIcon && (
+              <StateGroupIcon
+                stateGroup={selectedState?.group ?? "backlog"}
+                color={selectedState?.color ?? "var(--text-color-tertiary)"}
+                className={cn("flex-shrink-0", iconSize)}
+                percentage={selectedState?.order}
+              />
+            )}
+            {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
+              <span className="flex-grow truncate text-left">{selectedState?.name ?? t("state")}</span>
+            )}
+            {dropdownArrow && (
+              <ChevronDownOutline
+                className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)}
+                aria-hidden="true"
+              />
+            )}
+          </>
+        )}
+      </DropdownButton>
+    </button>
   );
 
   return (
+    // oxlint-disable-next-line jsx_a11y/no-static-element-interactions
     <ComboDropDown
       as="div"
       ref={dropdownRef}
@@ -210,7 +214,7 @@ export const WorkItemStateDropdownBase = observer(function WorkItemStateDropdown
       renderByDefault={renderByDefault}
     >
       {isOpen && (
-        <Combobox.Options className="fixed z-10" static>
+        <Combobox.Options as="ul" className="fixed z-10" static>
           <div
             className="my-1 w-48 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200 focus:outline-none"
             ref={setPopperElement}
@@ -218,7 +222,7 @@ export const WorkItemStateDropdownBase = observer(function WorkItemStateDropdown
             {...attributes.popper}
           >
             <div className="flex items-center gap-1.5 rounded-sm border border-subtle bg-surface-2 px-2">
-              <SearchIcon className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
+              <SearchOutline className="h-3.5 w-3.5 text-placeholder" />
               <Combobox.Input
                 as="input"
                 ref={inputRef}
@@ -239,14 +243,14 @@ export const WorkItemStateDropdownBase = observer(function WorkItemStateDropdown
                       key={option.value}
                       option={option}
                       selectedValue={value}
-                      className="flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5"
+                      className="flex w-full cursor-pointer items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 select-none"
                     />
                   ))
                 ) : (
-                  <p className="px-1.5 py-1 italic text-placeholder">{t("no_matching_results")}</p>
+                  <p className="px-1.5 py-1 text-placeholder italic">{t("no_matching_results")}</p>
                 )
               ) : (
-                <p className="px-1.5 py-1 italic text-placeholder">{t("loading")}</p>
+                <p className="px-1.5 py-1 text-placeholder italic">{t("loading")}</p>
               )}
             </div>
           </div>

@@ -1,11 +1,17 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { CopyLinkIcon } from "@plane/propel/icons";
+import { LinkOutline } from "@makeplane/propel/icons";
 import { IconButton } from "@plane/propel/icon-button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { EIssuesStoreType } from "@plane/types";
 import { generateWorkItemLink, copyTextToClipboard } from "@plane/utils";
 // hooks
@@ -94,7 +100,7 @@ export const IssueDetailQuickActions = observer(function IssueDetailQuickActions
       router.push(redirectionPath);
     } catch (_error) {
       setToast({
-        title: t("toast.error "),
+        title: t("toast.error"),
         type: TOAST_TYPE.ERROR,
         message: t("entity.delete.failed", { entity: t("issue.label", { count: 1 }) }),
       });
@@ -135,14 +141,14 @@ export const IssueDetailQuickActions = observer(function IssueDetailQuickActions
 
   return (
     <>
-      <div className="flex items-center justify-end flex-shrink-0">
+      <div className="flex flex-shrink-0 items-center justify-end">
         <div className="flex flex-wrap items-center gap-2">
           {currentUser && !issue?.archived_at && (
             <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
           )}
           <div className="flex flex-wrap items-center gap-2 text-tertiary">
-            <Tooltip tooltipContent={t("common.actions.copy_link")} isMobile={isMobile}>
-              <IconButton variant="secondary" size="lg" onClick={handleCopyText} icon={CopyLinkIcon} />
+            <Tooltip label={t("common.actions.copy_link")} disabled={isMobile}>
+              <IconButton variant="secondary" size="lg" onClick={handleCopyText} icon={LinkOutline} />
             </Tooltip>
             <WorkItemDetailQuickActions
               parentRef={parentRef}

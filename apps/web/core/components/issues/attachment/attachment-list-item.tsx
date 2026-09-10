@@ -1,9 +1,14 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 
 import { useTranslation } from "@plane/i18n";
-import { TrashIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+import { DeleteOutline } from "@makeplane/propel/icons";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TIssueServiceType } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 // ui
@@ -55,24 +60,25 @@ export const IssueAttachmentsListItem = observer(function IssueAttachmentsListIt
           window.open(fileURL, "_blank");
         }}
       >
-        <div className="group flex items-center justify-between gap-3 h-11 hover:bg-surface-2 pl-9 pr-2">
-          <div className="flex items-center gap-3 text-13 truncate">
+        <div className="group flex h-11 items-center justify-between gap-3 px-3 hover:bg-surface-2">
+          <div className="flex items-center gap-3 truncate text-13">
             <div className="flex items-center gap-3">{fileIcon}</div>
-            <Tooltip tooltipContent={`${fileName}.${fileExtension}`} isMobile={isMobile}>
-              <p className="text-secondary font-medium truncate">{`${fileName}.${fileExtension}`}</p>
+            <Tooltip label={`${fileName}.${fileExtension}`} layout="stacked" disabled={isMobile}>
+              <p className="truncate font-medium text-secondary">{`${fileName}.${fileExtension}`}</p>
             </Tooltip>
-            <span className="flex size-1.5 bg-layer-1 rounded-full" />
-            <span className="flex-shrink-0 text-placeholder">{convertBytesToSize(attachment.attributes.size)}</span>
+            <span className="flex size-1.5 rounded-full bg-layer-1" />
+            <span className="shrink-0 text-placeholder">{convertBytesToSize(attachment.attributes.size)}</span>
           </div>
 
           <div className="flex items-center gap-3">
             {attachment?.created_by && (
               <>
                 <Tooltip
-                  isMobile={isMobile}
-                  tooltipContent={`${
+                  label={`${
                     getUserDetails(attachment?.created_by)?.display_name ?? ""
                   } uploaded on ${renderFormattedDate(attachment.updated_at)}`}
+                  layout="stacked"
+                  disabled={isMobile}
                 >
                   <div className="flex items-center justify-center">
                     <ButtonAvatars showTooltip userIds={attachment?.created_by} />
@@ -88,7 +94,7 @@ export const IssueAttachmentsListItem = observer(function IssueAttachmentsListIt
                 }}
               >
                 <div className="flex items-center gap-2">
-                  <TrashIcon className="h-3.5 w-3.5" strokeWidth={2} />
+                  <DeleteOutline className="h-3.5 w-3.5" />
                   <span>{t("common.actions.delete")}</span>
                 </div>
               </CustomMenu.MenuItem>

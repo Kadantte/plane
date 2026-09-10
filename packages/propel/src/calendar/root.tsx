@@ -1,6 +1,12 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import * as React from "react";
 import { DayPicker } from "react-day-picker";
-import { ChevronLeftIcon } from "../icons/arrows/chevron-left";
+import { ChevronLeftOutline } from "@makeplane/propel/icons";
 
 import { cn } from "../utils";
 
@@ -18,7 +24,7 @@ export function Calendar({ className, showOutsideDays = true, ...props }: Calend
       weekStartsOn={props.weekStartsOn}
       components={{
         Chevron: ({ className, ...props }) => (
-          <ChevronLeftIcon
+          <ChevronLeftOutline
             className={cn(
               "size-4",
               { "rotate-180": props.orientation === "right", "-rotate-90": props.orientation === "down" },

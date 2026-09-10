@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import type {
@@ -9,14 +15,13 @@ import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element
 import { orderBy } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { FolderPlus } from "lucide-react";
+import { ChevronRightOutline, CreateFolderOutline } from "@makeplane/propel/icons";
 import { Disclosure, Transition } from "@headlessui/react";
 import { IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ChevronRightIcon } from "@plane/propel/icons";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IFavorite } from "@plane/types";
 // helpers
 import { cn } from "@plane/utils";
@@ -178,14 +183,14 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
         <div
           ref={elementRef}
           className={cn(
-            "group/favorites-button w-full flex items-center justify-between px-2 py-1.5 rounded-sm text-placeholder hover:bg-layer-transparent-hover"
+            "group/favorites-button flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-placeholder hover:bg-layer-transparent-hover"
           )}
         >
           <Disclosure.Button
             as="button"
             type="button"
             className={cn(
-              "w-full flex items-center gap-1 whitespace-nowrap text-left text-13 font-semibold text-placeholder",
+              "flex w-full items-center gap-1 text-left text-13 font-semibold whitespace-nowrap text-placeholder",
               {
                 "bg-layer-1 opacity-60": isDragging,
               }
@@ -199,8 +204,8 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
           >
             <span className="text-13 font-semibold">{t("favorites")}</span>
           </Disclosure.Button>
-          <div className="flex items-center opacity-0 pointer-events-none group-hover/favorites-button:opacity-100 group-hover/favorites-button:pointer-events-auto">
-            <Tooltip tooltipHeading={t("create_folder")} tooltipContent="">
+          <div className="pointer-events-none flex items-center opacity-0 group-hover/favorites-button:pointer-events-auto group-hover/favorites-button:opacity-100">
+            <Tooltip label={t("create_folder")}>
               <IconButton
                 variant="ghost"
                 size="sm"
@@ -209,13 +214,13 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
                   if (!isFavoriteMenuOpen) toggleFavoriteMenu(!isFavoriteMenuOpen);
                 }}
                 aria-label={t("aria_labels.projects_sidebar.create_favorites_folder")}
-                icon={FolderPlus}
+                icon={CreateFolderOutline}
               />
             </Tooltip>
             <Disclosure.Button
               as="button"
               type="button"
-              className="p-0.5 rounded-sm hover:bg-layer-transparent-hover flex-shrink-0 grid place-items-center"
+              className="grid flex-shrink-0 place-items-center rounded-sm p-0.5 hover:bg-layer-transparent-hover"
               onClick={() => toggleFavoriteMenu(!isFavoriteMenuOpen)}
               aria-label={t(
                 isFavoriteMenuOpen
@@ -223,8 +228,8 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
                   : "aria_labels.projects_sidebar.open_favorites_menu"
               )}
             >
-              <ChevronRightIcon
-                className={cn("flex-shrink-0 size-3 transition-all", {
+              <ChevronRightOutline
+                className={cn("size-3 flex-shrink-0 transition-all", {
                   "rotate-90": isFavoriteMenuOpen,
                 })}
               />
@@ -232,6 +237,7 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
           </div>
         </div>
         <Transition
+          as="div"
           show={isFavoriteMenuOpen}
           enter="transition duration-100 ease-out"
           enterFrom="transform scale-95 opacity-0"
@@ -241,11 +247,11 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
           leaveTo="transform scale-95 opacity-0"
         >
           {isFavoriteMenuOpen && (
-            <Disclosure.Panel as="div" className="flex flex-col mt-0.5 gap-0.5" static>
+            <Disclosure.Panel as="div" className="mt-0.5 flex flex-col gap-0.5" static>
               {createNewFolder && <NewFavoriteFolder setCreateNewFolder={setCreateNewFolder} actionType="create" />}
               {Object.keys(groupedFavorites).length === 0 ? (
                 <>
-                  <span className="text-placeholder text-11 font-medium px-8 py-1.5">{t("no_favorites_yet")}</span>
+                  <span className="px-8 py-1.5 text-11 font-medium text-placeholder">{t("no_favorites_yet")}</span>
                 </>
               ) : (
                 orderBy(Object.values(groupedFavorites), "sequence", "desc")

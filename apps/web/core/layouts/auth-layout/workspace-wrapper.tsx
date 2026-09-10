@@ -1,15 +1,21 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // ui
-import { LogOut } from "lucide-react";
+import { LogOutOutline } from "@makeplane/propel/icons";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { PlaneLogo } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { cn } from "@plane/utils";
 // assets
 import WorkSpaceNotAvailable from "@/app/assets/workspace/workspace-not-available.png?url";
@@ -25,7 +31,7 @@ import {
   WORKSPACE_STATES,
   WORKSPACE_SIDEBAR_PREFERENCES,
   WORKSPACE_PROJECT_NAVIGATION_PREFERENCES,
-} from "@/constants/fetch-keys";
+} from "@plane/constants";
 // hooks
 import { useFavorite } from "@/hooks/store/use-favorite";
 import { useMember } from "@/hooks/store/use-member";
@@ -134,7 +140,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   // if list of workspaces are not there then we have to render the spinner
   if (isParentLoading || allWorkspaces === undefined || loader) {
     return (
-      <div className="grid h-full place-items-center p-4 rounded-lg border border-subtle">
+      <div className="grid h-full place-items-center rounded-lg border border-subtle p-4">
         <div className="flex flex-col items-center gap-3 text-center">
           <LogoSpinner />
         </div>
@@ -145,8 +151,8 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   // if workspaces are there and we are trying to access the workspace that we are not part of then show the existing workspaces
   if (currentWorkspace === undefined && !currentWorkspaceInfo) {
     return (
-      <div className="relative flex h-full w-full flex-col items-center justify-center bg-surface-2 ">
-        <div className="container relative mx-auto flex h-full w-full flex-col overflow-hidden overflow-y-auto px-5 py-14 md:px-0">
+      <div className="relative flex h-full w-full flex-col items-center justify-center bg-surface-2">
+        <div className="relative container mx-auto flex h-full w-full flex-col overflow-hidden overflow-y-auto px-5 py-14 md:px-0">
           <div className="relative flex flex-shrink-0 items-center justify-between gap-4">
             <div className="z-10 flex-shrink-0 bg-surface-2 py-4">
               <PlaneLogo className="h-9 w-auto text-primary" />
@@ -157,8 +163,8 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
                 className="relative flex h-6 w-6 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm hover:bg-layer-1"
                 onClick={handleSignOut}
               >
-                <Tooltip tooltipContent={"Sign out"} position="top" className="ml-2" isMobile={isMobile}>
-                  <LogOut size={14} />
+                <Tooltip label={"Sign out"} alignOffset={8} disabled={isMobile}>
+                  <LogOutOutline width={14} height={14} />
                 </Tooltip>
               </div>
             </div>
@@ -190,7 +196,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
             </div>
           </div>
 
-          <div className="absolute bottom-0 left-4 top-0 w-0 bg-layer-1 md:w-0.5" />
+          <div className="absolute top-0 bottom-0 left-4 w-0 bg-layer-1 md:w-0.5" />
         </div>
       </div>
     );

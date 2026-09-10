@@ -1,16 +1,17 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import {
-  EIssueFilterType,
-  ISSUE_DISPLAY_FILTERS_BY_PAGE,
-  GLOBAL_VIEW_TRACKER_ELEMENTS,
-  DEFAULT_GLOBAL_VIEWS_LIST,
-} from "@plane/constants";
+import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE, DEFAULT_GLOBAL_VIEWS_LIST } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { ViewsIcon } from "@plane/propel/icons";
+import { ViewsOutline } from "@makeplane/propel/icons";
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, ICustomSearchSelectOption } from "@plane/types";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 import { Breadcrumbs, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
@@ -26,7 +27,6 @@ import { WorkspaceViewQuickActions } from "@/components/workspace/views/quick-ac
 import { useGlobalView } from "@/hooks/store/use-global-view";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { GlobalViewLayoutSelection } from "@/plane-web/components/views/helper";
 
 export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
   // states
@@ -69,20 +69,6 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
     [workspaceSlug, updateFilters, globalViewId]
   );
 
-  const handleLayoutChange = useCallback(
-    (layout: EIssueLayoutTypes) => {
-      if (!workspaceSlug || !globalViewId) return;
-      updateFilters(
-        workspaceSlug.toString(),
-        undefined,
-        EIssueFilterType.DISPLAY_FILTERS,
-        { layout: layout },
-        globalViewId
-      );
-    },
-    [workspaceSlug, updateFilters, globalViewId]
-  );
-
   const isLocked = viewDetails?.is_locked;
 
   const isDefaultView = DEFAULT_GLOBAL_VIEWS_LIST.find((view) => view.key === globalViewId);
@@ -92,7 +78,7 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
   const defaultOptions = DEFAULT_GLOBAL_VIEWS_LIST.map((view) => ({
     value: view.key,
     query: view.key,
-    content: <SwitcherLabel name={t(view.i18n_label)} LabelIcon={ViewsIcon} />,
+    content: <SwitcherLabel name={t(view.i18n_label)} LabelIcon={ViewsOutline} />,
   }));
 
   const workspaceOptions = (currentWorkspaceViews || []).map((view) => {
@@ -101,7 +87,7 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
     return {
       value: _view.id,
       query: _view.name,
-      content: <SwitcherLabel name={_view.name} LabelIcon={ViewsIcon} />,
+      content: <SwitcherLabel name={_view.name} LabelIcon={ViewsOutline} />,
     };
   });
 
@@ -120,7 +106,9 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
         <Header.LeftItem>
           <Breadcrumbs>
             <Breadcrumbs.Item
-              component={<BreadcrumbLink label={t("views")} icon={<ViewsIcon className="h-4 w-4 text-tertiary" />} />}
+              component={
+                <BreadcrumbLink label={t("views")} icon={<ViewsOutline className="h-4 w-4 text-tertiary" />} />
+              }
             />
             <Breadcrumbs.Item
               component={
@@ -133,7 +121,7 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
                   title={viewDetails?.name ?? t(defaultViewDetails?.i18n_label ?? "")}
                   icon={
                     <Breadcrumbs.Icon>
-                      <ViewsIcon className="size-4 flex-shrink-0 text-tertiary" />
+                      <ViewsOutline className="size-4 flex-shrink-0 text-tertiary" />
                     </Breadcrumbs.Icon>
                   }
                   isLast
@@ -145,13 +133,6 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
         </Header.LeftItem>
 
         <Header.RightItem className="items-center">
-          {!isLocked && (
-            <GlobalViewLayoutSelection
-              onChange={handleLayoutChange}
-              selectedLayout={activeLayout ?? EIssueLayoutTypes.SPREADSHEET}
-              workspaceSlug={workspaceSlug.toString()}
-            />
-          )}
           {globalViewId && <WorkItemFiltersToggle entityType={EIssuesStoreType.GLOBAL} entityId={globalViewId} />}
           {!isLocked && (
             <FiltersDropdown title={t("common.display")} placement="bottom-end">
@@ -164,12 +145,7 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
               />
             </FiltersDropdown>
           )}
-          <Button
-            variant="primary"
-            size="lg"
-            data-ph-element={GLOBAL_VIEW_TRACKER_ELEMENTS.RIGHT_HEADER_ADD_BUTTON}
-            onClick={() => setCreateViewModal(true)}
-          >
+          <Button variant="primary" size="lg" onClick={() => setCreateViewModal(true)}>
             {t("workspace_views.add_view")}
           </Button>
           <div className="hidden md:block">

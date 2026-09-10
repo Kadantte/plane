@@ -1,8 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { Clock } from "lucide-react";
+import { ClockOutline } from "@makeplane/propel/icons";
 // plane imports
-import { Avatar, Row } from "@plane/ui";
+import { Avatar } from "@makeplane/propel/components/avatar";
+import { Row } from "@plane/ui";
 import { cn, calculateTimeAgo, renderFormattedDate, renderFormattedTime, getFileURL } from "@plane/utils";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
@@ -65,7 +72,7 @@ export const NotificationItem = observer(function NotificationItem(props: TNotif
   return (
     <Row
       className={cn(
-        "relative py-4 flex items-center gap-2 border-b border-subtle cursor-pointer transition-all group",
+        "group relative flex cursor-pointer items-center gap-2 border-b border-subtle py-4 transition-all",
         {
           "bg-layer-1/30": currentSelectedNotificationId === notification?.id,
           "bg-accent-primary/5": notification.read_at === null,
@@ -74,25 +81,25 @@ export const NotificationItem = observer(function NotificationItem(props: TNotif
       onClick={handleNotificationIssuePeekOverview}
     >
       {notification.read_at === null && (
-        <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-accent-primary absolute top-[50%] left-2" />
+        <div className="absolute top-[50%] left-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-accent-primary" />
       )}
 
-      <div className="relative w-full flex gap-2">
-        <div className="flex-shrink-0 relative flex justify-center items-center w-12 h-12 bg-layer-1 rounded-full">
+      <div className="relative flex w-full gap-2">
+        <div className="relative flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-layer-1">
           {notificationTriggeredBy && (
             <Avatar
-              name={notificationTriggeredBy.display_name || notificationTriggeredBy?.first_name}
+              alt={notificationTriggeredBy.display_name || notificationTriggeredBy?.first_name}
+              fallback={(notificationTriggeredBy.display_name ||
+                notificationTriggeredBy?.first_name)?.[0]?.toUpperCase()}
               src={getFileURL(notificationTriggeredBy.avatar_url)}
-              size={42}
-              shape="circle"
-              className="text-body-sm-medium bg-layer-1"
+              size="xl"
             />
           )}
         </div>
 
-        <div className="w-full space-y-1 -mt-2">
-          <div className="relative flex items-center gap-3 h-8">
-            <div className="w-full overflow-hidden whitespace-normal break-all truncate line-clamp-1 text-body-xs-medium text-primary">
+        <div className="-mt-2 w-full space-y-1">
+          <div className="relative flex h-8 items-center gap-3">
+            <div className="line-clamp-1 w-full truncate overflow-hidden text-body-xs-medium break-all whitespace-normal text-primary">
               <NotificationContent
                 notification={notification}
                 workspaceId={workspace.id}
@@ -111,14 +118,14 @@ export const NotificationItem = observer(function NotificationItem(props: TNotif
           </div>
 
           <div className="relative flex items-center gap-3 text-caption-sm-regular text-secondary">
-            <div className="w-full overflow-hidden whitespace-normal break-words truncate line-clamp-1">
+            <div className="line-clamp-1 w-full truncate overflow-hidden break-words whitespace-normal">
               {notification?.data?.issue?.identifier}-{notification?.data?.issue?.sequence_id}&nbsp;
               {notification?.data?.issue?.name}
             </div>
             <div className="flex-shrink-0">
               {notification?.snoozed_till ? (
                 <p className="flex flex-shrink-0 items-center justify-end gap-x-1 text-tertiary">
-                  <Clock className="h-4 w-4" />
+                  <ClockOutline className="h-4 w-4" />
                   <span>
                     Till {renderFormattedDate(notification.snoozed_till)},&nbsp;
                     {renderFormattedTime(notification.snoozed_till, "12-hour")}

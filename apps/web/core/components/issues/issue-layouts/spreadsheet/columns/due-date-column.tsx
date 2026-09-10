@@ -1,6 +1,12 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
-import { DueDatePropertyIcon } from "@plane/propel/icons";
+import { DueDateOutline } from "@makeplane/propel/icons";
 // types
 import type { TIssue } from "@plane/types";
 import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
@@ -42,11 +48,11 @@ export const SpreadsheetDueDateColumn = observer(function SpreadsheetDueDateColu
         }}
         disabled={disabled}
         placeholder="Due date"
-        icon={<DueDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
+        icon={<DueDateOutline className="h-3 w-3 flex-shrink-0" />}
         buttonVariant="transparent-with-text"
         buttonContainerClassName="w-full"
         buttonClassName={cn(
-          "rounded-none text-left group-[.selected-issue-row]:bg-accent-primary/5 group-[.selected-issue-row]:hover:bg-accent-primary/10 px-page-x",
+          "rounded-none px-page-x text-left group-[.selected-issue-row]:bg-accent-primary/5 group-[.selected-issue-row]:hover:bg-accent-primary/10",
           {
             "text-danger-primary": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
           }

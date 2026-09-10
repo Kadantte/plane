@@ -1,12 +1,24 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { HelpCircle, MoveLeft } from "lucide-react";
 import { Transition } from "@headlessui/react";
 import { WEB_BASE_URL } from "@plane/constants";
 // plane internal packages
-import { DiscordIcon, GithubIcon, NewTabIcon, PageIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
+import {
+  ArrowNarrowLeftOutline,
+  ChatOutline,
+  Github,
+  HelpOutline,
+  NewTabOutline,
+  PagesOutline,
+} from "@makeplane/propel/icons";
 import { cn } from "@plane/utils";
 // hooks
 import { useInstance, useTheme } from "@/hooks/store";
@@ -16,17 +28,17 @@ const helpOptions = [
   {
     name: "Documentation",
     href: "https://docs.plane.so/",
-    Icon: PageIcon,
+    Icon: PagesOutline,
   },
   {
-    name: "Join our Discord",
-    href: "https://discord.com/invite/A92xrEGCge",
-    Icon: DiscordIcon,
+    name: "Join our Forum",
+    href: "https://forum.plane.so",
+    Icon: ChatOutline,
   },
   {
     name: "Report a bug",
     href: "https://github.com/makeplane/plane/issues/new/choose",
-    Icon: GithubIcon,
+    Icon: Github,
   },
 ];
 
@@ -44,48 +56,62 @@ export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection
   return (
     <div
       className={cn(
-        "flex w-full items-center justify-between gap-1 self-baseline border-t border-subtle bg-surface-1 px-4 h-14 flex-shrink-0",
+        "flex h-14 w-full flex-shrink-0 items-center justify-between gap-1 self-baseline border-t border-subtle bg-surface-1 px-4",
         {
-          "flex-col h-auto py-1.5": isSidebarCollapsed,
+          "h-auto flex-col py-1.5": isSidebarCollapsed,
         }
       )}
     >
       <div className={`flex items-center gap-1 ${isSidebarCollapsed ? "flex-col justify-center" : "w-full"}`}>
-        <Tooltip tooltipContent="Redirect to Plane" position="right" className="ml-4" disabled={!isSidebarCollapsed}>
-          <a
-            href={redirectionLink}
-            className={`relative px-2 py-1 flex items-center gap-1 rounded-sm bg-layer-1 text-body-xs-medium text-secondary whitespace-nowrap`}
-          >
-            <NewTabIcon width={14} height={14} />
-            {!isSidebarCollapsed && "Redirect to Plane"}
-          </a>
-        </Tooltip>
-        <Tooltip tooltipContent="Help" position={isSidebarCollapsed ? "right" : "top"} className="ml-4">
+        {!isSidebarCollapsed ? (
+          <>
+            <a
+              href={redirectionLink}
+              className={`relative flex items-center gap-1 rounded-sm bg-layer-1 px-2 py-1 text-body-xs-medium whitespace-nowrap text-secondary`}
+            >
+              <NewTabOutline width={14} height={14} />
+              {!isSidebarCollapsed && "Redirect to Plane"}
+            </a>
+          </>
+        ) : (
+          <Tooltip label="Redirect to Plane" side="right">
+            <a
+              href={redirectionLink}
+              className={`relative flex items-center gap-1 rounded-sm bg-layer-1 px-2 py-1 text-body-xs-medium whitespace-nowrap text-secondary`}
+            >
+              <NewTabOutline width={14} height={14} />
+              {!isSidebarCollapsed && "Redirect to Plane"}
+            </a>
+          </Tooltip>
+        )}
+        <Tooltip label="Help" side={isSidebarCollapsed ? "right" : "top"}>
           <button
             type="button"
+            aria-label="Help"
             className={`ml-auto grid place-items-center rounded-md p-1.5 text-secondary outline-none hover:bg-layer-1-hover hover:text-primary ${
               isSidebarCollapsed ? "w-full" : ""
             }`}
             onClick={() => setIsNeedHelpOpen((prev) => !prev)}
           >
-            <HelpCircle className="size-4" />
+            <HelpOutline className="size-4" />
           </button>
         </Tooltip>
-        <Tooltip tooltipContent="Toggle sidebar" position={isSidebarCollapsed ? "right" : "top"} className="ml-4">
+        <Tooltip label="Toggle sidebar" side={isSidebarCollapsed ? "right" : "top"}>
           <button
             type="button"
+            aria-label="Toggle sidebar"
             className={`grid place-items-center rounded-md p-1.5 text-secondary outline-none hover:bg-layer-1-hover hover:text-primary ${
               isSidebarCollapsed ? "w-full" : ""
             }`}
             onClick={() => toggleSidebar(!isSidebarCollapsed)}
           >
-            <MoveLeft className={`size-4 duration-300 ${isSidebarCollapsed ? "rotate-180" : ""}`} />
+            <ArrowNarrowLeftOutline className={`size-4 duration-300 ${isSidebarCollapsed ? "rotate-180" : ""}`} />
           </button>
         </Tooltip>
       </div>
-
       <div className="relative">
         <Transition
+          as="div"
           show={isNeedHelpOpen}
           enter="transition ease-out duration-100"
           enterFrom="transform opacity-0 scale-95"
@@ -95,9 +121,9 @@ export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection
           leaveTo="transform opacity-0 scale-95"
         >
           <div
-            className={`absolute bottom-2 min-w-[10rem] z-[15] ${
+            className={`absolute bottom-2 z-[15] min-w-[10rem] ${
               isSidebarCollapsed ? "left-full" : "-left-[75px]"
-            } divide-y divide-subtle-1 whitespace-nowrap rounded-sm bg-surface-1 p-1 shadow-raised-100`}
+            } divide-y divide-subtle-1 rounded-sm bg-surface-1 p-1 whitespace-nowrap shadow-raised-100`}
             ref={helpOptionsRef}
           >
             <div className="space-y-1 pb-2">
@@ -128,7 +154,7 @@ export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection
                   );
               })}
             </div>
-            <div className="px-2 pb-1 pt-2 text-10">Version: v{instance?.current_version}</div>
+            <div className="px-2 pt-2 pb-1 text-10">Version: v{instance?.current_version}</div>
           </div>
         </Transition>
       </div>

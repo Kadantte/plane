@@ -1,8 +1,14 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
-import { ArrowUp, Paperclip } from "lucide-react";
+import { AttachOutline, TopArrowOutline } from "@makeplane/propel/icons";
 // constants
-import type { ToolbarMenuItem } from "@/constants/editor";
-import { IMAGE_ITEM } from "@/constants/editor";
+import type { ToolbarMenuItem } from "@plane/editor";
+import { IMAGE_ITEM } from "@plane/editor";
 
 type LiteToolbarProps = {
   onSubmit: (e: React.KeyboardEvent<HTMLDivElement> | React.MouseEvent<HTMLButtonElement>) => void;
@@ -17,17 +23,17 @@ export function LiteToolbar({ onSubmit, isSubmitting, isEmpty, executeCommand }:
       <button
         onClick={() => executeCommand(IMAGE_ITEM)}
         type="button"
-        className="p-1 text-tertiary hover:text-secondary transition-colors"
+        className="p-1 text-tertiary transition-colors hover:text-secondary"
       >
-        <Paperclip className="size-3" />
+        <AttachOutline className="size-3" />
       </button>
       <button
         type="button"
         onClick={(e) => onSubmit(e)}
         disabled={isEmpty || isSubmitting}
-        className="p-1 bg-accent-primary hover:bg-accent-primary/80 disabled:bg-layer-1 disabled:text-secondary text-primary rounded-sm transition-colors"
+        className="rounded-sm bg-accent-primary p-1 text-primary transition-colors hover:bg-accent-primary/80 disabled:bg-layer-1 disabled:text-secondary"
       >
-        <ArrowUp className="size-3" />
+        <TopArrowOutline className="size-3" />
       </button>
     </div>
   );

@@ -1,14 +1,22 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { CircleUserRound } from "lucide-react";
+import { UserOutline } from "@makeplane/propel/icons";
 // plane imports
+import { Field } from "@makeplane/propel/components/field";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
 import type { IUser, TUserProfile } from "@plane/types";
-import { Input } from "@plane/ui";
+
 import { getFileURL } from "@plane/utils";
 // components
 import { DeactivateAccountModal } from "@/components/account/deactivate-account-modal";
@@ -22,6 +30,8 @@ import { handleCoverImageChange } from "@/helpers/cover-image.helper";
 // hooks
 import { useInstance } from "@/hooks/store/use-instance";
 import { useUser, useUserProfile } from "@/hooks/store/user";
+// utils
+import { validatePersonName, validateDisplayName } from "@plane/utils";
 
 type TUserProfileForm = {
   avatar_url: string;
@@ -142,13 +152,32 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
       role: formData.role,
     };
 
-    const updateCurrentUserDetail = updateCurrentUser(userPayload).finally(() => setIsLoading(false));
-    const updateCurrentUserProfile = updateUserProfile(profilePayload).finally(() => setIsLoading(false));
+    const updateCurrentUserDetail = updateCurrentUser(userPayload);
+    const promises: Promise<IUser | TUserProfile | undefined>[] = [updateCurrentUserDetail];
+    if (profilePayload.role !== profile.role) {
+      const updateCurrentUserProfile = updateUserProfile(profilePayload);
+      promises.push(updateCurrentUserProfile);
+    }
 
-    const promises = [updateCurrentUserDetail, updateCurrentUserProfile];
-    const updateUserAndProfile = Promise.all(promises);
+    const updatePromise = Promise.allSettled(promises)
+      .then((results) => {
+        const rejectedResult = results.find((result) => result.status === "rejected") as
+          | PromiseRejectedResult
+          | undefined;
+        if (rejectedResult) {
+          throw rejectedResult.reason ?? new Error("Failed to update profile");
+        }
+        const values = results.map(
+          (result) => (result as PromiseFulfilledResult<IUser | TUserProfile | undefined>).value
+        );
+        if (values.some((v) => v === undefined)) {
+          throw new Error("Failed to update profile");
+        }
+        return values;
+      })
+      .finally(() => setIsLoading(false));
 
-    setPromiseToast(updateUserAndProfile, {
+    setPromiseToast(updatePromise, {
       loading: "Updating...",
       success: {
         title: "Success!",
@@ -159,11 +188,6 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
         message: () => `There was some error in updating your profile. Please try again.`,
       },
     });
-    updateUserAndProfile
-      .then(() => {
-        return;
-      })
-      .catch(() => {});
   };
 
   return (
@@ -201,13 +225,13 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
                   <button type="button" onClick={() => setIsImageUploadModalOpen(true)}>
                     {!userAvatar || userAvatar === "" ? (
                       <div className="h-16 w-16 rounded-md bg-layer-1 p-2">
-                        <CircleUserRound className="h-full w-full text-secondary" />
+                        <UserOutline className="h-full w-full text-secondary" />
                       </div>
                     ) : (
                       <div className="relative h-16 w-16 overflow-hidden">
                         <img
                           src={getFileURL(userAvatar)}
-                          className="absolute left-0 top-0 h-full w-full rounded-lg object-cover"
+                          className="absolute top-0 left-0 h-full w-full rounded-lg object-cover"
                           onClick={() => setIsImageUploadModalOpen(true)}
                           alt={currentUser?.display_name}
                           role="button"
@@ -218,7 +242,7 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
                 </div>
               </div>
             </div>
-            <div className="absolute bottom-3 right-3 flex">
+            <div className="absolute right-3 bottom-3 flex">
               <Controller
                 control={control}
                 name="cover_image_url"
@@ -239,11 +263,11 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
               <div className="item-center flex text-16 font-medium text-secondary">
                 <span>{`${watch("first_name")} ${watch("last_name")}`}</span>
               </div>
-              <span className="text-13 text-tertiary tracking-tight">{watch("email")}</span>
+              <span className="text-13 tracking-tight text-tertiary">{watch("email")}</span>
             </div>
           </div>
           <div className="flex flex-col gap-2">
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-4">
+            <div className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2 xl:grid-cols-3">
               <div className="flex flex-col gap-1">
                 <h4 className="text-13 font-medium text-secondary">
                   {t("first_name")}&nbsp;
@@ -254,21 +278,25 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
                   name="first_name"
                   rules={{
                     required: "Please enter first name",
+                    validate: validatePersonName,
                   }}
                   render={({ field: { value, onChange, ref } }) => (
-                    <Input
-                      id="first_name"
-                      name="first_name"
-                      type="text"
-                      value={value}
-                      onChange={onChange}
-                      ref={ref}
-                      hasError={Boolean(errors.first_name)}
-                      placeholder="Enter your first name"
-                      className={`w-full rounded-md ${errors.first_name ? "border-danger-strong" : ""}`}
-                      maxLength={24}
-                      autoComplete="on"
-                    />
+                    <Field name="first_name" invalid={Boolean(errors.first_name)}>
+                      <InputGroup size="2xl">
+                        <Input
+                          size="2xl"
+                          id="first_name"
+                          name="first_name"
+                          type="text"
+                          value={value}
+                          onChange={onChange}
+                          ref={ref}
+                          placeholder="Enter your first name"
+                          maxLength={50}
+                          autoComplete="on"
+                        />
+                      </InputGroup>
+                    </Field>
                   )}
                 />
                 {errors.first_name && <span className="text-11 text-danger-primary">{errors.first_name.message}</span>}
@@ -278,22 +306,29 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
                 <Controller
                   control={control}
                   name="last_name"
+                  rules={{
+                    validate: validatePersonName,
+                  }}
                   render={({ field: { value, onChange, ref } }) => (
-                    <Input
-                      id="last_name"
-                      name="last_name"
-                      type="text"
-                      value={value}
-                      onChange={onChange}
-                      ref={ref}
-                      hasError={Boolean(errors.last_name)}
-                      placeholder="Enter your last name"
-                      className="w-full rounded-md"
-                      maxLength={24}
-                      autoComplete="on"
-                    />
+                    <Field name="last_name" invalid={Boolean(errors.last_name)}>
+                      <InputGroup size="2xl">
+                        <Input
+                          size="2xl"
+                          id="last_name"
+                          name="last_name"
+                          type="text"
+                          value={value}
+                          onChange={onChange}
+                          ref={ref}
+                          placeholder="Enter your last name"
+                          maxLength={50}
+                          autoComplete="on"
+                        />
+                      </InputGroup>
+                    </Field>
                   )}
                 />
+                {errors.last_name && <span className="text-11 text-danger-primary">{errors.last_name.message}</span>}
               </div>
               <div className="flex flex-col gap-1">
                 <h4 className="text-13 font-medium text-secondary">
@@ -305,28 +340,24 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
                   name="display_name"
                   rules={{
                     required: "Display name is required.",
-                    validate: (value) => {
-                      if (value.trim().length < 1) return "Display name can't be empty.";
-                      if (value.split("  ").length > 1) return "Display name can't have two consecutive spaces.";
-                      if (value.replace(/\s/g, "").length < 1) return "Display name must be at least 1 character long.";
-                      if (value.replace(/\s/g, "").length > 20)
-                        return "Display name must be less than 20 characters long.";
-                      return true;
-                    },
+                    validate: validateDisplayName,
                   }}
                   render={({ field: { value, onChange, ref } }) => (
-                    <Input
-                      id="display_name"
-                      name="display_name"
-                      type="text"
-                      value={value}
-                      onChange={onChange}
-                      ref={ref}
-                      hasError={Boolean(errors?.display_name)}
-                      placeholder="Enter your display name"
-                      className={`w-full ${errors?.display_name ? "border-danger-strong" : ""}`}
-                      maxLength={24}
-                    />
+                    <Field name="display_name" invalid={Boolean(errors?.display_name)}>
+                      <InputGroup size="2xl">
+                        <Input
+                          size="2xl"
+                          id="display_name"
+                          name="display_name"
+                          type="text"
+                          value={value}
+                          onChange={onChange}
+                          ref={ref}
+                          placeholder="Enter your display name"
+                          maxLength={50}
+                        />
+                      </InputGroup>
+                    </Field>
                   )}
                 />
                 {errors?.display_name && (
@@ -345,26 +376,27 @@ export const GeneralProfileSettingsForm = observer(function GeneralProfileSettin
                     required: "Email is required.",
                   }}
                   render={({ field: { value, ref } }) => (
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      value={value}
-                      ref={ref}
-                      hasError={Boolean(errors.email)}
-                      placeholder="Enter your email"
-                      className={`w-full cursor-not-allowed rounded-md !bg-surface-2 ${
-                        errors.email ? "border-danger-strong" : ""
-                      }`}
-                      autoComplete="on"
-                      disabled
-                    />
+                    <Field name="email" invalid={Boolean(errors.email)}>
+                      <InputGroup size="2xl">
+                        <Input
+                          size="2xl"
+                          id="email"
+                          name="email"
+                          type="email"
+                          value={value}
+                          ref={ref}
+                          placeholder="Enter your email"
+                          autoComplete="on"
+                          disabled
+                        />
+                      </InputGroup>
+                    </Field>
                   )}
                 />
                 {isSMTPConfigured && (
                   <button
                     type="button"
-                    className="text-11 underline btn w-fit text-secondary"
+                    className="btn w-fit text-11 text-secondary underline"
                     onClick={() => setIsChangeEmailModalOpen(true)}
                   >
                     {t("account_settings.profile.change_email_modal.title")}

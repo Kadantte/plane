@@ -1,19 +1,25 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
-import { Loader } from "lucide-react";
+import { ChevronDownOutline, LoadingOutline, SearchOutline, TickOutline } from "@makeplane/propel/icons";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { EUserPermissionsLevel, getRandomLabelColor } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { CheckIcon, SearchIcon, ChevronDownIcon } from "@plane/propel/icons";
 // types
 import type { IIssueLabel } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
 // components
 import { ComboDropDown } from "@plane/ui";
+import { sortBySelectedFirst } from "@plane/utils";
 // hooks
 import { useLabel } from "@/hooks/store/use-label";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -112,8 +118,11 @@ export function LabelDropdown(props: ILabelDropdownProps) {
 
   const filteredOptions = useMemo(
     () =>
-      query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase())),
-    [options, query]
+      sortBySelectedFirst(
+        query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase())),
+        value
+      ),
+    [options, query, value]
   );
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
@@ -195,18 +204,18 @@ export function LabelDropdown(props: ILabelDropdownProps) {
       <button
         ref={setReferenceElement}
         type="button"
-        className={`clickable flex w-full h-full items-center justify-center gap-1 text-caption-sm-regular ${fullWidth && "hover:bg-layer-1"} ${
+        className={`clickable flex h-full w-full items-center justify-center gap-1 text-caption-sm-regular ${fullWidth && "hover:bg-layer-1"} ${
           disabled
             ? "cursor-not-allowed text-secondary"
             : value.length <= maxRender
               ? "cursor-pointer"
               : "cursor-pointer hover:bg-layer-1"
-        }  ${buttonClassName}`}
+        } ${buttonClassName}`}
         onClick={handleOnClick}
         disabled={disabled}
       >
         {label}
-        {!hideDropdownArrow && !disabled && <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />}
+        {!hideDropdownArrow && !disabled && <ChevronDownOutline className="h-3 w-3" aria-hidden="true" />}
       </button>
     ),
     [
@@ -232,7 +241,7 @@ export function LabelDropdown(props: ILabelDropdownProps) {
       <ComboDropDown
         as="div"
         ref={dropdownRef}
-        className={`w-auto max-w-full h-full flex-shrink-0 text-left ${className}`}
+        className={`h-full w-auto max-w-full flex-shrink-0 text-left ${className}`}
         value={value}
         onChange={onChange}
         disabled={disabled}
@@ -242,15 +251,15 @@ export function LabelDropdown(props: ILabelDropdownProps) {
         multiple
       >
         {isOpen && (
-          <Combobox.Options className="fixed z-10" static>
+          <Combobox.Options as="ul" className="fixed z-10" static>
             <div
-              className={`z-10 my-1 w-48 h-auto whitespace-nowrap rounded-sm border border-strong bg-surface-1 px-2 py-2.5 text-caption-sm-regular shadow-raised-200 focus:outline-none ${optionsClassName}`}
+              className={`z-10 my-1 h-auto w-48 rounded-sm border border-strong bg-surface-1 px-2 py-2.5 text-caption-sm-regular whitespace-nowrap shadow-raised-200 focus:outline-none ${optionsClassName}`}
               ref={setPopperElement}
               style={styles.popper}
               {...attributes.popper}
             >
               <div className="flex w-full items-center justify-start rounded-sm border border-subtle bg-surface-2 px-2">
-                <SearchIcon className="h-3.5 w-3.5 text-tertiary" />
+                <SearchOutline className="h-3.5 w-3.5 text-tertiary" />
                 <Combobox.Input
                   ref={inputRef}
                   className="w-full bg-transparent px-2 py-1 text-caption-sm-regular text-secondary placeholder:text-placeholder focus:outline-none"
@@ -261,40 +270,43 @@ export function LabelDropdown(props: ILabelDropdownProps) {
                   onKeyDown={searchInputKeyDown}
                 />
               </div>
-              <div className={`mt-2 max-h-48 space-y-1 overflow-y-scroll`}>
+              <div className={`mt-2 max-h-48 overflow-y-scroll`}>
                 {isLoading ? (
                   <p className="text-center text-secondary">{t("common.loading")}</p>
-                ) : filteredOptions.length > 0 ? (
-                  filteredOptions.map((option) => (
-                    <Combobox.Option
-                      key={option.value}
-                      value={option.value}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          e.preventDefault();
-                          e.stopPropagation();
+                ) : filteredOptions && filteredOptions.length > 0 ? (
+                  <ul className="space-y-1">
+                    {filteredOptions.map((option) => (
+                      <Combobox.Option
+                        as="li"
+                        key={option.value}
+                        value={option.value}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            e.stopPropagation();
+                          }
+                        }}
+                        className={({ active, selected }) =>
+                          `flex cursor-pointer items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 select-none hover:bg-layer-1 ${
+                            active ? "bg-layer-1" : ""
+                          } ${selected ? "text-primary" : "text-secondary"}`
                         }
-                      }}
-                      className={({ active, selected }) =>
-                        `flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 hover:bg-layer-1 ${
-                          active ? "bg-layer-1" : ""
-                        } ${selected ? "text-primary" : "text-secondary"}`
-                      }
-                    >
-                      {({ selected }) => (
-                        <>
-                          {option.content}
-                          {selected && (
-                            <div className="flex-shrink-0">
-                              <CheckIcon className={`h-3.5 w-3.5`} />
-                            </div>
-                          )}
-                        </>
-                      )}
-                    </Combobox.Option>
-                  ))
+                      >
+                        {({ selected }) => (
+                          <>
+                            {option.content}
+                            {selected && (
+                              <div className="flex-shrink-0">
+                                <TickOutline className={`h-3.5 w-3.5`} />
+                              </div>
+                            )}
+                          </>
+                        )}
+                      </Combobox.Option>
+                    ))}
+                  </ul>
                 ) : submitting ? (
-                  <Loader className="animate-spin h-3.5 w-3.5" />
+                  <LoadingOutline className="h-3.5 w-3.5 animate-spin" />
                 ) : canCreateLabel ? (
                   <p
                     onClick={() => {
@@ -313,7 +325,7 @@ export function LabelDropdown(props: ILabelDropdownProps) {
                     )}
                   </p>
                 ) : (
-                  <p className="text-left text-secondary ">{t("common.search.no_matching_results")}</p>
+                  <p className="text-left text-secondary">{t("common.search.no_matching_results")}</p>
                 )}
               </div>
             </div>

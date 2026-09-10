@@ -1,9 +1,22 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { Box, PenTool, Rocket, Monitor, RefreshCw } from "lucide-react";
+import { PenTool } from "lucide-react";
+import {
+  CubeOutline,
+  MonitorOutline,
+  RefreshOutline,
+  RocketOutline,
+  TickOutline,
+  ViewsOutline,
+} from "@makeplane/propel/icons";
 // plane imports
 import { Button } from "@plane/propel/button";
-import { CheckIcon, ViewsIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TUserProfile } from "@plane/types";
 import { EOnboardingSteps } from "@plane/types";
@@ -18,13 +31,13 @@ type Props = {
 };
 
 const ROLES = [
-  { id: "product-manager", label: "Product Manager", icon: Box },
-  { id: "engineering-manager", label: "Engineering Manager", icon: ViewsIcon },
+  { id: "product-manager", label: "Product Manager", icon: CubeOutline },
+  { id: "engineering-manager", label: "Engineering Manager", icon: ViewsOutline },
   { id: "designer", label: "Designer", icon: PenTool },
-  { id: "developer", label: "Developer", icon: Monitor },
-  { id: "founder-executive", label: "Founder/Executive", icon: Rocket },
-  { id: "operations-manager", label: "Operations Manager", icon: RefreshCw },
-  { id: "others", label: "Others", icon: Box },
+  { id: "developer", label: "Developer", icon: MonitorOutline },
+  { id: "founder-executive", label: "Founder/Executive", icon: RocketOutline },
+  { id: "operations-manager", label: "Operations Manager", icon: RefreshOutline },
+  { id: "others", label: "Others", icon: CubeOutline },
 ];
 
 const defaultValues = {
@@ -110,10 +123,10 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
                       e.preventDefault();
                       onChange(role.id);
                     }}
-                    className={`w-full px-3 py-2 rounded-lg border transition-all duration-200 flex items-center justify-between ${
+                    className={`flex w-full items-center justify-between rounded-lg border px-3 py-2 transition-all duration-200 ${
                       isSelected
                         ? "border-accent-strong bg-accent-subtle text-accent-primary"
-                        : "border-subtle hover:border-strong text-tertiary"
+                        : "border-subtle text-tertiary hover:border-strong"
                     }`}
                   >
                     <div className="flex items-center space-x-3">
@@ -123,9 +136,9 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
                     {isSelected && (
                       <>
                         <button
-                          className={`size-4 rounded-sm border-2 flex items-center justify-center bg-accent-primary border-blue-500`}
+                          className={`border-blue-500 flex size-4 items-center justify-center rounded-sm border-2 bg-accent-primary`}
                         >
-                          <CheckIcon className="w-3 h-3 text-on-color" />
+                          <TickOutline className="h-3 w-3 text-on-color" />
                         </button>
                       </>
                     )}
@@ -142,7 +155,7 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
         <Button variant="primary" type="submit" className="w-full" size="xl" disabled={isButtonDisabled}>
           Continue
         </Button>
-        <Button variant="ghost" onClick={handleSkip} className="text-tertiary w-full" size="xl">
+        <Button variant="ghost" onClick={handleSkip} className="w-full text-tertiary" size="xl">
           Skip
         </Button>
       </div>

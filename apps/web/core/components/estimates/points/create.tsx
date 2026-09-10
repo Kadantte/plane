@@ -1,12 +1,17 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { FormEvent } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { Info } from "lucide-react";
+import { CloseOutline, InfoOutline, TickOutline } from "@makeplane/propel/icons";
 import { EEstimateSystem, MAX_ESTIMATE_POINT_INPUT_LENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { CheckIcon, CloseIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeErrorObject } from "@plane/types";
 import { Spinner } from "@plane/ui";
 import { cn, isEstimatePointValuesRepeated } from "@plane/utils";
@@ -160,17 +165,11 @@ export const EstimatePointCreate = observer(function EstimatePointCreate(props: 
         handleEstimatePointError(estimateInputValue, t("project_settings.estimates.validation.empty"));
   };
 
-  // derived values
-  const inputProps = {
-    type: "text",
-    maxlength: MAX_ESTIMATE_POINT_INPUT_LENGTH,
-  };
-
   return (
-    <form onSubmit={handleCreate} className="relative flex items-center gap-2 text-14 pr-2.5">
+    <form onSubmit={handleCreate} className="relative flex items-center gap-2 pr-2.5 text-14">
       <div
         className={cn(
-          "relative w-full border rounded-sm flex items-center my-1",
+          "relative my-1 flex w-full items-center rounded-sm border",
           estimatePointError?.message ? `border-danger-strong` : `border-subtle`
         )}
       >
@@ -180,9 +179,9 @@ export const EstimatePointCreate = observer(function EstimatePointCreate(props: 
           value={estimateInputValue}
         />
         {estimatePointError?.message && (
-          <Tooltip tooltipContent={estimatePointError?.message} position="bottom">
-            <div className="flex-shrink-0 w-3.5 h-3.5 overflow-hidden mr-3 relative flex justify-center items-center text-danger-primary">
-              <Info size={14} />
+          <Tooltip label={estimatePointError?.message} layout="stacked" side="bottom">
+            <div className="relative mr-3 flex h-3.5 w-3.5 flex-shrink-0 items-center justify-center overflow-hidden text-danger-primary">
+              <InfoOutline width={14} height={14} />
             </div>
           </Tooltip>
         )}
@@ -191,19 +190,19 @@ export const EstimatePointCreate = observer(function EstimatePointCreate(props: 
       {estimateInputValue && estimateInputValue.length > 0 && (
         <button
           type="submit"
-          className="rounded-xs w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-layer-1 transition-colors cursor-pointer text-success-primary"
+          className="relative flex h-6 w-6 flex-shrink-0 cursor-pointer items-center justify-center rounded-xs text-success-primary transition-colors hover:bg-layer-1"
           disabled={loader}
         >
-          {loader ? <Spinner className="w-4 h-4" /> : <CheckIcon width={14} height={14} />}
+          {loader ? <Spinner className="h-4 w-4" /> : <TickOutline width={14} height={14} />}
         </button>
       )}
       <button
         type="button"
-        className="rounded-xs w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-layer-1 transition-colors cursor-pointer"
+        className="relative flex h-6 w-6 flex-shrink-0 cursor-pointer items-center justify-center rounded-xs transition-colors hover:bg-layer-1"
         onClick={handleClose}
         disabled={loader}
       >
-        <CloseIcon height={14} width={14} className="text-secondary" />
+        <CloseOutline height={14} width={14} className="text-secondary" />
       </button>
     </form>
   );

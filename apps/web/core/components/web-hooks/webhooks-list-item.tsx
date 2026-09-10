@@ -1,8 +1,14 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import Link from "next/link";
 import { useParams } from "next/navigation";
 // Plane imports
 import type { IWebhook } from "@plane/types";
-import { ToggleSwitch } from "@plane/ui";
+import { Switch } from "@makeplane/propel/components/switch";
 // hooks
 import { useWebhook } from "@/hooks/store/use-webhook";
 
@@ -23,14 +29,29 @@ export function WebhooksListItem(props: IWebhookListItem) {
   };
 
   return (
-    <div className="bg-layer-2 border border-subtle px-4 py-3 rounded-lg">
+    <div className="rounded-lg border border-subtle bg-layer-2 px-4 py-3">
       <Link
         href={`/${workspaceSlug}/settings/webhooks/${webhook?.id}`}
         className="flex items-center justify-between gap-4"
       >
-        <h5 className="text-body-sm-medium truncate">{webhook.url}</h5>
-        <div className="shrink-0">
-          <ToggleSwitch value={webhook.is_active} onChange={handleToggle} />
+        <h5 className="truncate text-body-sm-medium">{webhook.url}</h5>
+        <div
+          className="shrink-0"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+          onKeyDown={(e) => e.stopPropagation()}
+          role="presentation"
+        >
+          <Switch
+            size="sm"
+            checked={webhook.is_active}
+            onCheckedChange={() => {
+              void handleToggle();
+            }}
+            aria-label="Toggle webhook"
+          />
         </div>
       </Link>
     </div>

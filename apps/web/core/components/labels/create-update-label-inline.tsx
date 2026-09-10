@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { forwardRef, useEffect } from "react";
 import { observer } from "mobx-react";
 import { TwitterPicker } from "react-color";
@@ -5,12 +11,13 @@ import type { SubmitHandler } from "react-hook-form";
 import { Controller, useForm } from "react-hook-form";
 import { Popover, Transition } from "@headlessui/react";
 // plane imports
-import { getRandomLabelColor, LABEL_COLOR_OPTIONS, PROJECT_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
+import { Field } from "@makeplane/propel/components/field";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { getRandomLabelColor, LABEL_COLOR_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IIssueLabel } from "@plane/types";
-import { Input } from "@plane/ui";
 
 // error codes
 const errorCodes = {
@@ -85,7 +92,7 @@ export const CreateUpdateLabelInline = observer(
 
       await labelOperationsCallbacks
         .createLabel(formData)
-        .then((res) => {
+        .then((_res) => {
           handleClose();
           reset(defaultValues);
         })
@@ -105,7 +112,7 @@ export const CreateUpdateLabelInline = observer(
 
       await labelOperationsCallbacks
         .updateLabel(labelToUpdate.id, formData)
-        .then((res) => {
+        .then((_res) => {
           reset(defaultValues);
           handleClose();
         })
@@ -183,7 +190,7 @@ export const CreateUpdateLabelInline = observer(
                     leaveFrom="opacity-100 translate-y-0"
                     leaveTo="opacity-0 translate-y-1"
                   >
-                    <Popover.Panel className="absolute left-0 top-full z-20 mt-3 w-screen max-w-xs px-2 sm:px-0">
+                    <Popover.Panel className="absolute top-full left-0 z-20 mt-3 w-screen max-w-xs px-2 sm:px-0">
                       <Controller
                         name="color"
                         control={control}
@@ -213,18 +220,21 @@ export const CreateUpdateLabelInline = observer(
                 },
               }}
               render={({ field: { value, onChange, ref } }) => (
-                <Input
-                  id="labelName"
-                  name="name"
-                  type="text"
-                  autoFocus
-                  value={value}
-                  onChange={onChange}
-                  ref={ref}
-                  hasError={Boolean(errors.name)}
-                  placeholder={t("project_settings.labels.label_title")}
-                  className="w-full"
-                />
+                <Field name="name" invalid={Boolean(errors.name)}>
+                  <InputGroup size="2xl">
+                    <Input
+                      size="2xl"
+                      id="labelName"
+                      name="name"
+                      type="text"
+                      autoFocus
+                      value={value}
+                      onChange={onChange}
+                      ref={ref}
+                      placeholder={t("project_settings.labels.label_title")}
+                    />
+                  </InputGroup>
+                </Field>
               )}
             />
           </div>

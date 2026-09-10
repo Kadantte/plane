@@ -1,9 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // lucide icons
-import { Minimize2, Maximize2, Circle } from "lucide-react";
-import { PlusIcon } from "@plane/propel/icons";
+import { Circle } from "lucide-react";
+import { AddOutline, ArrowCollapseOutline, FullScreenOutline } from "@makeplane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue, ISearchIssueResponse, TIssueKanbanFilters, TIssueGroupByOptions } from "@plane/types";
 // ui
@@ -13,10 +19,7 @@ import { ExistingIssuesListModal } from "@/components/core/modals/existing-issue
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 // constants
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
-import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
-// types
-// Plane-web
-import { WorkFlowGroupTree } from "@/plane-web/components/workflow";
+import { CreateUpdateEpicModal } from "@/components/epic-modal";
 
 interface IHeaderGroupByCard {
   sub_group_by: TIssueGroupByOptions | undefined;
@@ -35,7 +38,6 @@ interface IHeaderGroupByCard {
 
 export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHeaderGroupByCard) {
   const {
-    group_by,
     sub_group_by,
     column_id,
     icon,
@@ -120,8 +122,8 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
           }`}
         >
           <div
-            className={`line-clamp-1 inline-block overflow-hidden truncate font-medium text-primary ${
-              verticalAlignPosition ? `vertical-lr max-h-[400px]` : ``
+            className={`line-clamp-1 inline-block truncate overflow-hidden font-medium text-primary ${
+              verticalAlignPosition ? `max-h-[400px] vertical-lr` : ``
             }`}
           >
             {title}
@@ -133,18 +135,12 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
           </div>
         </div>
 
-        <WorkFlowGroupTree groupBy={group_by} groupId={column_id} />
-
         {sub_group_by === null && (
           <button
-            className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-layer-transparent-hover bg-layer-transparent"
+            className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm bg-layer-transparent transition-all hover:bg-layer-transparent-hover"
             onClick={() => handleCollapsedGroups("group_by", column_id)}
           >
-            {verticalAlignPosition ? (
-              <Maximize2 width={14} strokeWidth={2} />
-            ) : (
-              <Minimize2 width={14} strokeWidth={2} />
-            )}
+            {verticalAlignPosition ? <FullScreenOutline width={14} /> : <ArrowCollapseOutline width={14} />}
           </button>
         )}
 
@@ -152,8 +148,8 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
           (renderExistingIssueModal ? (
             <CustomMenu
               customButton={
-                <span className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden transition-all hover:bg-layer-transparent-hover bg-layer-transparent rounded-sm">
-                  <PlusIcon height={14} width={14} strokeWidth={2} />
+                <span className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm bg-layer-transparent transition-all hover:bg-layer-transparent-hover">
+                  <AddOutline height={14} width={14} />
                 </span>
               }
               placement="bottom-end"
@@ -175,12 +171,12 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
             </CustomMenu>
           ) : (
             <button
-              className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer  overflow-hidden transition-all hover:bg-layer-transparent-hover bg-layer-transparent rounded-sm items-center justify-center"
+              className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm bg-layer-transparent transition-all hover:bg-layer-transparent-hover"
               onClick={() => {
                 setIsOpen(true);
               }}
             >
-              <PlusIcon width={14} strokeWidth={2} />
+              <AddOutline width={14} />
             </button>
           ))}
       </div>

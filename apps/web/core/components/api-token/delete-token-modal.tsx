@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { mutate } from "swr";
 // types
@@ -8,7 +14,7 @@ import type { IApiToken } from "@plane/types";
 // ui
 import { AlertModalCore } from "@plane/ui";
 // fetch-keys
-import { API_TOKENS_LIST } from "@/constants/fetch-keys";
+import { API_TOKENS_LIST } from "@plane/constants";
 
 type Props = {
   isOpen: boolean;

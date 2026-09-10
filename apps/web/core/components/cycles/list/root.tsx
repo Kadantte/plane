@@ -1,4 +1,9 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
 import { Disclosure } from "@headlessui/react";
@@ -6,11 +11,11 @@ import { Disclosure } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
 import { ContentWrapper, ERowVariant } from "@plane/ui";
 import { ListLayout } from "@/components/core/list";
-import { ActiveCycleRoot } from "@/plane-web/components/cycles";
 // local imports
 import { CyclePeekOverview } from "../cycle-peek-overview";
 import { CycleListGroupHeader } from "./cycle-list-group-header";
 import { CyclesListMap } from "./cycles-list-map";
+import { ActiveCycleRoot } from "../active-cycle/root";
 
 export interface ICyclesList {
   completedCycleIds: string[];
@@ -40,7 +45,7 @@ export const CyclesList = observer(function CyclesList(props: ICyclesList) {
               <Disclosure as="div" className="flex flex-shrink-0 flex-col" defaultOpen>
                 {({ open }) => (
                   <>
-                    <Disclosure.Button className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-subtle bg-layer-1 cursor-pointer">
+                    <Disclosure.Button className="sticky top-0 z-[2] w-full flex-shrink-0 cursor-pointer border-b border-subtle bg-layer-1">
                       <CycleListGroupHeader
                         title={t("project_cycles.upcoming_cycle.label")}
                         type="upcoming"
@@ -59,7 +64,7 @@ export const CyclesList = observer(function CyclesList(props: ICyclesList) {
             <Disclosure as="div" className="flex flex-shrink-0 flex-col pb-7">
               {({ open }) => (
                 <>
-                  <Disclosure.Button className="sticky top-0 z-2 w-full flex-shrink-0 border-b border-subtle bg-layer-1 cursor-pointer">
+                  <Disclosure.Button className="sticky top-0 z-2 w-full flex-shrink-0 cursor-pointer border-b border-subtle bg-layer-1">
                     <CycleListGroupHeader
                       title={t("project_cycles.completed_cycle.label")}
                       type="completed"

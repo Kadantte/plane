@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Suspense } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -18,7 +24,7 @@ export const ProfileSettingsContent = observer(function ProfileSettingsContent(p
 
   return (
     <ScrollArea
-      className={cn("shrink-0 bg-surface-1 overflow-y-scroll", className)}
+      className={cn("shrink-0 overflow-y-scroll bg-surface-1", className)}
       viewportClassName="px-8 py-9"
       scrollType="hover"
       orientation="vertical"

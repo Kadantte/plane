@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -29,17 +35,16 @@ import { useParseEditorContent } from "@/hooks/use-parse-editor-content";
 // plane web imports
 import type { TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
 import { useRealtimePageEvents } from "@/hooks/use-realtime-page-events";
-import { EditorAIMenu } from "@/plane-web/components/pages";
-import type { TExtendedEditorExtensionsConfig } from "@/plane-web/hooks/pages";
-import type { EPageStoreType } from "@/plane-web/hooks/store";
-import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
+import type { TExtendedEditorExtensionsConfig } from "@/hooks/pages";
+import type { EPageStoreType } from "@/hooks/store";
+import { useEditorFlagging } from "@/hooks/use-editor-flagging";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
 import { PageContentLoader } from "../loaders/page-content-loader";
 import { PageEditorHeaderRoot } from "./header";
 import { PageContentBrowser } from "./summary";
-import { PageEditorTitle } from "./title";
+import { EditorAIMenu } from "./ai/menu";
 
 export type TEditorBodyConfig = {
   fileHandler: TFileHandler;
@@ -53,7 +58,7 @@ export type TEditorBodyHandlers = {
 type Props = {
   config: TEditorBodyConfig;
   editorReady: boolean;
-  editorForwardRef: React.RefObject<EditorRefApi>;
+  editorForwardRef: React.RefObject<EditorRefApi | null>;
   handleEditorReady: (status: boolean) => void;
   handleOpenNavigationPane: () => void;
   handlers: TEditorBodyHandlers;
@@ -183,6 +188,11 @@ export const PageEditorBody = observer(function PageEditorBody(props: Props) {
   );
 
   const realtimeConfig: TRealtimeConfig | undefined = useMemo(() => {
+    // The collaboration URL is derived from window.location, so it can only be
+    // built on the client. There is no socket to connect to during SSR anyway —
+    // the config is recomputed on hydration.
+    if (typeof window === "undefined") return undefined;
+
     // Construct the WebSocket Collaboration URL
     try {
       const LIVE_SERVER_BASE_URL = LIVE_BASE_URL?.trim() || window.location.origin;
@@ -218,7 +228,7 @@ export const PageEditorBody = observer(function PageEditorBody(props: Props) {
   );
 
   const blockWidthClassName = cn(
-    "block bg-transparent w-full max-w-[720px] mx-auto transition-all duration-200 ease-in-out",
+    "mx-auto block w-full max-w-[720px] bg-transparent transition-all duration-200 ease-in-out",
     {
       "max-w-[1152px]": isFullWidth,
     }
@@ -230,24 +240,26 @@ export const PageEditorBody = observer(function PageEditorBody(props: Props) {
 
   return (
     <Row
-      className="relative size-full flex flex-col overflow-y-auto overflow-x-hidden vertical-scrollbar scrollbar-md duration-200"
+      className="vertical-scrollbar relative scrollbar-md flex size-full flex-col overflow-x-hidden overflow-y-auto duration-200"
       variant={ERowVariant.HUGGING}
     >
       <div id="page-content-container" className="relative w-full flex-shrink-0">
         {/* table of content */}
         {!isNavigationPaneOpen && (
-          <div className="page-summary-container absolute h-full right-0 top-[64px] z-[5]">
+          <div className="page-summary-container absolute top-[64px] right-0 z-[5] h-full">
             <div className="sticky top-[72px]">
               <div className="group/page-toc relative px-page-x">
+                {/* oxlint-disable-next-line jsx_a11y/click-events-have-key-events */}
                 <div
-                  className="!cursor-pointer max-h-[50vh] overflow-hidden"
+                  className="max-h-[50vh] !cursor-pointer overflow-hidden"
+                  // oxlint-disable-next-line jsx_a11y/prefer-tag-over-role
                   role="button"
                   aria-label={t("page_navigation_pane.outline_floating_button")}
                   onClick={handleOpenNavigationPane}
                 >
                   <PageContentBrowser className="overflow-y-auto" editorRef={editorRef} showOutline />
                 </div>
-                <div className="absolute top-0 right-0 opacity-0 translate-x-1/2 pointer-events-none group-hover/page-toc:opacity-100 group-hover/page-toc:-translate-x-1/4 group-hover/page-toc:pointer-events-auto transition-all duration-300 w-52 max-h-[70vh] overflow-y-scroll vertical-scrollbar scrollbar-sm whitespace-nowrap bg-surface-2 p-4 rounded-sm">
+                <div className="vertical-scrollbar pointer-events-none absolute top-0 right-0 scrollbar-sm max-h-[70vh] w-52 translate-x-1/2 overflow-y-scroll rounded-sm bg-surface-2 p-4 whitespace-nowrap opacity-0 transition-all duration-300 group-hover/page-toc:pointer-events-auto group-hover/page-toc:-translate-x-1/4 group-hover/page-toc:opacity-100">
                   <PageContentBrowser className="overflow-y-auto" editorRef={editorRef} />
                 </div>
               </div>
@@ -276,6 +288,7 @@ export const PageEditorBody = observer(function PageEditorBody(props: Props) {
                 if (!res) throw new Error("Failed in fetching mentions");
                 return res;
               },
+              // oxlint-disable-next-line no-shadow
               renderComponent: (props) => <EditorMentionsRoot {...props} />,
               getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
             }}

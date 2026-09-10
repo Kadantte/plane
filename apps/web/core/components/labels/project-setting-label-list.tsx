@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -85,7 +91,7 @@ export const ProjectSettingsLabelList = observer(function ProjectSettingsLabelLi
           )
         }
       />
-      <div className="w-full mt-6">
+      <div className="mt-6 w-full">
         {showLabelForm && (
           <div className="my-2 w-full rounded-sm border border-subtle px-3.5 py-2">
             <CreateUpdateLabelInline

@@ -1,7 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { Controller, useForm } from "react-hook-form";
 import { Button } from "@plane/propel/button";
 import { Calendar } from "@plane/propel/calendar";
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseOutline } from "@makeplane/propel/icons";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { renderFormattedPayloadDate, renderFormattedDate, getDate } from "@plane/utils";
 import { DateFilterSelect } from "./date-filter-select";
@@ -55,7 +61,7 @@ export function DateFilterModal({ title, handleClose, isOpen, onSelect }: Props)
               <DateFilterSelect title={title} value={value} onChange={onChange} />
             )}
           />
-          <CloseIcon className="h-4 w-4 cursor-pointer" onClick={handleClose} />
+          <CloseOutline className="h-4 w-4 cursor-pointer" onClick={handleClose} />
         </div>
         <div className="flex w-full justify-between gap-4">
           <Controller

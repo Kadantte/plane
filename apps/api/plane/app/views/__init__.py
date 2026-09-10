@@ -1,3 +1,7 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 from .project.base import (
     ProjectViewSet,
     ProjectIdentifierEndpoint,
@@ -161,7 +165,7 @@ from .module.issue import ModuleIssueViewSet
 
 from .module.archive import ModuleArchiveUnarchiveEndpoint
 
-from .api import ApiTokenEndpoint, ServiceApiTokenEndpoint
+from .api import ApiTokenEndpoint
 
 from .page.base import (
     PageViewSet,

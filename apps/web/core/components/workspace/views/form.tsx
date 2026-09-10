@@ -1,19 +1,26 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
+import { Field } from "@makeplane/propel/components/field";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { TextArea, TextAreaGroup } from "@makeplane/propel/components/text-area";
 import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, IWorkspaceView, IIssueFilters } from "@plane/types";
 import { EViewAccess, EIssueLayoutTypes, EIssuesStoreType } from "@plane/types";
-import { Input, TextArea } from "@plane/ui";
 import { getComputedDisplayFilters, getComputedDisplayProperties } from "@plane/utils";
 // components
 import { DisplayFiltersSelection, FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 import { WorkspaceLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/workspace-level";
 // plane web imports
 import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
-import { AccessController } from "@/plane-web/components/views/access-controller";
 
 type Props = {
   handleFormSubmit: (values: Partial<IWorkspaceView>) => Promise<void>;
@@ -85,17 +92,20 @@ export const WorkspaceViewForm = observer(function WorkspaceViewForm(props: Prop
                 },
               }}
               render={({ field: { value, onChange, ref } }) => (
-                <Input
-                  id="name"
-                  name="name"
-                  type="name"
-                  value={value}
-                  onChange={onChange}
-                  ref={ref}
-                  hasError={Boolean(errors.name)}
-                  placeholder={t("common.title")}
-                  className="w-full text-14"
-                />
+                <Field name="name" invalid={Boolean(errors.name)}>
+                  <InputGroup size="2xl">
+                    <Input
+                      size="2xl"
+                      id="name"
+                      name="name"
+                      type="name"
+                      value={value}
+                      onChange={onChange}
+                      ref={ref}
+                      placeholder={t("common.title")}
+                    />
+                  </InputGroup>
+                </Field>
               )}
             />
             <span className="text-11 text-danger-primary">{errors?.name?.message}</span>
@@ -105,20 +115,25 @@ export const WorkspaceViewForm = observer(function WorkspaceViewForm(props: Prop
               name="description"
               control={control}
               render={({ field: { value, onChange } }) => (
-                <TextArea
-                  id="description"
-                  name="description"
-                  value={value}
-                  placeholder={t("common.description")}
-                  onChange={onChange}
-                  className="w-full text-14 resize-none min-h-24"
-                  hasError={Boolean(errors?.description)}
-                />
+                <Field name="description" invalid={Boolean(errors?.description)}>
+                  <TextAreaGroup resize="none">
+                    <TextArea
+                      size="lg"
+                      surface="field"
+                      autoResize
+                      maxRows={8}
+                      id="description"
+                      name="description"
+                      value={value}
+                      placeholder={t("common.description")}
+                      onChange={onChange}
+                    />
+                  </TextAreaGroup>
+                </Field>
               )}
             />
           </div>
           <div className="flex gap-2">
-            <AccessController control={control} />
             {/* display filters dropdown */}
             <Controller
               control={control}
@@ -179,7 +194,7 @@ export const WorkspaceViewForm = observer(function WorkspaceViewForm(props: Prop
           </div>
         </div>
       </div>
-      <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle">
+      <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle px-5 py-4">
         <Button variant="secondary" onClick={handleClose}>
           {t("common.cancel")}
         </Button>

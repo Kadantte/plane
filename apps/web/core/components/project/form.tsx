@@ -1,17 +1,25 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Info } from "lucide-react";
+import { InfoOutline, LockOutline } from "@makeplane/propel/icons";
+import { Field } from "@makeplane/propel/components/field";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { TextArea, TextAreaGroup } from "@makeplane/propel/components/text-area";
 import { NETWORK_CHOICES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane imports
 import { Button } from "@plane/propel/button";
 import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
-import { LockIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { EFileAssetType } from "@plane/types";
 import type { IProject, IWorkspace } from "@plane/types";
-import { CustomSelect, Input, TextArea } from "@plane/ui";
+import { CustomSelect } from "@plane/ui";
 import { renderFormattedDate } from "@plane/utils";
 import { CoverImage } from "@/components/common/cover-image";
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";
@@ -99,8 +107,9 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
 
           const nameError = errorData.name?.includes("PROJECT_NAME_ALREADY_EXIST");
           const identifierError = errorData?.identifier?.includes("PROJECT_IDENTIFIER_ALREADY_EXIST");
+          const nameSpecialCharError = errorData?.name?.includes("PROJECT_NAME_CANNOT_CONTAIN_SPECIAL_CHARACTERS");
 
-          if (nameError || identifierError) {
+          if (nameError || identifierError || nameSpecialCharError) {
             if (nameError) {
               setToast({
                 type: TOAST_TYPE.ERROR,
@@ -114,6 +123,14 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                 type: TOAST_TYPE.ERROR,
                 title: t("toast.error"),
                 message: t("project_identifier_already_taken"),
+              });
+            }
+
+            if (nameSpecialCharError) {
+              setToast({
+                type: TOAST_TYPE.ERROR,
+                title: t("toast.error"),
+                message: t("project_name_cannot_contain_special_characters"),
               });
             }
           } else {
@@ -189,7 +206,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
       <div className="relative h-44 w-full">
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
         <CoverImage src={coverImage} alt="Project cover image" className="h-44 w-full rounded-md" />
-        <div className="z-5 absolute bottom-4 flex w-full items-end justify-between gap-3 px-4">
+        <div className="absolute bottom-4 z-5 flex w-full items-end justify-between gap-3 px-4">
           <div className="flex flex-grow gap-3 truncate">
             <Controller
               control={control}
@@ -232,7 +249,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
               <span className="flex items-center gap-2 text-13">
                 <span>{watch("identifier")} .</span>
                 <span className="flex items-center gap-1.5">
-                  {project.network === 0 && <LockIcon className="h-2.5 w-2.5 text-on-color " />}
+                  {project.network === 0 && <LockOutline className="h-2.5 w-2.5 text-on-color" />}
                   {currentNetwork && t(currentNetwork?.i18n_label)}
                 </span>
               </span>
@@ -272,18 +289,21 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
               },
             }}
             render={({ field: { value, onChange, ref } }) => (
-              <Input
-                id="name"
-                name="name"
-                type="text"
-                ref={ref}
-                value={value}
-                onChange={onChange}
-                hasError={Boolean(errors.name)}
-                className="rounded-md !p-3 font-medium"
-                placeholder={t("common.project_name")}
-                disabled={!isAdmin}
-              />
+              <Field name="name" invalid={Boolean(errors.name)}>
+                <InputGroup size="2xl">
+                  <Input
+                    size="2xl"
+                    id="name"
+                    name="name"
+                    type="text"
+                    ref={ref}
+                    value={value}
+                    onChange={onChange}
+                    placeholder={t("common.project_name")}
+                    disabled={!isAdmin}
+                  />
+                </InputGroup>
+              </Field>
             )}
           />
           <span className="text-11 text-danger-primary">{errors?.name?.message}</span>
@@ -294,20 +314,25 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
             name="description"
             control={control}
             render={({ field: { value, onChange } }) => (
-              <TextArea
-                id="description"
-                name="description"
-                value={value}
-                placeholder={t("project_description_placeholder")}
-                onChange={onChange}
-                className="min-h-[102px] text-13 font-medium"
-                hasError={Boolean(errors?.description)}
-                disabled={!isAdmin}
-              />
+              <Field name="description" invalid={Boolean(errors?.description)} disabled={!isAdmin}>
+                <TextAreaGroup resize="none">
+                  <TextArea
+                    size="lg"
+                    surface="field"
+                    autoResize
+                    maxRows={8}
+                    id="description"
+                    name="description"
+                    value={value}
+                    placeholder={t("project_description_placeholder")}
+                    onChange={onChange}
+                  />
+                </TextAreaGroup>
+              </Field>
             )}
           />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div className="flex flex-col gap-1">
             <h4 className="text-13">Project ID</h4>
             <div className="relative">
@@ -327,27 +352,31 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                   },
                 }}
                 render={({ field: { value, ref } }) => (
-                  <Input
-                    id="identifier"
-                    name="identifier"
-                    type="text"
-                    value={value}
-                    onChange={handleIdentifierChange}
-                    ref={ref}
-                    hasError={Boolean(errors.identifier)}
-                    placeholder={t("project_settings.general.enter_project_id")}
-                    className="w-full font-medium"
-                    disabled={!isAdmin}
-                  />
+                  <Field name="identifier" invalid={Boolean(errors.identifier)}>
+                    <InputGroup size="2xl">
+                      <Input
+                        size="2xl"
+                        id="identifier"
+                        name="identifier"
+                        type="text"
+                        value={value}
+                        onChange={handleIdentifierChange}
+                        ref={ref}
+                        placeholder={t("project_settings.general.enter_project_id")}
+                        disabled={!isAdmin}
+                      />
+                    </InputGroup>
+                  </Field>
                 )}
               />
               <Tooltip
-                isMobile={isMobile}
-                tooltipContent={t("project_id_tooltip_content")}
-                className="text-13"
-                position="right-start"
+                label={t("project_id_tooltip_content")}
+                layout="stacked"
+                side="right"
+                align="start"
+                disabled={isMobile}
               >
-                <Info className="absolute right-2 top-2.5 h-4 w-4 text-placeholder" />
+                <InfoOutline className="absolute top-2.5 right-2 h-4 w-4 text-placeholder" />
               </Tooltip>
             </div>
             <span className="text-11 text-danger-primary">
@@ -398,7 +427,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
               }}
             />
           </div>
-          <div className="flex flex-col gap-1 col-span-1 sm:col-span-2 xl:col-span-1">
+          <div className="col-span-1 flex flex-col gap-1 sm:col-span-2 xl:col-span-1">
             <h4 className="text-13">{t("common.project_timezone")}</h4>
             <Controller
               name="timezone"
@@ -412,7 +441,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                       onChange(value);
                     }}
                     error={Boolean(errors.timezone)}
-                    buttonClassName="border-none"
+                    buttonClassName="!border-subtle !shadow-none font-medium rounded-md"
                     disabled={!isAdmin}
                   />
                 </>
@@ -426,7 +455,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
             <Button variant="primary" size="lg" type="submit" loading={isLoading} disabled={!isAdmin}>
               {isLoading ? t("updating") : t("common.update_project")}
             </Button>
-            <span className="text-13 italic text-placeholder">
+            <span className="text-13 text-placeholder italic">
               {t("common.created_on")} {renderFormattedDate(project?.created_at)}
             </span>
           </>

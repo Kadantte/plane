@@ -1,4 +1,9 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams, useLocation, Link, useNavigate } from "react-router";
@@ -10,8 +15,6 @@ import type { EUserProjectRoles } from "@plane/types";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
-// plane web imports
-import { useNavigationItems } from "@/plane-web/components/navigations";
 // local imports
 import { LeaveProjectModal } from "../project/leave-project-modal";
 import { PublishProjectModal } from "../project/publish-project/modal";
@@ -24,6 +27,7 @@ import { useActiveTab } from "./use-active-tab";
 import { useProjectActions } from "./use-project-actions";
 import { useResponsiveTabLayout } from "./use-responsive-tab-layout";
 import { useTabPreferences } from "./use-tab-preferences";
+import { useNavigationItems } from "./use-navigation-items";
 
 // Local type definition for navigation items with app-specific fields
 export type TNavigationItem = {
@@ -104,13 +108,18 @@ export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTab
   // Filter and sort navigation items
   const allNavigationItems = navigationItems
     .filter((item) => item.shouldRender)
-    .sort((a, b) => a.sortOrder - b.sortOrder);
+    // oxlint-disable-next-line unicorn/no-array-sort
+    .sort((a: TNavigationItem, b: TNavigationItem) => a.sortOrder - b.sortOrder);
 
   // Split items into two categories:
   // 1. visibleNavigationItems: Items NOT user-hidden (may still overflow due to space)
   // 2. hiddenNavigationItems: Items user explicitly hid (always in overflow with "Show" icon)
-  const visibleNavigationItems = allNavigationItems.filter((item) => !tabPreferences.hiddenTabs.includes(item.key));
-  const hiddenNavigationItems = allNavigationItems.filter((item) => tabPreferences.hiddenTabs.includes(item.key));
+  const visibleNavigationItems = allNavigationItems.filter(
+    (item: TNavigationItem) => !tabPreferences.hiddenTabs.includes(item.key)
+  );
+  const hiddenNavigationItems = allNavigationItems.filter((item: TNavigationItem) =>
+    tabPreferences.hiddenTabs.includes(item.key)
+  );
 
   // Responsive tab layout hook
   const { visibleItems, overflowItems, hasOverflow, itemRefs, containerRef } = useResponsiveTabLayout({
@@ -126,10 +135,11 @@ export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTab
 
     if (isProjectRoot && allNavigationItems.length > 0) {
       // Find the default tab in available items
-      const defaultTabItem = allNavigationItems.find((item) => item.key === tabPreferences.defaultTab);
+      const defaultTabItem = allNavigationItems.find((item: TNavigationItem) => item.key === tabPreferences.defaultTab);
 
       // If default tab exists and is enabled, use it; otherwise fall back to work_items
-      const targetItem = defaultTabItem || allNavigationItems.find((item) => item.key === DEFAULT_TAB_KEY);
+      const targetItem =
+        defaultTabItem || allNavigationItems.find((item: TNavigationItem) => item.key === DEFAULT_TAB_KEY);
 
       if (targetItem) {
         navigate(targetItem.href, { replace: true });
@@ -165,8 +175,8 @@ export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTab
       />
 
       {/* container for the tab navigation */}
-      <div className="flex items-center gap-3 overflow-hidden size-full">
-        <div className="flex items-center gap-2 shrink-0">
+      <div className="flex size-full items-center gap-3 overflow-hidden">
+        <div className="flex shrink-0 items-center gap-2">
           <ProjectHeader workspaceSlug={workspaceSlug} projectId={projectId} />
           <div className="shrink-0">
             <ProjectActionsMenu
@@ -181,9 +191,9 @@ export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTab
           </div>
         </div>
 
-        <div className="shrink-0 h-5 w-1 border-l border-subtle" />
+        <div className="h-5 w-1 shrink-0 border-l border-subtle" />
 
-        <div ref={containerRef} className="flex items-center h-full flex-1 min-w-0 overflow-hidden">
+        <div ref={containerRef} className="flex h-full min-w-0 flex-1 items-center overflow-hidden">
           <TabNavigationList className="h-full">
             {/* Render visible tab items */}
             {visibleItems.map((item) => {
@@ -218,8 +228,8 @@ export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTab
           </TabNavigationList>
 
           {hasOverflow && (
-            <div className="absolute opacity-0 pointer-events-none -z-10">
-              {visibleNavigationItems.map((item) => {
+            <div className="pointer-events-none absolute -z-10 opacity-0">
+              {visibleNavigationItems.map((item: TNavigationItem) => {
                 const itemIsActive = isActive(item);
                 const originalIndex = allNavigationItems.indexOf(item);
                 return (

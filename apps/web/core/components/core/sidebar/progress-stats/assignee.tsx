@@ -1,7 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
+import { Avatar } from "@makeplane/propel/components/avatar";
 import { useTranslation } from "@plane/i18n";
-import { Avatar } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // assets
 import emptyMembers from "@/app/assets/empty-state/empty_members.svg?url";
@@ -37,7 +43,12 @@ export const AssigneeStatComponent = observer(function AssigneeStatComponent(pro
                 key={assignee?.id}
                 title={
                   <div className="flex items-center gap-2">
-                    <Avatar name={assignee?.title ?? undefined} src={getFileURL(assignee?.avatar_url ?? "")} />
+                    <Avatar
+                      alt={assignee?.title ?? undefined}
+                      fallback={assignee?.title?.[0]?.toUpperCase()}
+                      src={getFileURL(assignee?.avatar_url ?? "")}
+                      size="xs"
+                    />
                     <span>{assignee?.title ?? ""}</span>
                   </div>
                 }
@@ -56,7 +67,7 @@ export const AssigneeStatComponent = observer(function AssigneeStatComponent(pro
                 title={
                   <div className="flex items-center gap-2">
                     <div className="h-4 w-4 rounded-full border-2 border-subtle bg-layer-1">
-                      <img src={userImage} className="rounded-full w-full h-full object-cover" alt="User" />
+                      <img src={userImage} className="h-full w-full rounded-full object-cover" alt="User" />
                     </div>
                     <span>{t("no_assignee")}</span>
                   </div>

@@ -1,11 +1,17 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useMemo, useState } from "react";
 import { sortBy } from "lodash-es";
 import { observer } from "mobx-react";
 // plane types
+import { Avatar } from "@makeplane/propel/components/avatar";
 import type { TInboxIssueFilterMemberKeys } from "@plane/types";
 // plane ui
-import { Avatar, Loader } from "@plane/ui";
+import { Loader } from "@plane/ui";
 // components
 import { getFileURL } from "@plane/utils";
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
@@ -81,10 +87,10 @@ export const FilterMember = observer(function FilterMember(props: Props) {
                       onClick={() => handleInboxIssueFilters(filterKey, handleFilterValue(member.id))}
                       icon={
                         <Avatar
-                          name={member.display_name}
+                          alt={member.display_name}
+                          fallback={member.display_name?.[0]?.toUpperCase()}
                           src={getFileURL(member.avatar_url)}
-                          showTooltip={false}
-                          size="md"
+                          size="xs"
                         />
                       }
                       title={currentUser?.id === member.id ? "You" : member?.display_name}
@@ -102,7 +108,7 @@ export const FilterMember = observer(function FilterMember(props: Props) {
                 )}
               </>
             ) : (
-              <p className="text-11 italic text-placeholder">No matches found</p>
+              <p className="text-11 text-placeholder italic">No matches found</p>
             )
           ) : (
             <Loader className="space-y-2">

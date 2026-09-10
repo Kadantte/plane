@@ -1,6 +1,12 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect } from "react";
 import { observer } from "mobx-react";
-import { Layers } from "lucide-react";
+import { WorkItemsOutline } from "@makeplane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
@@ -45,7 +51,7 @@ export const ReadonlyModule = observer(function ReadonlyModule(props: TReadonlyM
   if (modules.length === 0) {
     return (
       <div className={cn("flex items-center gap-1 text-body-xs-regular", className)}>
-        {!hideIcon && <Layers className="size-4 flex-shrink-0" />}
+        {!hideIcon && <WorkItemsOutline className="size-4 flex-shrink-0" />}
         <span className="flex-grow truncate">{placeholder ?? t("common.none")}</span>
       </div>
     );
@@ -57,7 +63,7 @@ export const ReadonlyModule = observer(function ReadonlyModule(props: TReadonlyM
 
     return (
       <div className={cn("flex items-center gap-1 text-body-xs-regular", className)}>
-        {!hideIcon && <Layers className="size-4 flex-shrink-0" />}
+        {!hideIcon && <WorkItemsOutline className="size-4 flex-shrink-0" />}
         <span className="flex-grow truncate">{displayText}</span>
       </div>
     );
@@ -66,7 +72,7 @@ export const ReadonlyModule = observer(function ReadonlyModule(props: TReadonlyM
   const moduleItem = modules[0];
   return (
     <div className={cn("flex items-center gap-2 text-body-xs-regular", className)}>
-      {!hideIcon && <Layers className="size-4 flex-shrink-0" />}
+      {!hideIcon && <WorkItemsOutline className="size-4 flex-shrink-0" />}
       <span className="flex-grow truncate">{moduleItem?.name}</span>
     </div>
   );

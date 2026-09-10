@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -10,7 +16,6 @@ type TGroupList = {
   groupedStates: Record<string, IState[]>;
   stateOperationsCallbacks: TStateOperationsCallbacks;
   isEditable: boolean;
-  shouldTrackEvents: boolean;
   groupListClassName?: string;
   groupItemClassName?: string;
   stateItemClassName?: string;
@@ -21,7 +26,6 @@ export const GroupList = observer(function GroupList(props: TGroupList) {
     groupedStates,
     stateOperationsCallbacks,
     isEditable,
-    shouldTrackEvents,
     groupListClassName,
     groupItemClassName,
     stateItemClassName,
@@ -66,7 +70,6 @@ export const GroupList = observer(function GroupList(props: TGroupList) {
             groupsExpanded={groupsExpanded}
             stateOperationsCallbacks={stateOperationsCallbacks}
             isEditable={isEditable}
-            shouldTrackEvents={shouldTrackEvents}
             handleGroupCollapse={handleGroupCollapse}
             handleExpand={handleExpand}
             groupItemClassName={groupItemClassName}

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
@@ -8,16 +14,23 @@ import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
 import { createRoot } from "react-dom/client";
 import scrollIntoView from "smooth-scroll-into-view-if-needed";
-import { Settings, Share2, LogOut, MoreHorizontal } from "lucide-react";
+import {
+  ArchiveOutline,
+  ChevronRightOutline,
+  LinkOutline,
+  LogOutOutline,
+  MoreHorizontalOutline,
+  SettingsOutline,
+  ShareAltOutline,
+} from "@makeplane/propel/icons";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { LinkIcon, ArchiveIcon, ChevronRightIcon } from "@plane/propel/icons";
 import { IconButton } from "@plane/propel/icon-button";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { CustomMenu, DropIndicator, DragHandle, ControlLink } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
@@ -32,11 +45,10 @@ import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useProjectNavigationPreferences } from "@/hooks/use-navigation-preferences";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web imports
-import { useNavigationItems } from "@/plane-web/components/navigations";
-import { ProjectNavigationRoot } from "@/plane-web/components/sidebar";
 // local imports
 import { HIGHLIGHT_CLASS, highlightIssueOnDrop } from "../../issues/issue-layouts/utils";
+import { ProjectNavigation } from "./project-navigation";
+import { useNavigationItems } from "@/components/navigation/use-navigation-items";
 
 type Props = {
   projectId: string;
@@ -154,8 +166,8 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
             render: ({ container }) => {
               const root = createRoot(container);
               root.render(
-                <div className="rounded-sm flex items-center bg-surface-1 text-13 p-1 pr-2">
-                  <div className="size-4 grid place-items-center flex-shrink-0">
+                <div className="flex items-center rounded-sm bg-surface-1 p-1 pr-2 text-13">
+                  <div className="grid size-4 flex-shrink-0 place-items-center">
                     {project && <Logo logo={project?.logo_props} />}
                   </div>
                   <p className="truncate text-secondary">{project?.name}</p>
@@ -171,6 +183,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
         element,
         canDrop: ({ source }) =>
           !disableDrop && source?.data?.id !== projectId && source?.data?.dragInstanceId === "PROJECTS",
+        // oxlint-disable-next-line no-shadow
         getData: ({ input, element }) => {
           const data = { id: projectId };
 
@@ -216,6 +229,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
         },
       })
     );
+    // oxlint-disable-next-line eslint-plugin-react-hooks/exhaustive-deps
   }, [projectId, isLastChild, projectListType, handleOnProjectDrop]);
 
   useEffect(() => {
@@ -254,6 +268,8 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
 
   if (!project) return null;
 
+  const isAccordionMode = projectPreferences.navigationMode === "ACCORDION";
+
   const handleItemClick = () => {
     if (projectPreferences.navigationMode === "ACCORDION") {
       setIsProjectListOpen(!isProjectListOpen);
@@ -261,12 +277,10 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
       router.push(defaultTabUrl);
     }
     // close the extended sidebar if it is open
-    if (isExtendedProjectSidebarOpened) {
+    if (isExtendedProjectSidebarOpened && !isAccordionMode) {
       toggleExtendedProjectSidebar(false);
     }
   };
-
-  const isAccordionMode = projectPreferences.navigationMode === "ACCORDION";
 
   const shouldHighlightProject = URLProjectId === project?.id && projectPreferences.navigationMode !== "ACCORDION";
 
@@ -285,7 +299,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
           <DropIndicator classNames="absolute top-0" isVisible={instruction === "DRAG_OVER"} />
           <div
             className={cn(
-              "group/project-item relative w-full px-2 py-1.5 flex items-center rounded-md text-primary hover:bg-layer-transparent-hover",
+              "group/project-item relative flex w-full items-center rounded-md px-2 py-1.5 text-primary hover:bg-layer-transparent-hover",
               {
                 "bg-surface-2": isMenuActive,
                 "bg-layer-transparent-active": shouldHighlightProject,
@@ -295,17 +309,14 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
           >
             {!disableDrag && (
               <Tooltip
-                isMobile={isMobile}
-                tooltipContent={
-                  project.sort_order === null ? t("join_the_project_to_rearrange") : t("drag_to_rearrange")
-                }
-                position="top-end"
-                disabled={isDragging}
+                label={project.sort_order === null ? t("join_the_project_to_rearrange") : t("drag_to_rearrange")}
+                align="end"
+                disabled={isDragging || isMobile}
               >
                 <button
                   type="button"
                   className={cn(
-                    "hidden group-hover/project-item:flex items-center justify-center absolute top-1/2 -left-3 -translate-y-1/2 rounded-sm text-placeholder cursor-grab",
+                    "absolute top-1/2 -left-3 hidden -translate-y-1/2 cursor-grab items-center justify-center rounded-sm text-placeholder group-hover/project-item:flex",
                     {
                       "cursor-not-allowed opacity-60": project.sort_order === null,
                       "cursor-grabbing": isDragging,
@@ -319,26 +330,26 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
               </Tooltip>
             )}
             <>
-              <ControlLink href={defaultTabUrl} className="flex-grow flex truncate" onClick={handleItemClick}>
+              <ControlLink href={defaultTabUrl} className="flex flex-grow truncate" onClick={handleItemClick}>
                 {isAccordionMode ? (
                   <Disclosure.Button
                     as="button"
                     type="button"
-                    className={cn("flex-grow flex items-center gap-1.5 text-left select-none w-full", {})}
+                    className={cn("flex w-full flex-grow items-center gap-1.5 text-left select-none", {})}
                     aria-label={
                       isProjectListOpen
                         ? t("aria_labels.projects_sidebar.close_project_menu")
                         : t("aria_labels.projects_sidebar.open_project_menu")
                     }
                   >
-                    <div className="size-4 grid place-items-center flex-shrink-0">
+                    <div className="grid size-4 flex-shrink-0 place-items-center">
                       <Logo logo={project.logo_props} size={16} />
                     </div>
                     <p className="truncate text-13 font-medium text-secondary">{project.name}</p>
                   </Disclosure.Button>
                 ) : (
-                  <div className="flex-grow flex items-center gap-1.5 text-left select-none w-full">
-                    <div className="size-4 grid place-items-center flex-shrink-0">
+                  <div className="flex w-full flex-grow items-center gap-1.5 text-left select-none">
+                    <div className="grid size-4 flex-shrink-0 place-items-center">
                       <Logo logo={project.logo_props} size={16} />
                     </div>
                     <p className="truncate text-13 font-medium text-secondary">{project.name}</p>
@@ -352,15 +363,15 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                       ref={actionSectionRef}
                       variant="ghost"
                       size="sm"
-                      icon={MoreHorizontal}
+                      icon={MoreHorizontalOutline}
                       onClick={() => setIsMenuActive(!isMenuActive)}
                       className="text-placeholder"
                     />
                   }
                   className={cn(
-                    "opacity-0 pointer-events-none flex-shrink-0 group-hover/project-item:opacity-100 group-hover/project-item:pointer-events-auto",
+                    "pointer-events-none flex-shrink-0 opacity-0 group-hover/project-item:pointer-events-auto group-hover/project-item:opacity-100",
                     {
-                      "opacity-100 pointer-events-auto": isMenuActive,
+                      "pointer-events-auto opacity-100": isMenuActive,
                     }
                   )}
                   customButtonClassName="grid place-items-center"
@@ -391,7 +402,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                     <CustomMenu.MenuItem onClick={() => setPublishModal(true)}>
                       <div className="relative flex flex-shrink-0 items-center justify-start gap-2">
                         <div className="flex h-4 w-4 cursor-pointer items-center justify-center rounded-sm text-secondary transition-all duration-300 hover:bg-layer-1">
-                          <Share2 className="h-3.5 w-3.5 stroke-[1.5]" />
+                          <ShareAltOutline className="h-3.5 w-3.5 stroke-[1.5]" />
                         </div>
                         <div>{t("publish_project")}</div>
                       </div>
@@ -399,7 +410,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                   )}
                   <CustomMenu.MenuItem onClick={handleCopyText}>
                     <span className="flex items-center justify-start gap-2">
-                      <LinkIcon className="h-3.5 w-3.5 stroke-[1.5]" />
+                      <LinkOutline className="h-3.5 w-3.5 stroke-[1.5]" />
                       <span>{t("copy_link")}</span>
                     </span>
                   </CustomMenu.MenuItem>
@@ -409,8 +420,8 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                         router.push(`/${workspaceSlug}/projects/${project?.id}/archives/issues`);
                       }}
                     >
-                      <div className="flex items-center justify-start gap-2 cursor-pointer">
-                        <ArchiveIcon className="h-3.5 w-3.5 stroke-[1.5]" />
+                      <div className="flex cursor-pointer items-center justify-start gap-2">
+                        <ArchiveOutline className="h-3.5 w-3.5 stroke-[1.5]" />
                         <span>{t("archives")}</span>
                       </div>
                     </CustomMenu.MenuItem>
@@ -420,19 +431,16 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                       router.push(`/${workspaceSlug}/settings/projects/${project?.id}`);
                     }}
                   >
-                    <div className="flex items-center justify-start gap-2 cursor-pointer">
-                      <Settings className="h-3.5 w-3.5 stroke-[1.5]" />
+                    <div className="flex cursor-pointer items-center justify-start gap-2">
+                      <SettingsOutline className="h-3.5 w-3.5 stroke-[1.5]" />
                       <span>{t("settings")}</span>
                     </div>
                   </CustomMenu.MenuItem>
                   {/* leave project */}
                   {!isAuthorized && (
-                    <CustomMenu.MenuItem
-                      onClick={handleLeaveProject}
-                      data-ph-element={MEMBER_TRACKER_ELEMENTS.SIDEBAR_PROJECT_QUICK_ACTIONS}
-                    >
+                    <CustomMenu.MenuItem onClick={handleLeaveProject}>
                       <div className="flex items-center justify-start gap-2">
-                        <LogOut className="h-3.5 w-3.5 stroke-[1.5]" />
+                        <LogOutOutline className="h-3.5 w-3.5 stroke-[1.5]" />
                         <span>{t("leave_project")}</span>
                       </div>
                     </CustomMenu.MenuItem>
@@ -442,9 +450,9 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                   <IconButton
                     variant="ghost"
                     size="sm"
-                    icon={ChevronRightIcon}
+                    icon={ChevronRightOutline}
                     onClick={() => setIsProjectListOpen(!isProjectListOpen)}
-                    className={cn("hidden group-hover/project-item:inline-flex text-placeholder", {
+                    className={cn("hidden text-placeholder group-hover/project-item:inline-flex", {
                       "inline-flex": isMenuActive,
                     })}
                     iconClassName={cn("transition-transform", {
@@ -462,6 +470,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
           </div>
           {isAccordionMode && (
             <Transition
+              as="div"
               show={isProjectListOpen}
               enter="transition duration-100 ease-out"
               enterFrom="transform scale-95 opacity-0"
@@ -471,9 +480,9 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
               leaveTo="transform scale-95 opacity-0"
             >
               {isProjectListOpen && (
-                <Disclosure.Panel as="div" className="relative flex flex-col gap-0.5 mt-1 pl-6 mb-1.5">
-                  <div className="absolute left-[15px] top-0 bottom-1 w-[1px] bg-layer-3" />
-                  <ProjectNavigationRoot workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
+                <Disclosure.Panel as="div" className="relative mt-1 mb-1.5 flex flex-col gap-0.5 pl-6">
+                  <div className="absolute top-0 bottom-1 left-[15px] w-[1px] bg-layer-3" />
+                  <ProjectNavigation workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
                 </Disclosure.Panel>
               )}
             </Transition>

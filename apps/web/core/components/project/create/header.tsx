@@ -1,10 +1,16 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import { ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseOutline } from "@makeplane/propel/icons";
 // plane types
 import type { IProject } from "@plane/types";
 // plane ui
@@ -12,8 +18,6 @@ import { getTabIndex } from "@plane/utils";
 // components
 import { CoverImage } from "@/components/common/cover-image";
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";
-// plane web imports
-import { ProjectTemplateSelect } from "@/plane-web/components/projects/create/template-select";
 
 type Props = {
   handleClose: () => void;
@@ -25,14 +29,7 @@ type Props = {
 };
 
 function ProjectCreateHeader(props: Props) {
-  const {
-    handleClose,
-    isMobile = false,
-    handleFormOnChange,
-    isClosable = true,
-    handleTemplateSelect,
-    showActionButtons = true,
-  } = props;
+  const { handleClose, isMobile = false, handleFormOnChange, isClosable = true } = props;
   const { watch, control, setValue } = useFormContext<IProject>();
   const { t } = useTranslation();
   // derived values
@@ -46,21 +43,16 @@ function ProjectCreateHeader(props: Props) {
       <CoverImage
         src={coverImage}
         alt={t("project_cover_image_alt")}
-        className="absolute left-0 top-0 h-full w-full rounded-lg"
+        className="absolute top-0 left-0 h-full w-full rounded-lg"
       />
-      {showActionButtons && (
-        <div className="absolute left-2.5 top-2.5">
-          <ProjectTemplateSelect onClick={handleTemplateSelect} />
-        </div>
-      )}
       {isClosable && (
-        <div className="absolute right-2 top-2 p-2">
+        <div className="absolute top-2 right-2 p-2">
           <button type="button" onClick={handleClose} tabIndex={getIndex("close")}>
-            <CloseIcon className="h-5 w-5 text-on-color" />
+            <CloseOutline className="h-5 w-5 text-on-color" />
           </button>
         </div>
       )}
-      <div className="absolute bottom-2 right-2">
+      <div className="absolute right-2 bottom-2">
         <Controller
           name="cover_image_url"
           control={control}
@@ -90,7 +82,7 @@ function ProjectCreateHeader(props: Props) {
               className="flex items-center justify-center"
               buttonClassName="flex items-center justify-center"
               label={
-                <span className="grid h-11 w-11 place-items-center bg-layer-2 rounded-md border border-subtle">
+                <span className="grid h-11 w-11 place-items-center rounded-md border border-subtle bg-layer-2">
                   <Logo logo={value} size={20} />
                 </span>
               }

@@ -1,10 +1,17 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback } from "react";
 import { useParams } from "next/navigation";
-import { Star, StarOff, Users } from "lucide-react";
+import { StarOff } from "lucide-react";
+import { LinkOutline, MembersOutline, StarOutline } from "@makeplane/propel/icons";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { LinkIcon, ModuleStatusIcon } from "@plane/propel/icons";
+import { ModuleStatusIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { IModule, TModuleStatus } from "@plane/types";
 import { EUserPermissions } from "@plane/types";
@@ -97,7 +104,7 @@ export const usePowerKModuleContextBasedActions = (): TPowerKCommandConfig[] => 
     {
       id: "add_remove_module_members",
       i18n_title: "power_k.contextual_actions.module.add_remove_members",
-      icon: Users,
+      icon: MembersOutline,
       group: "contextual",
       contextType: "module",
       type: "change-page",
@@ -114,7 +121,7 @@ export const usePowerKModuleContextBasedActions = (): TPowerKCommandConfig[] => 
     {
       id: "change_module_status",
       i18n_title: "power_k.contextual_actions.module.change_status",
-      iconNode: <ModuleStatusIcon status="backlog" className="shrink-0 size-3.5" />,
+      iconNode: <ModuleStatusIcon status="backlog" className="size-3.5 shrink-0" />,
       group: "contextual",
       contextType: "module",
       type: "change-page",
@@ -133,7 +140,7 @@ export const usePowerKModuleContextBasedActions = (): TPowerKCommandConfig[] => 
       i18n_title: isFavorite
         ? "power_k.contextual_actions.module.remove_from_favorites"
         : "power_k.contextual_actions.module.add_to_favorites",
-      icon: isFavorite ? StarOff : Star,
+      icon: isFavorite ? StarOff : StarOutline,
       group: "contextual",
       contextType: "module",
       type: "action",
@@ -146,7 +153,7 @@ export const usePowerKModuleContextBasedActions = (): TPowerKCommandConfig[] => 
     {
       id: "copy_module_url",
       i18n_title: "power_k.contextual_actions.module.copy_url",
-      icon: LinkIcon,
+      icon: LinkOutline,
       group: "contextual",
       contextType: "module",
       type: "action",

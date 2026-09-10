@@ -1,4 +1,10 @@
-import { Tooltip } from "@plane/propel/tooltip";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import { generateWorkItemLink } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -28,8 +34,9 @@ export function IssueLink(props: TIssueLink) {
   });
   return (
     <Tooltip
-      tooltipContent={activity.issue_detail ? activity.issue_detail.name : "This work item has been deleted"}
-      isMobile={isMobile}
+      label={activity.issue_detail ? activity.issue_detail.name : "This work item has been deleted"}
+      layout="stacked"
+      disabled={isMobile}
     >
       <a
         aria-disabled={activity.issue === null}

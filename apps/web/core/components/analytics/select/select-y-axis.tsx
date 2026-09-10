@@ -1,7 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { EEstimateSystem } from "@plane/constants";
-import { ProjectIcon } from "@plane/propel/icons";
+import { ProjectsOutline } from "@makeplane/propel/icons";
 import type { ChartYAxisMetric } from "@plane/types";
 // plane package imports
 import { CustomSelect } from "@plane/ui";
@@ -42,7 +48,7 @@ export const SelectYAxis = observer(function SelectYAxis({ value, onChange, hidd
       value={value}
       label={
         <div className="flex items-center gap-2">
-          <ProjectIcon className="h-3 w-3" />
+          <ProjectsOutline className="h-3 w-3" />
           <span>{options.find((v) => v.value === value)?.label ?? "Add Metric"}</span>
         </div>
       }

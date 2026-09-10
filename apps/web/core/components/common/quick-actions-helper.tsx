@@ -1,8 +1,16 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+// @types/react 19 removed the global JSX namespace; it is imported from react now.
+import type { JSX } from "react";
 // types
 import type { ICycle, IModule, IProjectView, IWorkspaceView } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 // hooks
-import { useQuickActionsFactory } from "@/plane-web/components/common/quick-actions-factory";
+import { useQuickActionsFactory } from "@/components/common/quick-actions-factory";
 
 // Types
 interface UseCycleMenuItemsProps {

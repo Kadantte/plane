@@ -1,15 +1,22 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { Ref } from "react";
 import React, { useEffect, useState, useRef, Fragment } from "react";
 import type { Placement } from "@popperjs/core";
 import { Controller, useForm } from "react-hook-form"; // services
 import { usePopper } from "react-popper";
-import { AlertCircle } from "lucide-react";
+import { WarningCircleOutline } from "@makeplane/propel/icons";
 import { Popover, Transition } from "@headlessui/react";
 // plane imports
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import type { EditorRefApi } from "@plane/editor";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Input } from "@plane/ui";
+
 // components
 import { RichTextEditor } from "@/components/editor/rich-text";
 // services
@@ -208,7 +215,7 @@ export function GptAssistantPopover(props: Props) {
       >
         <Popover.Panel
           as="div"
-          className={`fixed z-10 flex w-full min-w-[50rem] max-w-full flex-col space-y-4 overflow-hidden rounded-[10px] border border-subtle bg-surface-1 p-4 shadow ${className}`}
+          className={`shadow fixed z-10 flex w-full max-w-full min-w-[50rem] flex-col space-y-4 overflow-hidden rounded-[10px] border border-subtle bg-surface-1 p-4 ${className}`}
           ref={setPopperElement as Ref<HTMLDivElement>}
           style={styles.popper}
           {...attributes.popper}
@@ -254,28 +261,30 @@ export function GptAssistantPopover(props: Props) {
             control={control}
             name="task"
             render={({ field: { value, onChange, ref } }) => (
-              <Input
-                id="task"
-                name="task"
-                type="text"
-                value={value}
-                onChange={onChange}
-                ref={ref}
-                placeholder={`${
-                  prompt && prompt !== "" ? "Tell AI what action to perform on this content..." : "Ask AI anything..."
-                }`}
-                className="w-full"
-                autoFocus
-              />
+              <InputGroup size="2xl">
+                <Input
+                  size="2xl"
+                  id="task"
+                  name="task"
+                  type="text"
+                  value={value}
+                  onChange={onChange}
+                  ref={ref}
+                  placeholder={`${
+                    prompt && prompt !== "" ? "Tell AI what action to perform on this content..." : "Ask AI anything..."
+                  }`}
+                  autoFocus
+                />
+              </InputGroup>
             )}
           />
-          <div className="flex gap-2 justify-between">
+          <div className="flex justify-between gap-2">
             {responseActionButton ? (
               <>{responseActionButton}</>
             ) : (
               <>
                 <div className="flex items-start justify-center gap-2 text-13 text-accent-primary">
-                  <AlertCircle className="h-4 w-4" />
+                  <WarningCircleOutline className="h-4 w-4" />
                   <p>By using this feature, you consent to sharing the message with a 3rd party service. </p>
                 </div>
               </>

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useState } from "react";
 import { mutate } from "swr";
 // types
@@ -44,7 +50,7 @@ export function CycleCreateUpdateModal(props: CycleModalProps) {
 
     const selectedProjectId = payload.project_id ?? projectId.toString();
     await createCycle(workspaceSlug, selectedProjectId, payload)
-      .then((res) => {
+      .then((_res) => {
         // mutate when the current cycle creation is active
         if (payload.start_date && payload.end_date) {
           const currentDate = new Date();
@@ -75,7 +81,7 @@ export function CycleCreateUpdateModal(props: CycleModalProps) {
 
     const selectedProjectId = payload.project_id ?? projectId.toString();
     await updateCycleDetails(workspaceSlug, selectedProjectId, cycleId, payload)
-      .then((res) => {
+      .then((_res) => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",

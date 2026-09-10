@@ -1,7 +1,14 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // plane types
-import { PriorityIcon, StateGroupIcon, WorkItemsIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+import { PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
+import { WorkItemsOutline } from "@makeplane/propel/icons";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TActivityEntityData, TIssueEntityData } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 // plane ui
@@ -9,17 +16,15 @@ import { calculateTimeAgo, generateWorkItemLink } from "@plane/utils";
 // components
 import { ListItem } from "@/components/core/list";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
-// helpers
+import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
-// plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 
 type BlockProps = {
   activity: TActivityEntityData;
-  ref: React.RefObject<HTMLDivElement>;
+  ref: React.RefObject<HTMLDivElement | null>;
   workspaceSlug: string;
 };
 export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
@@ -65,7 +70,7 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
       itemLink={workItemLink}
       title={issueDetails?.name}
       prependTitleElement={
-        <div className="flex-shrink-0 flex items-center gap-2">
+        <div className="flex flex-shrink-0 items-center gap-2">
           {issueDetails.type ? (
             <IssueIdentifier
               size="lg"
@@ -76,11 +81,11 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
               variant="tertiary"
             />
           ) : (
-            <div className="flex gap-2 items-center justify-center">
-              <div className="flex-shrink-0 grid place-items-center rounded-sm bg-layer-2 size-8">
-                <WorkItemsIcon className="size-4 text-tertiary" />
+            <div className="flex items-center justify-center gap-2">
+              <div className="grid size-8 flex-shrink-0 place-items-center rounded-sm bg-layer-2">
+                <WorkItemsOutline className="size-4 text-tertiary" />
               </div>
-              <div className="font-medium text-placeholder text-13 whitespace-nowrap">
+              <div className="text-13 font-medium whitespace-nowrap text-placeholder">
                 {issueDetails?.project_identifier}-{issueDetails?.sequence_id}
               </div>
             </div>
@@ -88,23 +93,23 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
         </div>
       }
       appendTitleElement={
-        <div className="flex-shrink-0 font-medium text-11 text-placeholder">
+        <div className="flex-shrink-0 text-11 font-medium text-placeholder">
           {calculateTimeAgo(activity.visited_at)}
         </div>
       }
       quickActionElement={
         <div className="flex gap-4">
-          <Tooltip tooltipHeading="State" tooltipContent={state?.name ?? "State"}>
+          <Tooltip label={`State: ${state?.name ?? "State"}`} layout="stacked">
             <div>
               <StateGroupIcon
                 stateGroup={state?.group ?? "backlog"}
                 color={state?.color}
-                className="h-4 w-4 my-auto"
+                className="my-auto h-4 w-4"
                 percentage={state?.order}
               />
             </div>
           </Tooltip>
-          <Tooltip tooltipHeading="Priority" tooltipContent={issueDetails?.priority ?? "Priority"}>
+          <Tooltip label={`Priority: ${issueDetails?.priority ?? "Priority"}`}>
             <div>
               <PriorityIcon priority={issueDetails?.priority} withContainer size={12} />
             </div>
@@ -130,7 +135,7 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
       }
       parentRef={ref}
       disableLink={false}
-      className="my-auto !px-2 border-none py-3"
+      className="my-auto border-none !px-2 py-3"
       itemClassName="my-auto"
       onItemClick={handlePeekOverview}
       preventDefaultProgress

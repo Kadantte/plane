@@ -1,8 +1,13 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { ChevronRightIcon } from "@plane/propel/icons";
+import { ChevronRightOutline } from "@makeplane/propel/icons";
 // icons
 import { Row } from "@plane/ui";
 // helpers
@@ -25,18 +30,17 @@ export const CycleListProjectGroupHeader = observer(function CycleListProjectGro
 
   if (!project) return null;
   return (
-    <Row className="flex items-center gap-2 flex-shrink-0 py-2.5">
-      <ChevronRightIcon
-        className={cn("h-4 w-4 text-tertiary duration-300 ", {
+    <Row className="flex flex-shrink-0 items-center gap-2 py-2.5">
+      <ChevronRightOutline
+        className={cn("h-4 w-4 text-tertiary duration-300", {
           "rotate-90": isExpanded,
         })}
-        strokeWidth={2}
       />
       <div className="flex size-4 flex-shrink-0 items-center justify-center overflow-hidden">
         <Logo logo={project.logo_props} size={16} />
       </div>
       <div className="relative flex w-full flex-row items-center gap-1 overflow-hidden">
-        <div className="inline-block line-clamp-1 truncate font-medium text-primary">{project.name}</div>
+        <div className="line-clamp-1 inline-block truncate font-medium text-primary">{project.name}</div>
         {showCount && <div className="pl-2 text-13 font-medium text-tertiary">{`${count ?? "0"}`}</div>}
       </div>
     </Row>

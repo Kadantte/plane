@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useRef, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
@@ -8,7 +14,8 @@ import { Combobox } from "@headlessui/react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // icon
-import { CheckIcon, CycleGroupIcon, CycleIcon, SearchIcon } from "@plane/propel/icons";
+import { CycleGroupIcon } from "@plane/propel/icons";
+import { CyclesOutline, SearchOutline, TickOutline } from "@makeplane/propel/icons";
 import type { TCycleGroups } from "@plane/types";
 // ui
 // store hooks
@@ -107,7 +114,7 @@ export const CycleOptions = observer(function CycleOptions(props: CycleOptionsPr
       query: t("cycle.no_cycle"),
       content: (
         <div className="flex items-center gap-2">
-          <CycleIcon className="h-3 w-3 flex-shrink-0" />
+          <CyclesOutline className="h-3 w-3 flex-shrink-0" />
           <span className="flex-grow truncate">{t("cycle.no_cycle")}</span>
         </div>
       ),
@@ -118,7 +125,7 @@ export const CycleOptions = observer(function CycleOptions(props: CycleOptionsPr
     query === "" ? options : options?.filter((o) => o.query.toLowerCase().includes(query.toLowerCase()));
 
   return (
-    <Combobox.Options className="fixed z-10" static>
+    <Combobox.Options as="ul" className="fixed z-10" static>
       <div
         className="my-1 w-48 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200 focus:outline-none"
         ref={setPopperElement}
@@ -126,7 +133,7 @@ export const CycleOptions = observer(function CycleOptions(props: CycleOptionsPr
         {...attributes.popper}
       >
         <div className="flex items-center gap-1.5 rounded-sm border border-subtle bg-surface-2 px-2">
-          <SearchIcon className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
+          <SearchOutline className="h-3.5 w-3.5 text-placeholder" />
           <Combobox.Input
             as="input"
             ref={inputRef}
@@ -143,10 +150,11 @@ export const CycleOptions = observer(function CycleOptions(props: CycleOptionsPr
             filteredOptions.length > 0 ? (
               filteredOptions.map((option) => (
                 <Combobox.Option
+                  as="li"
                   key={option.value}
                   value={option.value}
                   className={({ active, selected }) =>
-                    `flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 ${
+                    `flex w-full cursor-pointer items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 select-none ${
                       active ? "bg-layer-transparent-hover" : ""
                     } ${selected ? "text-primary" : "text-secondary"}`
                   }
@@ -154,16 +162,16 @@ export const CycleOptions = observer(function CycleOptions(props: CycleOptionsPr
                   {({ selected }) => (
                     <>
                       <span className="flex-grow truncate">{option.content}</span>
-                      {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
+                      {selected && <TickOutline className="h-3.5 w-3.5 flex-shrink-0" />}
                     </>
                   )}
                 </Combobox.Option>
               ))
             ) : (
-              <p className="px-1.5 py-1 italic text-placeholder">{t("common.search.no_matches_found")}</p>
+              <p className="px-1.5 py-1 text-placeholder italic">{t("common.search.no_matches_found")}</p>
             )
           ) : (
-            <p className="px-1.5 py-1 italic text-placeholder">{t("common.loading")}</p>
+            <p className="px-1.5 py-1 text-placeholder italic">{t("common.loading")}</p>
           )}
         </div>
       </div>

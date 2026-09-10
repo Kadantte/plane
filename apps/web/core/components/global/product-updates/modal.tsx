@@ -1,11 +1,17 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // ui
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // components
 import { ProductUpdatesFooter } from "@/components/global";
 // plane web components
-import { ProductUpdatesChangelog } from "@/plane-web/components/global/product-updates/changelog";
-import { ProductUpdatesHeader } from "@/plane-web/components/global/product-updates/header";
+import { ProductUpdatesChangelog } from "@/components/global/product-updates/changelog";
+import { ProductUpdatesHeader } from "@/components/global/product-updates/header";
 
 export type ProductUpdatesModalProps = {
   isOpen: boolean;

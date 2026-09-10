@@ -1,8 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
-import { XCircle } from "lucide-react";
+import { CloseCircleOutline } from "@makeplane/propel/icons";
 // plane imports
-import { PROFILE_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IApiToken } from "@plane/types";
 import { renderFormattedDate, calculateTimeAgo, renderFormattedTime } from "@plane/utils";
 // components
@@ -25,13 +30,12 @@ export function ApiTokenListItem(props: Props) {
     <>
       <DeleteApiTokenModal isOpen={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} tokenId={token.id} />
       <div className="group relative flex flex-col justify-center border-b border-subtle py-3">
-        <Tooltip tooltipContent="Delete token" isMobile={isMobile}>
+        <Tooltip label="Delete token" disabled={isMobile}>
           <button
             onClick={() => setDeleteModalOpen(true)}
             className="absolute right-4 hidden place-items-center group-hover:grid"
-            data-ph-element={PROFILE_SETTINGS_TRACKER_ELEMENTS.LIST_ITEM_DELETE_ICON}
           >
-            <XCircle className="h-4 w-4 text-danger-primary" />
+            <CloseCircleOutline className="h-4 w-4 text-danger-primary" />
           </button>
         </Tooltip>
         <div className="flex w-4/5 items-center">
@@ -46,7 +50,7 @@ export function ApiTokenListItem(props: Props) {
         </div>
         <div className="mt-1 flex w-full flex-col justify-center">
           {token.description.trim() !== "" && (
-            <p className="mb-1 max-w-[70%] break-words text-13">{token.description}</p>
+            <p className="mb-1 max-w-[70%] text-13 break-words">{token.description}</p>
           )}
           <p className="mb-1 text-11 leading-6 text-placeholder">
             {token.is_active

@@ -1,8 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { DraftIcon, HomeIcon, PiChatLogo, YourWorkIcon, DashboardIcon } from "@plane/propel/icons";
+import { PiChatLogo } from "@plane/propel/icons";
+import { DashboardsOutline, DraftsOutline, HomeOutline, YourWorkOutline } from "@makeplane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
 // hooks
 import { useUserPermissions, useUser } from "@/hooks/store/user";
@@ -22,28 +29,28 @@ export const SidebarUserMenu = observer(function SidebarUserMenu() {
       labelTranslationKey: "sidebar.home",
       href: `/${workspaceSlug.toString()}/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
-      Icon: HomeIcon,
+      Icon: HomeOutline,
     },
     {
       key: "dashboards",
       labelTranslationKey: "workspace_dashboards",
       href: `/${workspaceSlug.toString()}/dashboards/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-      Icon: DashboardIcon,
+      Icon: DashboardsOutline,
     },
     {
       key: "your-work",
       labelTranslationKey: "sidebar.your_work",
       href: `/${workspaceSlug.toString()}/profile/${currentUser?.id}/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-      Icon: YourWorkIcon,
+      Icon: YourWorkOutline,
     },
     {
       key: "drafts",
       labelTranslationKey: "sidebar.drafts",
       href: `/${workspaceSlug.toString()}/drafts/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-      Icon: DraftIcon,
+      Icon: DraftsOutline,
     },
     {
       key: "pi-chat",

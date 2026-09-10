@@ -1,7 +1,12 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import * as React from "react";
 import { Menu as BaseMenu } from "@base-ui-components/react/menu";
-import { MoreHorizontal } from "lucide-react";
-import { ChevronDownIcon, ChevronRightIcon } from "../icons";
+import { ChevronDownOutline, ChevronRightOutline, MoreHorizontalOutline } from "@makeplane/propel/icons";
 import { cn } from "../utils/classname";
 import type { TMenuProps, TSubMenuProps, TMenuItemProps } from "./types";
 
@@ -25,7 +30,7 @@ function SubMenu(props: TSubMenuProps) {
     <BaseMenu.SubmenuRoot disabled={disabled}>
       <BaseMenu.SubmenuTrigger className={""}>
         <span className="flex-1">{trigger}</span>
-        <ChevronRightIcon />
+        <ChevronRightOutline />
       </BaseMenu.SubmenuTrigger>
       <BaseMenu.Portal>
         <BaseMenu.Positioner className={""} alignOffset={-4} sideOffset={-4}>
@@ -44,7 +49,7 @@ function MenuItem(props: TMenuItemProps) {
     <BaseMenu.Item
       disabled={disabled}
       className={cn(
-        "w-full select-none truncate rounded-sm px-1 py-1.5 text-left text-secondary hover:bg-layer-1 cursor-pointer outline-none",
+        "w-full cursor-pointer truncate rounded-sm px-1 py-1.5 text-left text-secondary outline-none select-none hover:bg-layer-1",
         {
           "text-placeholder": disabled,
         },
@@ -148,14 +153,14 @@ function Menu(props: TMenuProps) {
               tabIndex={customButtonTabIndex}
               aria-label={ariaLabel}
             >
-              <MoreHorizontal className={`h-3.5 w-3.5 ${verticalEllipsis ? "rotate-90" : ""}`} />
+              <MoreHorizontalOutline className={`h-3.5 w-3.5 ${verticalEllipsis ? "rotate-90" : ""}`} />
             </BaseMenu.Trigger>
           ) : (
             <BaseMenu.Trigger
               type="button"
-              className={`flex items-center justify-between gap-1 whitespace-nowrap rounded-md px-2.5 py-1 text-11 duration-300 outline-none ${
+              className={`flex items-center justify-between gap-1 rounded-md px-2.5 py-1 text-11 whitespace-nowrap duration-300 outline-none ${
                 isOpen ? "bg-surface-2 text-primary" : "text-secondary"
-              } ${noBorder ? "" : "border border-strong shadow-sm focus:outline-none"} ${
+              } ${noBorder ? "" : "shadow-sm border border-strong focus:outline-none"} ${
                 disabled ? "cursor-not-allowed text-secondary" : "cursor-pointer hover:bg-layer-1"
               } ${buttonClassName}`}
               onClick={handleMenuButtonClick}
@@ -164,7 +169,7 @@ function Menu(props: TMenuProps) {
               aria-label={ariaLabel}
             >
               {label}
-              {!noChevron && <ChevronDownIcon className="h-3.5 w-3.5" />}
+              {!noChevron && <ChevronDownOutline className="h-3.5 w-3.5" />}
             </BaseMenu.Trigger>
           )}
         </>
@@ -180,7 +185,7 @@ function Menu(props: TMenuProps) {
           <BaseMenu.Popup
             tabIndex={tabIndex}
             className={cn(
-              "my-1 overflow-y-scroll rounded-md border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-raised-200 focus:outline-none min-w-[12rem] whitespace-nowrap",
+              "my-1 min-w-[12rem] overflow-y-scroll rounded-md border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 whitespace-nowrap shadow-raised-200 focus:outline-none",
               {
                 "max-h-60": maxHeight === "lg",
                 "max-h-48": maxHeight === "md",

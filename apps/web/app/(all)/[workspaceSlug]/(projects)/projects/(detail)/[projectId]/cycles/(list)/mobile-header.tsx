@@ -1,8 +1,14 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type React from "react";
 import { observer } from "mobx-react";
 // ui
 import type { ISvgIcons } from "@plane/propel/icons";
-import { TimelineLayoutIcon, GridLayoutIcon, ListLayoutIcon } from "@plane/propel/icons";
+import { GridOutline, ListOutline, TimelineOutline } from "@makeplane/propel/icons";
 // plane package imports
 import type { TCycleLayoutOptions } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
@@ -17,17 +23,17 @@ const CYCLE_VIEW_LAYOUTS: {
 }[] = [
   {
     key: "list",
-    icon: ListLayoutIcon,
+    icon: ListOutline,
     title: "List layout",
   },
   {
     key: "board",
-    icon: GridLayoutIcon,
+    icon: GridOutline,
     title: "Gallery layout",
   },
   {
     key: "gantt",
-    icon: TimelineLayoutIcon,
+    icon: TimelineOutline,
     title: "Timeline layout",
   },
 ];
@@ -40,12 +46,12 @@ export const CyclesListMobileHeader = observer(function CyclesListMobileHeader()
     <div className="flex justify-center sm:hidden">
       <CustomMenu
         maxHeight={"md"}
-        className="flex flex-grow justify-center text-secondary text-13 py-2 border-b border-subtle bg-surface-1"
+        className="flex flex-grow justify-center border-b border-subtle bg-surface-1 py-2 text-13 text-secondary"
         // placement="bottom-start"
         customButton={
           <span className="flex items-center gap-2">
-            <ListLayoutIcon className="h-4 w-4" />
-            <span className="flex flex-grow justify-center text-secondary text-13">Layout</span>
+            <ListOutline className="h-4 w-4" />
+            <span className="flex flex-grow justify-center text-13 text-secondary">Layout</span>
           </span>
         }
         customButtonClassName="flex flex-grow justify-center items-center text-secondary text-13"
@@ -63,7 +69,7 @@ export const CyclesListMobileHeader = observer(function CyclesListMobileHeader()
               }}
               className="flex items-center gap-2"
             >
-              <layout.icon className="w-3 h-3" />
+              <layout.icon className="h-3 w-3" />
               <div className="text-tertiary">{layout.title}</div>
             </CustomMenu.MenuItem>
           );

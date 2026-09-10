@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 // plane imports
 import type { TWorkspaceSettingsItem, TWorkspaceSettingsTabs } from "@plane/types";
 import { EUserWorkspaceRoles } from "@plane/types";
@@ -13,6 +19,12 @@ export const WORKSPACE_SETTINGS_CATEGORIES: WORKSPACE_SETTINGS_CATEGORY[] = [
   WORKSPACE_SETTINGS_CATEGORY.FEATURES,
   WORKSPACE_SETTINGS_CATEGORY.DEVELOPER,
 ];
+
+export const WORKSPACE_SETTINGS_CATEGORY_LABELS: Record<WORKSPACE_SETTINGS_CATEGORY, string> = {
+  [WORKSPACE_SETTINGS_CATEGORY.ADMINISTRATION]: "common.administration",
+  [WORKSPACE_SETTINGS_CATEGORY.FEATURES]: "common.features",
+  [WORKSPACE_SETTINGS_CATEGORY.DEVELOPER]: "common.developer",
+};
 
 export const WORKSPACE_SETTINGS: Record<TWorkspaceSettingsTabs, TWorkspaceSettingsItem> = {
   general: {

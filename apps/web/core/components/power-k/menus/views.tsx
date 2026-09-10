@@ -1,6 +1,12 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
-import { Layers } from "lucide-react";
+import { WorkItemsOutline } from "@makeplane/propel/icons";
 // plane imports
 import type { IProjectView } from "@plane/types";
 // local imports
@@ -16,7 +22,7 @@ export const PowerKViewsMenu = observer(function PowerKViewsMenu({ views, onSele
     <PowerKMenuBuilder
       items={views}
       getKey={(view) => view.id}
-      getIcon={() => Layers}
+      getIcon={() => WorkItemsOutline}
       getValue={(view) => view.name}
       getLabel={(view) => view.name}
       onSelect={onSelect}

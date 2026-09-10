@@ -1,9 +1,16 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useState } from "react";
-import { CircleCheck, XCircle } from "lucide-react";
+import { CloseCircleOutline, TickCircleOutline } from "@makeplane/propel/icons";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { API_BASE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { Input, Spinner } from "@plane/ui";
+import { Spinner } from "@plane/ui";
 // constants
 // helpers
 import { EAuthModes } from "@/helpers/authentication.helper";
@@ -35,7 +42,7 @@ const defaultValues: TUniqueCodeFormValues = {
 };
 
 export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
-  const { mode, email, handleEmailClear, generateEmailUniqueCode, isExistingEmail, nextPath } = props;
+  const { mode, email, handleEmailClear, generateEmailUniqueCode, nextPath } = props;
   // derived values
   const defaultResetTimerValue = 5;
   // states
@@ -92,47 +99,50 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
         <label htmlFor="email" className="text-13 font-medium text-tertiary">
           {t("auth.common.email.label")}
         </label>
-        <div className={`relative flex items-center rounded-md bg-surface-1 border border-strong`}>
+        <InputGroup size="2xl">
           <Input
+            size="2xl"
             id="email"
             name="email"
             type="email"
             value={uniqueCodeFormData.email}
             onChange={(e) => handleFormChange("email", e.target.value)}
             placeholder={t("auth.common.email.placeholder")}
-            className="disable-autofill-style h-10 w-full placeholder:text-placeholder border-0"
-            autoComplete="on"
+            autoComplete="off"
             disabled
           />
           {uniqueCodeFormData.email.length > 0 && (
             <button
               type="button"
-              className="absolute right-3 size-5 grid place-items-center"
+              className="grid size-5 place-items-center"
               aria-label={t("aria_labels.auth_forms.clear_email")}
               onClick={handleEmailClear}
             >
-              <XCircle className="size-5 stroke-placeholder" />
+              <CloseCircleOutline className="size-5 text-placeholder" />
             </button>
           )}
-        </div>
+        </InputGroup>
       </div>
 
       <div className="space-y-1">
         <label htmlFor="unique-code" className="text-13 font-medium text-tertiary">
           {t("auth.common.unique_code.label")}
         </label>
-        <Input
-          name="code"
-          id="unique-code"
-          value={uniqueCodeFormData.code}
-          onChange={(e) => handleFormChange("code", e.target.value)}
-          placeholder={t("auth.common.unique_code.placeholder")}
-          className="disable-autofill-style h-10 w-full border border-strong !bg-surface-1 pr-12 placeholder:text-placeholder"
-          autoFocus
-        />
-        <div className="flex w-full items-center justify-between px-1 text-11 pt-1">
+        <InputGroup size="2xl">
+          <Input
+            size="2xl"
+            name="code"
+            id="unique-code"
+            value={uniqueCodeFormData.code}
+            onChange={(e) => handleFormChange("code", e.target.value)}
+            placeholder={t("auth.common.unique_code.placeholder")}
+            autoComplete="off"
+            autoFocus
+          />
+        </InputGroup>
+        <div className="flex w-full items-center justify-between px-1 pt-1 text-11">
           <p className="flex items-center gap-1 font-medium text-success-primary">
-            <CircleCheck height={12} width={12} />
+            <TickCircleOutline height={12} width={12} />
             {t("auth.common.unique_code.paste_code")}
           </p>
           <button

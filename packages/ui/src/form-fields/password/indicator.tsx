@@ -1,4 +1,10 @@
-import { CircleCheck } from "lucide-react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { TickCircleOutline } from "@makeplane/propel/icons";
 import React from "react";
 import { E_PASSWORD_STRENGTH } from "@plane/constants";
 import { cn, getPasswordStrength, getPasswordCriteria } from "@plane/utils";
@@ -29,7 +35,7 @@ export function PasswordStrengthIndicator({
     <div className={cn("space-y-3")}>
       {/* Strength Indicator */}
       <div className="space-y-2">
-        <div className="flex gap-1 w-full transition-all duration-300 ease-linear">
+        <div className="flex w-full gap-1 transition-all duration-300 ease-linear">
           {[0, 1, 2].map((fragmentIndex) => (
             <div
               key={fragmentIndex}
@@ -51,7 +57,7 @@ export function PasswordStrengthIndicator({
           {criteria.map((criterion) => (
             <div key={criterion.key} className="flex items-center gap-1.5">
               <div className="flex items-center justify-center p-0.5">
-                <CircleCheck
+                <TickCircleOutline
                   className={cn("h-3 w-3 flex-shrink-0", {
                     "text-success-primary": criterion.isValid,
                     "text-primary": !criterion.isValid,

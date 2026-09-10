@@ -1,8 +1,13 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { isNil } from "lodash-es";
 import { observer } from "mobx-react";
-import { Bell, BellOff } from "lucide-react";
+import { SubscribeOutline, UnsubscribeOutline } from "@makeplane/propel/icons";
 // plane-i18n
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -77,7 +82,7 @@ export const IssueSubscription = observer(function IssueSubscription(props: TIss
   return (
     <div>
       <Button
-        prependIcon={isSubscribed ? <BellOff /> : <Bell className="h-3 w-3" />}
+        prependIcon={isSubscribed ? <UnsubscribeOutline /> : <SubscribeOutline className="h-3 w-3" />}
         variant="secondary"
         className="hover:!bg-accent-primary/20"
         onClick={handleSubscription}

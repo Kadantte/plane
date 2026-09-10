@@ -1,9 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 // plane imports
-import { EditIcon, TrashIcon } from "@plane/propel/icons";
+import { DeleteOutline, EditOutline } from "@makeplane/propel/icons";
 import { CustomMenu } from "@plane/ui";
 import { truncateText } from "@plane/utils";
 // hooks
@@ -38,7 +44,7 @@ export const GlobalViewListItem = observer(function GlobalViewListItem(props: Pr
             <div className="flex w-full items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="flex flex-col">
-                  <p className="truncate text-13 font-medium leading-4">{truncateText(view.name, 75)}</p>
+                  <p className="truncate text-13 leading-4 font-medium">{truncateText(view.name, 75)}</p>
                   {view?.description && <p className="text-11 text-secondary">{view.description}</p>}
                 </div>
               </div>
@@ -51,7 +57,7 @@ export const GlobalViewListItem = observer(function GlobalViewListItem(props: Pr
                       }}
                     >
                       <span className="flex items-center justify-start gap-2">
-                        <EditIcon width={14} height={14} strokeWidth={2} />
+                        <EditOutline width={14} height={14} />
                         <span>Edit View</span>
                       </span>
                     </CustomMenu.MenuItem>
@@ -61,7 +67,7 @@ export const GlobalViewListItem = observer(function GlobalViewListItem(props: Pr
                       }}
                     >
                       <span className="flex items-center justify-start gap-2">
-                        <TrashIcon width={14} height={14} strokeWidth={2} />
+                        <DeleteOutline width={14} height={14} />
                         <span>Delete View</span>
                       </span>
                     </CustomMenu.MenuItem>

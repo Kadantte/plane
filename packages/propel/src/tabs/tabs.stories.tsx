@@ -1,7 +1,12 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { Settings, User, Bell } from "lucide-react";
-import { HomeIcon } from "../icons/workspace/home-icon";
+import { HomeOutline, SettingsOutline, SubscribeOutline, UserOutline } from "@makeplane/propel/icons";
 import { Tabs } from "./tabs";
 
 type TabOption = {
@@ -52,7 +57,7 @@ export const Basic: Story = {
           {tabOptions.map((option) => (
             <Tabs.Content key={option.value} value={option.value} className="p-4">
               <div className="text-13">
-                <h3 className="font-medium mb-2">{option.label}</h3>
+                <h3 className="mb-2 font-medium">{option.label}</h3>
                 <p className="text-tertiary">Content for the {option.label.toLowerCase()} tab.</p>
               </div>
             </Tabs.Content>
@@ -72,7 +77,7 @@ export const Sizes: Story = {
       lg: "Large",
     };
     return (
-      <div className="w-[400px] grid gap-4">
+      <div className="grid w-[400px] gap-4">
         {sizes.map((size) => (
           <div key={size} className="flex flex-col gap-2">
             <div className="text-13 font-medium">{sizeLabels[size]}</div>
@@ -153,10 +158,10 @@ export const DisabledTab: Story = {
 export const WithIcons: Story = {
   render({ defaultValue }) {
     const tabsWithIcons = [
-      { label: "Home", value: "home", icon: HomeIcon },
-      { label: "Profile", value: "profile", icon: User },
-      { label: "Settings", value: "settings", icon: Settings },
-      { label: "Notifications", value: "notifications", icon: Bell },
+      { label: "Home", value: "home", icon: HomeOutline },
+      { label: "Profile", value: "profile", icon: UserOutline },
+      { label: "Settings", value: "settings", icon: SettingsOutline },
+      { label: "Notifications", value: "notifications", icon: SubscribeOutline },
     ];
 
     return (
@@ -165,7 +170,7 @@ export const WithIcons: Story = {
           <Tabs.List>
             {tabsWithIcons.map((tab) => (
               <Tabs.Trigger key={tab.value} value={tab.value}>
-                <tab.icon className="w-4 h-4 mr-2" />
+                <tab.icon className="mr-2 h-4 w-4" />
                 {tab.label}
               </Tabs.Trigger>
             ))}
@@ -185,10 +190,10 @@ export const WithIcons: Story = {
 export const IconsOnly: Story = {
   render({ defaultValue }) {
     const iconTabs = [
-      { value: "home", icon: HomeIcon },
-      { value: "profile", icon: User },
-      { value: "settings", icon: Settings },
-      { value: "notifications", icon: Bell },
+      { value: "home", icon: HomeOutline },
+      { value: "profile", icon: UserOutline },
+      { value: "settings", icon: SettingsOutline },
+      { value: "notifications", icon: SubscribeOutline },
     ];
 
     return (
@@ -197,7 +202,7 @@ export const IconsOnly: Story = {
           <Tabs.List>
             {iconTabs.map((tab) => (
               <Tabs.Trigger key={tab.value} value={tab.value}>
-                <tab.icon className="w-4 h-4" />
+                <tab.icon className="h-4 w-4" />
               </Tabs.Trigger>
             ))}
             <Tabs.Indicator />
@@ -237,7 +242,7 @@ export const DynamicTabs: Story = {
     return (
       <div className="w-[500px]">
         <div className="mb-4">
-          <button onClick={addTab} className="px-3 py-1.5 text-13 bg-layer-1 rounded-sm hover:bg-surface-2">
+          <button onClick={addTab} className="rounded-sm bg-layer-1 px-3 py-1.5 text-13 hover:bg-surface-2">
             Add Tab
           </button>
         </div>
@@ -317,11 +322,11 @@ export const WithComplexContent: Story = {
             <div className="space-y-4">
               <div>
                 <label className="text-13 font-medium">Username</label>
-                <input type="text" className="mt-1 w-full px-3 py-2 bg-layer-1 rounded-sm" />
+                <input type="text" className="mt-1 w-full rounded-sm bg-layer-1 px-3 py-2" />
               </div>
               <div>
                 <label className="text-13 font-medium">Email</label>
-                <input type="email" className="mt-1 w-full px-3 py-2 bg-layer-1 rounded-sm" />
+                <input type="email" className="mt-1 w-full rounded-sm bg-layer-1 px-3 py-2" />
               </div>
             </div>
           </Tabs.Content>
@@ -329,11 +334,11 @@ export const WithComplexContent: Story = {
             <div className="space-y-4">
               <div>
                 <label className="text-13 font-medium">Current Password</label>
-                <input type="password" className="mt-1 w-full px-3 py-2 bg-layer-1 rounded-sm" />
+                <input type="password" className="mt-1 w-full rounded-sm bg-layer-1 px-3 py-2" />
               </div>
               <div>
                 <label className="text-13 font-medium">New Password</label>
-                <input type="password" className="mt-1 w-full px-3 py-2 bg-layer-1 rounded-sm" />
+                <input type="password" className="mt-1 w-full rounded-sm bg-layer-1 px-3 py-2" />
               </div>
             </div>
           </Tabs.Content>

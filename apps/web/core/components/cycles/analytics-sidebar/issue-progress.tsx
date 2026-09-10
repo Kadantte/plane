@@ -1,4 +1,9 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useMemo } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
@@ -6,7 +11,7 @@ import { useSearchParams } from "next/navigation";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { ChevronUpIcon, ChevronDownIcon } from "@plane/propel/icons";
+import { ChevronDownOutline, ChevronUpOutline } from "@makeplane/propel/icons";
 import type { ICycle, TCyclePlotType, TProgressSnapshot } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 import { getDate } from "@plane/utils";
@@ -14,9 +19,9 @@ import { getDate } from "@plane/utils";
 import { useCycle } from "@/hooks/store/use-cycle";
 // plane web components
 import { useWorkItemFilters } from "@/hooks/store/work-item-filters/use-work-item-filters";
-import { SidebarChartRoot } from "@/plane-web/components/cycles";
 // local imports
 import { CycleProgressStats } from "./progress-stats";
+import { SidebarChart } from "./sidebar-chart";
 
 type TCycleAnalyticsProgress = {
   workspaceSlug: string;
@@ -98,35 +103,35 @@ export const CycleAnalyticsProgress = observer(function CycleAnalyticsProgress(p
 
   if (!cycleDetails) return <></>;
   return (
-    <div className="border-t border-subtle space-y-4 py-5">
+    <div className="space-y-4 border-t border-subtle py-5">
       <Disclosure defaultOpen>
         {({ open }) => (
           <div className="flex flex-col">
             {/* progress bar header */}
             {isCycleDateValid ? (
-              <div className="relative w-full flex justify-between items-center gap-2">
-                <Disclosure.Button className="relative flex items-center gap-2 w-full">
-                  <div className="font-medium text-secondary text-13">{t("project_cycles.active_cycle.progress")}</div>
+              <div className="relative flex w-full items-center justify-between gap-2">
+                <Disclosure.Button className="relative flex w-full items-center gap-2">
+                  <div className="text-13 font-medium text-secondary">{t("project_cycles.active_cycle.progress")}</div>
                 </Disclosure.Button>
                 <Disclosure.Button className="ml-auto">
                   {open ? (
-                    <ChevronUpIcon className="h-3.5 w-3.5" aria-hidden="true" />
+                    <ChevronUpOutline className="h-3.5 w-3.5" aria-hidden="true" />
                   ) : (
-                    <ChevronDownIcon className="h-3.5 w-3.5" aria-hidden="true" />
+                    <ChevronDownOutline className="h-3.5 w-3.5" aria-hidden="true" />
                   )}
                 </Disclosure.Button>
               </div>
             ) : (
-              <div className="relative w-full flex justify-between items-center gap-2">
-                <div className="font-medium text-secondary text-13">{t("project_cycles.active_cycle.progress")}</div>
+              <div className="relative flex w-full items-center justify-between gap-2">
+                <div className="text-13 font-medium text-secondary">{t("project_cycles.active_cycle.progress")}</div>
               </div>
             )}
-            <Transition show={open}>
+            <Transition as="div" show={open}>
               <Disclosure.Panel className="flex flex-col divide-y divide-subtle-1">
                 {cycleStartDate && cycleEndDate ? (
                   <>
                     {isCycleDateValid && (
-                      <SidebarChartRoot workspaceSlug={workspaceSlug} projectId={projectId} cycleId={cycleId} />
+                      <SidebarChart workspaceSlug={workspaceSlug} projectId={projectId} cycleId={cycleId} />
                     )}
                     {/* progress detailed view */}
                     {chartDistributionData && (
@@ -156,7 +161,7 @@ export const CycleAnalyticsProgress = observer(function CycleAnalyticsProgress(p
                     )}
                   </>
                 ) : (
-                  <div className="my-2 py-2 text-13 text-tertiary  bg-surface-2 rounded-md px-2 w-full">
+                  <div className="my-2 w-full rounded-md bg-surface-2 px-2 py-2 text-13 text-tertiary">
                     {t("no_data_yet")}
                   </div>
                 )}

@@ -1,4 +1,10 @@
-import { observable, action, makeObservable, runInAction } from "mobx";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { observable, action, computed, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
 import type { TCreateModalStoreTypes, TCreatePageModal } from "@plane/constants";
@@ -14,6 +20,8 @@ export interface ModalData {
 }
 
 export interface IBaseCommandPaletteStore {
+  // computed
+  isAnyModalOpen: boolean;
   // observables
   isCreateProjectModalOpen: boolean;
   isCreateCycleModalOpen: boolean;
@@ -46,7 +54,7 @@ export interface IBaseCommandPaletteStore {
   toggleProfileSettingsModal: (value: { activeTab?: TProfileSettingsTabs | null; isOpen?: boolean }) => void;
 }
 
-export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStore {
+export class BaseCommandPaletteStore implements IBaseCommandPaletteStore {
   // observables
   isCreateProjectModalOpen: boolean = false;
   isCreateCycleModalOpen: boolean = false;
@@ -93,7 +101,12 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
       toggleAllStickiesModal: action,
       toggleProjectListOpen: action,
       toggleProfileSettingsModal: action,
+      isAnyModalOpen: computed,
     });
+  }
+
+  get isAnyModalOpen(): boolean {
+    return Boolean(this.getCoreModalsState());
   }
 
   /**
@@ -271,3 +284,7 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
     });
   };
 }
+
+// Aliases so consumers can keep using CommandPaletteStore / ICommandPaletteStore
+export type ICommandPaletteStore = IBaseCommandPaletteStore;
+export { BaseCommandPaletteStore as CommandPaletteStore };

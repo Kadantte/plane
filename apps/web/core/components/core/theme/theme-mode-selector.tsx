@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
@@ -21,7 +27,7 @@ export const CustomThemeModeSelector = observer(function CustomThemeModeSelector
         name="darkPalette"
         render={({ field: { value, onChange } }) => (
           <div className="mt-2 flex items-center gap-3">
-            <label className="bg-layer-2 hover:bg-layer-2-hover border border-subtle-1 rounded-lg py-2 px-3 flex items-center gap-1.5 text-body-sm-regular cursor-pointer transition-colors">
+            <label className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-subtle-1 bg-layer-2 px-3 py-2 text-body-sm-regular transition-colors hover:bg-layer-2-hover">
               <input
                 type="radio"
                 name="darkPalette"
@@ -32,7 +38,7 @@ export const CustomThemeModeSelector = observer(function CustomThemeModeSelector
               />
               Light mode
             </label>
-            <label className="bg-layer-2 hover:bg-layer-2-hover border border-subtle-1 rounded-lg py-2 px-3 flex items-center gap-1.5 text-body-sm-regular cursor-pointer transition-colors">
+            <label className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-subtle-1 bg-layer-2 px-3 py-2 text-body-sm-regular transition-colors hover:bg-layer-2-hover">
               <input
                 type="radio"
                 name="darkPalette"

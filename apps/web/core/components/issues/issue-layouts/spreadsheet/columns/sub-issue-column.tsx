@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -8,7 +14,6 @@ import { Row } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
-import { IssueStats } from "@/plane-web/components/issues/issue-layouts/issue-stats";
 
 type Props = {
   issue: TIssue;
@@ -36,13 +41,13 @@ export const SpreadsheetSubIssueColumn = observer(function SpreadsheetSubIssueCo
     <Row
       onClick={subIssueCount ? redirectToIssueDetail : () => {}}
       className={cn(
-        "flex h-11 w-full items-center border-b-[0.5px] border-subtle py-1 text-11 hover:bg-surface-2 group-[.selected-issue-row]:bg-accent-primary/5 group-[.selected-issue-row]:hover:bg-accent-primary",
+        "flex h-11 w-full items-center border-b-[0.5px] border-subtle py-1 text-11 group-[.selected-issue-row]:bg-accent-primary/5 hover:bg-surface-2 group-[.selected-issue-row]:hover:bg-accent-primary",
         {
           "cursor-pointer": subIssueCount,
         }
       )}
     >
-      {isEpic ? <IssueStats issueId={issue.id} /> : label}
+      {isEpic ? null : label}
     </Row>
   );
 });

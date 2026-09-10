@@ -1,11 +1,16 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { EEstimateSystem, ESTIMATE_SYSTEMS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { ChevronLeftIcon } from "@plane/propel/icons";
+import { ChevronLeftOutline } from "@makeplane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IEstimateFormData, TEstimateSystemKeys, TEstimatePointsObject, TEstimateTypeError } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
@@ -140,7 +145,7 @@ export const CreateEstimateModal = observer(function CreateEstimateModal(props: 
     <ModalCore isOpen={isOpen} position={EModalPosition.TOP} width={EModalWidth.XXL}>
       <div className="relative space-y-6 py-5">
         {/* heading */}
-        <div className="relative flex justify-between items-center gap-2 px-5">
+        <div className="relative flex items-center justify-between gap-2 px-5">
           <div className="relative flex items-center gap-1">
             {estimatePoints && (
               <div
@@ -148,14 +153,14 @@ export const CreateEstimateModal = observer(function CreateEstimateModal(props: 
                   setEstimateSystem(EEstimateSystem.POINTS);
                   handleUpdatePoints(undefined);
                 }}
-                className="flex-shrink-0 cursor-pointer w-5 h-5 flex justify-center items-center"
+                className="flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center"
               >
-                <ChevronLeftIcon className="w-4 h-4" />
+                <ChevronLeftOutline className="h-4 w-4" />
               </div>
             )}
             <div className="text-18 font-medium text-primary">{t("project_settings.estimates.new")}</div>
           </div>
-          <div className="text-11 text-gray-400">
+          <div className="text-gray-400 text-11">
             {t("project_settings.estimates.create.step", {
               step: renderEstimateStepsCount,
               total: 2,
@@ -194,7 +199,7 @@ export const CreateEstimateModal = observer(function CreateEstimateModal(props: 
           )} */}
         </div>
 
-        <div className="relative flex justify-end items-center gap-3 px-5 pt-5 border-t border-subtle">
+        <div className="relative flex items-center justify-end gap-3 border-t border-subtle px-5 pt-5">
           <Button variant="secondary" size="lg" onClick={handleClose} disabled={buttonLoader}>
             {t("common.cancel")}
           </Button>

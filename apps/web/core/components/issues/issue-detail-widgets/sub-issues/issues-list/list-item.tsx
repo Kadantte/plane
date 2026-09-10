@@ -1,9 +1,14 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
-import { Link as Loader } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { LinkIcon, EditIcon, TrashIcon, CloseIcon, ChevronRightIcon } from "@plane/propel/icons";
+import { ChevronRightOutline, CloseOutline, DeleteOutline, EditOutline, LinkOutline } from "@makeplane/propel/icons";
 // plane imports
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { TIssue, TIssueServiceType, TSubIssueOperations } from "@plane/types";
 import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
 import { ControlLink, CustomMenu } from "@plane/ui";
@@ -16,8 +21,8 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+// components
+import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 // local components
 import { SubIssuesListItemProperties } from "./properties";
 import { SubIssuesListRoot } from "./root";
@@ -107,16 +112,16 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
       >
         {issue && (
           <div
-            className="group relative flex min-h-11 h-full w-full items-center pr-2 py-1 transition-all hover:bg-surface-2"
+            className="group relative flex h-full min-h-11 w-full items-center py-1 pr-2 transition-all hover:bg-surface-2"
             style={{ paddingLeft: `${spacingLeft}px` }}
           >
-            <div className="flex size-5 items-center justify-center flex-shrink-0">
+            <div className="flex size-5 flex-shrink-0 items-center justify-center">
               {/* disable the chevron when current issue is also the root issue*/}
               {subIssueCount > 0 && !isCurrentIssueRoot && (
                 <>
                   {subIssueHelpers.preview_loader.includes(issue.id) ? (
                     <div className="flex h-full w-full cursor-not-allowed items-center justify-center rounded-xs bg-layer-1 transition-all">
-                      <Loader width={14} strokeWidth={2} className="animate-spin" />
+                      <LinkOutline width={14} height={14} className="animate-spin" />
                     </div>
                   ) : (
                     <div
@@ -132,11 +137,10 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
                         setSubIssueHelpers(parentIssueId, "issue_visibility", issueId);
                       }}
                     >
-                      <ChevronRightIcon
+                      <ChevronRightOutline
                         className={cn("size-3.5 transition-all", {
                           "rotate-90": subIssueHelpers.issue_visibility.includes(issue.id),
                         })}
-                        strokeWidth={2.5}
                       />
                     </div>
                   )}
@@ -144,7 +148,7 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
               )}
             </div>
 
-            <div className="flex w-full truncate cursor-pointer items-center gap-3">
+            <div className="flex w-full cursor-pointer items-center gap-3 truncate">
               <WithDisplayPropertiesHOC displayProperties={displayProperties || {}} displayPropertyKey="key">
                 <div className="flex-shrink-0">
                   {projectDetail && (
@@ -159,8 +163,8 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
                   )}
                 </div>
               </WithDisplayPropertiesHOC>
-              <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
-                <span className="flex-1 w-0 truncate text-13 text-primary">{issue.name}</span>
+              <Tooltip label={issue.name} layout="stacked" disabled={isMobile}>
+                <span className="w-0 flex-1 truncate text-13 text-primary">{issue.name}</span>
               </Tooltip>
             </div>
 
@@ -192,7 +196,7 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
                     }}
                   >
                     <div className="flex items-center gap-2">
-                      <EditIcon className="h-3.5 w-3.5" strokeWidth={2} />
+                      <EditOutline className="h-3.5 w-3.5" />
                       <span>{t("issue.edit")}</span>
                     </div>
                   </CustomMenu.MenuItem>
@@ -204,7 +208,7 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
                   }}
                 >
                   <div className="flex items-center gap-2">
-                    <LinkIcon className="h-3.5 w-3.5" strokeWidth={2} />
+                    <LinkOutline className="h-3.5 w-3.5" />
                     <span>{t("issue.copy_link")}</span>
                   </div>
                 </CustomMenu.MenuItem>
@@ -217,7 +221,7 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
                     }}
                   >
                     <div className="flex items-center gap-2">
-                      <CloseIcon className="h-3.5 w-3.5" strokeWidth={2} />
+                      <CloseOutline className="h-3.5 w-3.5" />
                       {issueServiceType === EIssueServiceType.ISSUES
                         ? t("issue.remove.parent.label")
                         : t("issue.remove.label")}
@@ -233,7 +237,7 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
                     }}
                   >
                     <div className="flex items-center gap-2">
-                      <TrashIcon className="h-3.5 w-3.5" strokeWidth={2} />
+                      <DeleteOutline className="h-3.5 w-3.5" />
                       <span>{t("issue.delete.label")}</span>
                     </div>
                   </CustomMenu.MenuItem>

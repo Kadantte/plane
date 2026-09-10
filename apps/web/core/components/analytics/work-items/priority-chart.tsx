@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useMemo } from "react";
 import type { ColumnDef, Row, RowData, Table } from "@tanstack/react-table";
 import { observer } from "mobx-react";
@@ -5,7 +11,7 @@ import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane package imports
-import { Download } from "lucide-react";
+import { DownloadOutline } from "@makeplane/propel/icons";
 import type { ChartXAxisDateGrouping } from "@plane/constants";
 import { ANALYTICS_X_AXIS_VALUES, ANALYTICS_Y_AXIS_VALUES, CHART_COLOR_PALETTES, EChartModels } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -25,6 +31,7 @@ import { ChartLoader } from "../loaders";
 import { generateBarColor } from "./utils";
 
 declare module "@tanstack/react-table" {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface ColumnMeta<TData extends RowData, TValue> {
     export: {
       key: string;
@@ -190,7 +197,7 @@ const PriorityChart = observer(function PriorityChart(props: Props) {
   );
 
   return (
-    <div className="flex flex-col gap-12 ">
+    <div className="flex flex-col gap-12">
       {priorityChartLoading ? (
         <ChartLoader />
       ) : parsedData?.data && parsedData.data.length > 0 ? (
@@ -221,7 +228,7 @@ const PriorityChart = observer(function PriorityChart(props: Props) {
             actions={(table: Table<TChartDatum>) => (
               <Button
                 variant="secondary"
-                prependIcon={<Download className="h-3.5 w-3.5" />}
+                prependIcon={<DownloadOutline className="h-3.5 w-3.5" />}
                 onClick={() => exportCSV(table.getRowModel().rows, [...defaultColumns, ...columns], workspaceSlug)}
               >
                 <div>{t("exporter.csv.short_description")}</div>

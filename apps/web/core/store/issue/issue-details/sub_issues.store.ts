@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { pull, concat, uniq, set, update } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
@@ -160,8 +166,8 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
       sub_issue_ids: issueIds,
     });
 
-    const subIssuesStateDistribution = response?.state_distribution;
-    const subIssues = response.sub_issues as TIssue[];
+    const subIssuesStateDistribution = response?.state_distribution ?? {};
+    const subIssues = Array.isArray(response?.sub_issues) ? response.sub_issues : [];
 
     // fetch other issues states and members when sub-issues are from different project
     if (subIssues && subIssues.length > 0) {

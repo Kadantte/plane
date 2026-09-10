@@ -1,11 +1,19 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import type { Control, FieldArrayWithId, FormState } from "react-hook-form";
 import { Controller } from "react-hook-form";
 // plane imports
+import { Field } from "@makeplane/propel/components/field";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { ROLE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { CloseIcon } from "@plane/propel/icons";
-import { CustomSelect, Input } from "@plane/ui";
+import { CloseOutline } from "@makeplane/propel/icons";
+import { CustomSelect } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
@@ -41,7 +49,7 @@ export const InvitationFields = observer(function InvitationFields(props: TInvit
       {fields.map((field, index) => (
         <div
           key={field.id}
-          className="relative group mb-1 flex items-start justify-between gap-x-4 text-body-xs-regular w-full"
+          className="group relative mb-1 flex w-full items-start justify-between gap-x-4 text-body-xs-regular"
         >
           <div className="w-full">
             <Controller
@@ -56,17 +64,20 @@ export const InvitationFields = observer(function InvitationFields(props: TInvit
               }}
               render={({ field: { value, onChange, ref } }) => (
                 <>
-                  <Input
-                    id={`emails.${index}.email`}
-                    name={`emails.${index}.email`}
-                    type="text"
-                    value={value}
-                    onChange={onChange}
-                    ref={ref}
-                    hasError={Boolean(errors.emails?.[index]?.email)}
-                    placeholder={t("workspace_settings.settings.members.modal.placeholder")}
-                    className="w-full text-caption-sm-regular sm:text-body-xs-regular"
-                  />
+                  <Field name="input" invalid={Boolean(errors.emails?.[index]?.email)}>
+                    <InputGroup size="2xl">
+                      <Input
+                        size="2xl"
+                        id={`emails.${index}.email`}
+                        name={`emails.${index}.email`}
+                        type="text"
+                        value={value}
+                        onChange={onChange}
+                        ref={ref}
+                        placeholder={t("workspace_settings.settings.members.modal.placeholder")}
+                      />
+                    </InputGroup>
+                  </Field>
                   {errors.emails?.[index]?.email && (
                     <span className="ml-1 text-caption-sm-regular text-danger-primary">
                       {errors.emails?.[index]?.email?.message}
@@ -76,7 +87,7 @@ export const InvitationFields = observer(function InvitationFields(props: TInvit
               )}
             />
           </div>
-          <div className="flex items-center justify-between gap-2 shrink-0">
+          <div className="flex shrink-0 items-center justify-between gap-2">
             <div className="flex flex-col gap-1">
               <Controller
                 control={control}
@@ -87,7 +98,7 @@ export const InvitationFields = observer(function InvitationFields(props: TInvit
                     value={value}
                     label={<span className="text-caption-sm-regular sm:text-body-xs-regular">{ROLE[value]}</span>}
                     onChange={onChange}
-                    className="flex-grow w-24"
+                    className="w-24 flex-grow"
                     input
                   >
                     {Object.entries(ROLE).map(([key, value]) => {
@@ -109,7 +120,7 @@ export const InvitationFields = observer(function InvitationFields(props: TInvit
                   className="place-items-center self-center rounded-sm"
                   onClick={() => remove(index)}
                 >
-                  <CloseIcon className="h-4 w-4 text-secondary" />
+                  <CloseOutline className="h-4 w-4 text-secondary" />
                 </button>
               </div>
             )}

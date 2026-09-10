@@ -1,11 +1,19 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { ReactNode } from "react";
 import { useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // plane imports
+import { Avatar } from "@makeplane/propel/components/avatar";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { EditorRefApi } from "@plane/editor";
 import { useHashScroll } from "@plane/hooks";
-import { GlobeIcon, LockIcon } from "@plane/propel/icons";
+import { GlobeOutline, LockOutline } from "@makeplane/propel/icons";
 import { EIssueCommentAccessSpecifier } from "@plane/types";
 import type { TCommentsOperations, TIssueComment } from "@plane/types";
 import { calculateTimeAgo, cn, getFileURL, renderFormattedDate, renderFormattedTime } from "@plane/utils";
@@ -15,7 +23,6 @@ import { LiteTextEditor } from "@/components/editor/lite-text";
 import { CommentReactions } from "../comment-reaction";
 import { CommentCardEditForm } from "./edit-form";
 import { EmojiReactionButton, EmojiReactionPicker } from "@plane/propel/emoji-reaction";
-import { Avatar, Tooltip } from "@plane/ui";
 import { useMember } from "@/hooks/store/use-member";
 
 export type TCommentCardDisplayProps = {
@@ -24,7 +31,7 @@ export type TCommentCardDisplayProps = {
   disabled: boolean;
   entityId: string;
   projectId?: string;
-  readOnlyEditorRef: React.RefObject<EditorRefApi>;
+  readOnlyEditorRef: React.RefObject<EditorRefApi | null>;
   showAccessSpecifier: boolean;
   workspaceId: string;
   workspaceSlug: string;
@@ -102,23 +109,25 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: TC
   return (
     <div id={commentBlockId} className="relative flex flex-col gap-2">
       {showAccessSpecifier && (
-        <div className="absolute right-2.5 top-2.5 z-[1] text-tertiary">
+        <div className="absolute top-2.5 right-2.5 z-[1] text-tertiary">
           {comment.access === EIssueCommentAccessSpecifier.INTERNAL ? (
-            <LockIcon className="size-3" />
+            <LockOutline className="size-3" />
           ) : (
-            <GlobeIcon className="size-3" />
+            <GlobeOutline className="size-3" />
           )}
         </div>
       )}
-      <div className="flex relative w-full gap-2 items-center mb-3">
-        <Avatar size="sm" name={displayName} src={getFileURL(avatarUrl)} className="shrink-0" />
-        <div className="flex-1 flex flex-wrap items-center gap-1">
+      <div className="relative mb-3 flex w-full items-center gap-2">
+        <Avatar alt={displayName} fallback={displayName?.[0]?.toUpperCase()} size="2xs" src={getFileURL(avatarUrl)} />
+        <div className="flex flex-1 flex-wrap items-center gap-1">
           <div className="text-caption-sm-medium">{displayName}</div>
           <div className="text-caption-sm-regular text-tertiary">
             commented{" "}
             <Tooltip
-              tooltipContent={`${renderFormattedDate(comment.created_at)} at ${renderFormattedTime(comment.created_at)}`}
-              position="bottom"
+              label={`${renderFormattedDate(comment.created_at)} at ${renderFormattedTime(comment.created_at)}`}
+              side="bottom"
+              layout="single"
+              delay={200}
             >
               <span className="text-tertiary">
                 {calculateTimeAgo(comment.created_at)}
@@ -128,7 +137,7 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: TC
           </div>
         </div>
         {!disabled && (
-          <div className="flex items-center gap-1 shrink-0">
+          <div className="flex shrink-0 items-center gap-1">
             <EmojiReactionPicker
               isOpen={isPickerOpen}
               handleToggle={setIsPickerOpen}

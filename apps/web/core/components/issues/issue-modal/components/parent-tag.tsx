@@ -1,9 +1,15 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import { ETabIndices } from "@plane/constants";
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseOutline } from "@makeplane/propel/icons";
 // plane imports
 // types
 import type { ISearchIssueResponse, TIssue } from "@plane/types";
@@ -11,8 +17,8 @@ import type { ISearchIssueResponse, TIssue } from "@plane/types";
 import { getTabIndex } from "@plane/utils";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+// components
+import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 
 type TIssueParentTagProps = {
   control: Control<TIssue>;
@@ -33,7 +39,7 @@ export const IssueParentTag = observer(function IssueParentTag(props: TIssuePare
       control={control}
       name="parent_id"
       render={({ field: { onChange } }) => (
-        <div className="flex w-min items-center gap-2 whitespace-nowrap rounded-sm bg-surface-2 p-2 text-caption-sm-regular">
+        <div className="flex w-min items-center gap-2 rounded-sm bg-surface-2 p-2 text-caption-sm-regular whitespace-nowrap">
           <div className="flex items-center gap-2">
             <span
               className="block h-1.5 w-1.5 rounded-full"
@@ -63,7 +69,7 @@ export const IssueParentTag = observer(function IssueParentTag(props: TIssuePare
               }}
               tabIndex={getIndex("remove_parent")}
             >
-              <CloseIcon className="h-3 w-3 cursor-pointer" />
+              <CloseOutline className="h-3 w-3 cursor-pointer" />
             </button>
           </div>
         </div>

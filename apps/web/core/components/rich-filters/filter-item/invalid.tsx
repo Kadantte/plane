@@ -1,6 +1,12 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
-import { CircleAlert } from "lucide-react";
+import { WarningCircleOutline } from "@makeplane/propel/icons";
 // plane imports
 import type { TExternalFilter, TFilterProperty } from "@plane/types";
 // local imports
@@ -25,7 +31,7 @@ export const InvalidFilterItem = observer(function InvalidFilterItem<
       {/* Property section */}
       <FilterItemProperty
         conditionId={condition.id}
-        icon={CircleAlert}
+        icon={WarningCircleOutline}
         label="Invalid filter"
         filter={filter}
         isDisabled={isDisabled}

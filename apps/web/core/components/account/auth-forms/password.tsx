@@ -1,14 +1,21 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 // icons
-import { Eye, EyeOff, Info, XCircle } from "lucide-react";
+import { CloseCircleOutline, HideOutline, ShowOutline } from "@makeplane/propel/icons";
 // plane imports
-import { API_BASE_URL, E_PASSWORD_STRENGTH, AUTH_TRACKER_EVENTS, AUTH_TRACKER_ELEMENTS } from "@plane/constants";
+import { Banner } from "@makeplane/propel/components/banner";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { API_BASE_URL, E_PASSWORD_STRENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { CloseIcon } from "@plane/propel/icons";
-import { Input, PasswordStrengthIndicator, Spinner } from "@plane/ui";
+import { PasswordStrengthIndicator, Spinner } from "@plane/ui";
 import { getPasswordStrength } from "@plane/utils";
 // components
 import { ForgotPasswordPopover } from "@/components/account/auth-forms/forgot-password-popover";
@@ -80,7 +87,6 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
       <div className="w-full">
         {isSMTPConfigured ? (
           <Link
-            data-ph-element={AUTH_TRACKER_ELEMENTS.FORGOT_PASSWORD_FROM_SIGNIN}
             href={`/accounts/forgot-password?email=${encodeURIComponent(email)}`}
             className="text-11 font-medium text-accent-primary"
           >
@@ -122,21 +128,12 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
   return (
     <>
       {isBannerMessage && mode === EAuthModes.SIGN_UP && (
-        <div className="relative flex items-center p-2 rounded-md gap-2 border border-danger-strong/50 bg-danger-subtle">
-          <div className="w-4 h-4 shrink-0 relative flex justify-center items-center">
-            <Info size={16} className="text-danger-primary" />
-          </div>
-          <div className="w-full text-13 font-medium text-danger-primary">
-            {t("auth.sign_up.errors.password.strength")}
-          </div>
-          <button
-            type="button"
-            className="relative ml-auto w-6 h-6 rounded-xs flex justify-center items-center transition-all cursor-pointer hover:bg-danger-subtle-hover text-accent-primary/80"
-            onClick={() => setBannerMessage(false)}
-          >
-            <CloseIcon className="w-4 h-4 shrink-0 text-danger-primary" />
-          </button>
-        </div>
+        <Banner
+          placement="inline"
+          variant="danger"
+          description={t("auth.sign_up.errors.password.strength")}
+          onDismiss={() => setBannerMessage(false)}
+        />
       )}
       <form
         ref={formRef}
@@ -168,86 +165,87 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
           <label htmlFor="email" className="text-13 font-medium text-tertiary">
             {t("auth.common.email.label")}
           </label>
-          <div className={`relative flex items-center rounded-md bg-surface-1 border border-strong`}>
+          <InputGroup size="2xl">
             <Input
+              size="2xl"
               id="email"
               name="email"
               type="email"
               value={passwordFormData.email}
               onChange={(e) => handleFormChange("email", e.target.value)}
               placeholder={t("auth.common.email.placeholder")}
-              className={`disable-autofill-style h-10 w-full placeholder:text-placeholder border-0`}
               disabled
             />
             {passwordFormData.email.length > 0 && (
               <button
                 type="button"
-                className="absolute right-3 size-5"
+                className="grid size-5 place-items-center"
                 onClick={handleEmailClear}
                 aria-label={t("aria_labels.auth_forms.clear_email")}
               >
-                <XCircle className="size-5 stroke-placeholder" />
+                <CloseCircleOutline className="size-5 text-placeholder" />
               </button>
             )}
-          </div>
+          </InputGroup>
         </div>
 
         <div className="space-y-1">
-          <label htmlFor="password" className="text-13 text-tertiary font-medium">
+          <label htmlFor="password" className="text-13 font-medium text-tertiary">
             {mode === EAuthModes.SIGN_IN ? t("auth.common.password.label") : t("auth.common.password.set_password")}
           </label>
-          <div className="relative flex items-center rounded-md bg-surface-1">
+          <InputGroup size="2xl">
             <Input
+              size="2xl"
               type={showPassword?.password ? "text" : "password"}
               id="password"
               name="password"
               value={passwordFormData.password}
               onChange={(e) => handleFormChange("password", e.target.value)}
               placeholder={t("auth.common.password.placeholder")}
-              className="disable-autofill-style h-10 w-full border border-strong !bg-surface-1 pr-12 placeholder:text-placeholder"
               onFocus={() => setIsPasswordInputFocused(true)}
               onBlur={() => setIsPasswordInputFocused(false)}
-              autoComplete="on"
+              autoComplete="off"
               autoFocus
             />
             <button
               type="button"
               onClick={() => handleShowPassword("password")}
-              className="absolute right-3 size-5 grid place-items-center"
+              className="grid size-5 place-items-center"
               aria-label={t(
                 showPassword?.password ? "aria_labels.auth_forms.hide_password" : "aria_labels.auth_forms.show_password"
               )}
             >
               {showPassword?.password ? (
-                <EyeOff className="size-5 stroke-placeholder" />
+                <HideOutline className="size-5 text-placeholder" />
               ) : (
-                <Eye className="size-5 stroke-placeholder" />
+                <ShowOutline className="size-5 text-placeholder" />
               )}
             </button>
-          </div>
+          </InputGroup>
           {passwordSupport}
         </div>
 
         {mode === EAuthModes.SIGN_UP && (
           <div className="space-y-1">
-            <label htmlFor="confirm-password" className="text-13 text-tertiary font-medium">
+            <label htmlFor="confirm-password" className="text-13 font-medium text-tertiary">
               {t("auth.common.password.confirm_password.label")}
             </label>
-            <div className="relative flex items-center rounded-md bg-surface-1">
+            <InputGroup size="2xl">
               <Input
+                size="2xl"
                 type={showPassword?.retypePassword ? "text" : "password"}
                 id="confirm-password"
                 name="confirm_password"
                 value={passwordFormData.confirm_password}
                 onChange={(e) => handleFormChange("confirm_password", e.target.value)}
                 placeholder={t("auth.common.password.confirm_password.placeholder")}
-                className="disable-autofill-style h-10 w-full border border-strong !bg-surface-1 pr-12 placeholder:text-placeholder"
                 onFocus={() => setIsRetryPasswordInputFocused(true)}
                 onBlur={() => setIsRetryPasswordInputFocused(false)}
+                autoComplete="off"
               />
               <button
                 type="button"
-                className="absolute right-3 size-5 grid place-items-center"
+                className="grid size-5 place-items-center"
                 aria-label={t(
                   showPassword?.retypePassword
                     ? "aria_labels.auth_forms.hide_password"
@@ -256,12 +254,12 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
                 onClick={() => handleShowPassword("retypePassword")}
               >
                 {showPassword?.retypePassword ? (
-                  <EyeOff className="size-5 stroke-placeholder" />
+                  <HideOutline className="size-5 text-placeholder" />
                 ) : (
-                  <Eye className="size-5 stroke-placeholder" />
+                  <ShowOutline className="size-5 text-placeholder" />
                 )}
               </button>
-            </div>
+            </InputGroup>
             {!!passwordFormData.confirm_password &&
               passwordFormData.password !== passwordFormData.confirm_password &&
               renderPasswordMatchError && (
@@ -285,7 +283,6 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
               {isSMTPConfigured && (
                 <Button
                   type="button"
-                  data-ph-element={AUTH_TRACKER_ELEMENTS.SIGN_IN_WITH_UNIQUE_CODE}
                   onClick={redirectToUniqueCodeSignIn}
                   variant="secondary"
                   className="w-full"

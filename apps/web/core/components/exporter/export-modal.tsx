@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React, { useState } from "react";
 import { intersection } from "lodash-es";
 import { observer } from "mobx-react";
@@ -8,7 +14,8 @@ import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IUser, IImporterService } from "@plane/types";
 // ui
-import { Checkbox, CustomSearchSelect, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { Checkbox } from "@makeplane/propel/components/checkbox";
+import { CustomSearchSelect, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
@@ -51,7 +58,7 @@ export const Exporter = observer(function Exporter(props: Props) {
       query: `${projectDetails?.name} ${projectDetails?.identifier}`,
       content: (
         <div className="flex items-center gap-2">
-          <span className="text-10 text-secondary flex-shrink-0">{projectDetails?.identifier}</span>
+          <span className="flex-shrink-0 text-10 text-secondary">{projectDetails?.identifier}</span>
           <span className="truncate">{projectDetails?.name}</span>
         </div>
       ),
@@ -139,12 +146,12 @@ export const Exporter = observer(function Exporter(props: Props) {
             multiple
           />
         </div>
-        <div className="flex max-w-min cursor-pointer items-center gap-2">
-          <Checkbox checked={multiple} onChange={() => setMultiple(!multiple)} />
-          <div className="whitespace-nowrap text-13">
-            {t("workspace_settings.settings.exports.export_separate_files")}
-          </div>
-        </div>
+        <Checkbox
+          label={t("workspace_settings.settings.exports.export_separate_files")}
+          stretch="auto"
+          checked={multiple}
+          onCheckedChange={setMultiple}
+        />
         <div className="flex justify-end gap-2">
           <Button variant="secondary" onClick={handleClose}>
             {t("cancel")}

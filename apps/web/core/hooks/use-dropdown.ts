@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect } from "react";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
@@ -6,7 +12,7 @@ import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 import { usePlatformOS } from "./use-platform-os";
 
 type TArguments = {
-  dropdownRef: React.RefObject<HTMLDivElement>;
+  dropdownRef: React.RefObject<HTMLDivElement | null>;
   inputRef?: React.RefObject<HTMLInputElement | null>;
   isOpen: boolean;
   onClose?: () => void;

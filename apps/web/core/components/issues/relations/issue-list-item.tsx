@@ -1,10 +1,16 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import React from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-import { LinkIcon, EditIcon, TrashIcon, CloseIcon } from "@plane/propel/icons";
+import { CloseOutline, DeleteOutline, EditOutline, LinkOutline } from "@makeplane/propel/icons";
 // plane imports
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
+import type { TIssueRelationTypes } from "@plane/types";
 import type { TIssue, TIssueServiceType } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 import { ControlLink, CustomMenu } from "@plane/ui";
@@ -14,9 +20,8 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web imports
-import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
-import type { TIssueRelationTypes } from "@/plane-web/types";
+// components
+import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 // local imports
 import { useRelationOperations } from "../issue-detail-widgets/relations/helper";
 import { RelationIssueProperty } from "./properties";
@@ -123,9 +128,9 @@ export const RelationIssueListItem = observer(function RelationIssueListItem(pro
         className="w-full cursor-pointer"
       >
         {issue && (
-          <div className="group relative flex min-h-11 h-full w-full items-center px-1.5 py-1 transition-all hover:bg-surface-2">
+          <div className="group relative flex h-full min-h-11 w-full items-center px-1.5 py-1 transition-all hover:bg-surface-2">
             <span className="size-5 flex-shrink-0" />
-            <div className="flex flex-1 min-w-0 cursor-pointer items-center gap-3">
+            <div className="flex min-w-0 flex-1 cursor-pointer items-center gap-3">
               <div className="flex-shrink-0">
                 {projectDetail && (
                   <IssueIdentifier
@@ -139,8 +144,8 @@ export const RelationIssueListItem = observer(function RelationIssueListItem(pro
                 )}
               </div>
 
-              <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
-                <span className="flex-1 w-0 truncate text-13 text-primary">{issue.name}</span>
+              <Tooltip label={issue.name} layout="stacked" disabled={isMobile}>
+                <span className="w-0 flex-1 truncate text-13 text-primary">{issue.name}</span>
               </Tooltip>
             </div>
             <div
@@ -158,12 +163,12 @@ export const RelationIssueListItem = observer(function RelationIssueListItem(pro
                 issueServiceType={issueServiceType}
               />
             </div>
-            <div className="pl-2 flex-shrink-0 text-13">
+            <div className="flex-shrink-0 pl-2 text-13">
               <CustomMenu placement="bottom-end" ellipsis>
                 {!disabled && (
                   <CustomMenu.MenuItem onClick={handleEditIssue}>
                     <div className="flex items-center gap-2">
-                      <EditIcon className="h-3.5 w-3.5" strokeWidth={2} />
+                      <EditOutline className="h-3.5 w-3.5" />
                       <span>{t("common.actions.edit")}</span>
                     </div>
                   </CustomMenu.MenuItem>
@@ -171,7 +176,7 @@ export const RelationIssueListItem = observer(function RelationIssueListItem(pro
 
                 <CustomMenu.MenuItem onClick={handleCopyIssueLink}>
                   <div className="flex items-center gap-2">
-                    <LinkIcon className="h-3.5 w-3.5" strokeWidth={2} />
+                    <LinkOutline className="h-3.5 w-3.5" />
                     <span>{t("common.actions.copy_link")}</span>
                   </div>
                 </CustomMenu.MenuItem>
@@ -179,7 +184,7 @@ export const RelationIssueListItem = observer(function RelationIssueListItem(pro
                 {!disabled && (
                   <CustomMenu.MenuItem onClick={handleRemoveRelation}>
                     <div className="flex items-center gap-2">
-                      <CloseIcon className="h-3.5 w-3.5" strokeWidth={2} />
+                      <CloseOutline className="h-3.5 w-3.5" />
                       <span>{t("common.actions.remove_relation")}</span>
                     </div>
                   </CustomMenu.MenuItem>
@@ -188,7 +193,7 @@ export const RelationIssueListItem = observer(function RelationIssueListItem(pro
                 {!disabled && (
                   <CustomMenu.MenuItem onClick={handleDeleteIssue}>
                     <div className="flex items-center gap-2">
-                      <TrashIcon className="h-3.5 w-3.5" strokeWidth={2} />
+                      <DeleteOutline className="h-3.5 w-3.5" />
                       <span>{t("common.actions.delete")}</span>
                     </div>
                   </CustomMenu.MenuItem>

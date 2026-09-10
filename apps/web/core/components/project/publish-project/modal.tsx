@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -6,11 +12,12 @@ import { Controller, useForm } from "react-hook-form";
 // types
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
 import { Button } from "@plane/propel/button";
-import { GlobeIcon, NewTabIcon, CheckIcon } from "@plane/propel/icons";
+import { GlobeOutline, NewTabOutline, TickOutline } from "@makeplane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TProjectPublishLayouts, TProjectPublishSettings } from "@plane/types";
 // ui
-import { Loader, ToggleSwitch, CustomSelect, ModalCore, EModalWidth } from "@plane/ui";
+import { Switch } from "@makeplane/propel/components/switch";
+import { Loader, CustomSelect, ModalCore, EModalWidth } from "@plane/ui";
 // helpers
 import { copyTextToClipboard } from "@plane/utils";
 // hooks
@@ -196,40 +203,40 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
             <Loader.Item height="30px" />
           </Loader>
         ) : (
-          <div className="px-5 space-y-4">
+          <div className="space-y-4 px-5">
             {isProjectPublished && projectPublishSettings && (
               <>
-                <div className="border border-strong rounded-md py-1.5 pl-4 pr-1 flex items-center justify-between gap-2">
+                <div className="flex items-center justify-between gap-2 rounded-md border border-strong py-1.5 pr-1 pl-4">
                   <a
                     href={publishLink}
-                    className="text-13 text-secondary truncate"
+                    className="truncate text-13 text-secondary"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
                     {publishLink}
                   </a>
-                  <div className="flex-shrink-0 flex items-center gap-1">
+                  <div className="flex flex-shrink-0 items-center gap-1">
                     <a
                       href={publishLink}
-                      className="size-8 grid place-items-center bg-layer-3 hover:bg-layer-3-hover rounded-sm"
+                      className="grid size-8 place-items-center rounded-sm bg-layer-3 hover:bg-layer-3-hover"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <NewTabIcon className="size-4" />
+                      <NewTabOutline className="size-4" />
                     </a>
                     <button
                       type="button"
-                      className="h-8 bg-layer-3 hover:bg-layer-3-hover rounded-sm text-11 font-medium py-2 px-3"
+                      className="h-8 rounded-sm bg-layer-3 px-3 py-2 text-11 font-medium hover:bg-layer-3-hover"
                       onClick={handleCopyLink}
                     >
                       Copy link
                     </button>
                   </div>
                 </div>
-                <p className="text-13 font-medium text-accent-primary flex items-center gap-1 mt-3">
-                  <span className="relative grid place-items-center size-2.5">
-                    <span className="animate-ping absolute inline-flex size-full rounded-full bg-accent-primary opacity-75" />
-                    <span className="relative inline-flex rounded-full size-1.5 bg-accent-primary" />
+                <p className="mt-3 flex items-center gap-1 text-13 font-medium text-accent-primary">
+                  <span className="relative grid size-2.5 place-items-center">
+                    <span className="absolute inline-flex size-full animate-ping rounded-full bg-accent-primary opacity-75" />
+                    <span className="relative inline-flex size-1.5 rounded-full bg-accent-primary" />
                   </span>
                   This project is now live on web
                 </p>
@@ -264,7 +271,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
                           className="flex items-center justify-between gap-2"
                         >
                           {option.label}
-                          {selectedLayouts.includes(option.key) && <CheckIcon className="size-3.5 flex-shrink-0" />}
+                          {selectedLayouts.includes(option.key) && <TickOutline className="size-3.5 flex-shrink-0" />}
                         </CustomSelect.Option>
                       ))}
                     </CustomSelect>
@@ -277,7 +284,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
                   control={control}
                   name="is_comments_enabled"
                   render={({ field: { onChange, value } }) => (
-                    <ToggleSwitch value={!!value} onChange={onChange} size="sm" />
+                    <Switch size="sm" checked={!!value} onCheckedChange={onChange} aria-label="Allow comments" />
                   )}
                 />
               </div>
@@ -287,7 +294,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
                   control={control}
                   name="is_reactions_enabled"
                   render={({ field: { onChange, value } }) => (
-                    <ToggleSwitch value={!!value} onChange={onChange} size="sm" />
+                    <Switch size="sm" checked={!!value} onCheckedChange={onChange} aria-label="Allow reactions" />
                   )}
                 />
               </div>
@@ -297,7 +304,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
                   control={control}
                   name="is_votes_enabled"
                   render={({ field: { onChange, value } }) => (
-                    <ToggleSwitch value={!!value} onChange={onChange} size="sm" />
+                    <Switch size="sm" checked={!!value} onCheckedChange={onChange} aria-label="Allow voting" />
                   )}
                 />
               </div>
@@ -306,9 +313,9 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
         )}
 
         {/* modal handlers */}
-        <div className="relative flex items-center justify-between border-t border-subtle px-5 py-4 mt-4">
+        <div className="relative mt-4 flex items-center justify-between border-t border-subtle px-5 py-4">
           <div className="flex items-center gap-1 text-13 text-placeholder">
-            <GlobeIcon className="size-3.5" />
+            <GlobeOutline className="size-3.5" />
             <div className="text-13">Anyone with the link can access</div>
           </div>
           {!fetchSettingsLoader && (

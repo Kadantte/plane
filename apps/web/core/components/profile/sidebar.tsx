@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -7,8 +13,8 @@ import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { IconButton } from "@plane/propel/icon-button";
-import { EditIcon, ChevronDownIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+import { ChevronDownOutline, EditOutline } from "@makeplane/propel/icons";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { IUserProfileProjectSegregation } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { cn, renderFormattedDate, getFileURL } from "@plane/utils";
@@ -81,7 +87,7 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
   return (
     <div
       className={cn(
-        `vertical-scrollbar scrollbar-md fixed z-5 h-full w-full shrink-0 overflow-hidden overflow-y-auto border-l border-subtle bg-surface-1 transition-all md:relative md:w-[300px] shadow-raised-200`,
+        `vertical-scrollbar fixed z-5 scrollbar-md h-full w-full shrink-0 overflow-hidden overflow-y-auto border-l border-subtle bg-surface-1 shadow-raised-200 transition-all md:relative md:w-[300px]`,
         className
       )}
       style={profileSidebarCollapsed ? { marginLeft: `${window?.innerWidth || 0}px` } : {}}
@@ -90,10 +96,10 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
         <>
           <div className="relative h-[110px]">
             {currentUser?.id === userId && (
-              <div className="absolute right-3.5 top-3.5">
+              <div className="absolute top-3.5 right-3.5">
                 <IconButton
                   variant="secondary"
-                  icon={EditIcon}
+                  icon={EditOutline}
                   onClick={() =>
                     toggleProfileSettingsModal({
                       activeTab: "general",
@@ -117,7 +123,7 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
                   className="h-full w-full rounded-sm object-cover"
                 />
               ) : (
-                <div className="flex h-[52px] w-[52px] items-center justify-center rounded-sm bg-accent-primary capitalize text-on-color">
+                <div className="flex h-[52px] w-[52px] items-center justify-center rounded-sm bg-accent-primary text-on-color capitalize">
                   {userData?.first_name?.[0]}
                 </div>
               )}
@@ -134,7 +140,7 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
               {userDetails.map((detail) => (
                 <div key={detail.i18n_label} className="flex items-center gap-4 text-13">
                   <div className="w-2/5 flex-shrink-0 text-secondary">{t(detail.i18n_label)}</div>
-                  <div className="w-3/5 break-words font-medium">{detail.value}</div>
+                  <div className="w-3/5 font-medium break-words">{detail.value}</div>
                 </div>
               ))}
             </div>
@@ -161,11 +167,11 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
                             <span className="grid h-7 w-7 flex-shrink-0 place-items-center">
                               <Logo logo={projectDetails.logo_props} />
                             </span>
-                            <div className="truncate break-words text-13 font-medium">{projectDetails.name}</div>
+                            <div className="truncate text-13 font-medium break-words">{projectDetails.name}</div>
                           </div>
                           <div className="flex flex-shrink-0 items-center gap-2">
                             {project.assigned_issues > 0 && (
-                              <Tooltip tooltipContent="Completion percentage" position="left" isMobile={isMobile}>
+                              <Tooltip label="Completion percentage" side="left" disabled={isMobile}>
                                 <div
                                   className={`rounded-sm px-1 py-0.5 text-11 font-medium ${
                                     completedIssuePercentage <= 35
@@ -179,10 +185,11 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
                                 </div>
                               </Tooltip>
                             )}
-                            <ChevronDownIcon className="h-4 w-4" />
+                            <ChevronDownOutline className="h-4 w-4" />
                           </div>
                         </Disclosure.Button>
                         <Transition
+                          as="div"
                           show={open}
                           enter="transition duration-100 ease-out"
                           enterFrom="transform opacity-0"

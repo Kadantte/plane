@@ -1,23 +1,26 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { createContext } from "react";
 // ce imports
 import type { UseFormReset, UseFormWatch } from "react-hook-form";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
-import type { ISearchIssueResponse, TIssue } from "@plane/types";
-// plane web imports
-import type { TIssuePropertyValues, TIssuePropertyValueErrors } from "@/plane-web/types/issue-types";
-import type { TIssueFields } from "ce/components/issues/issue-modal";
+import type { ISearchIssueResponse, TIssue, TIssuePropertyValues, TIssuePropertyValueErrors } from "@plane/types";
 
 export type TPropertyValuesValidationProps = {
   projectId: string | null;
   workspaceSlug: string;
-  watch: UseFormWatch<TIssueFields>;
+  watch: UseFormWatch<TIssue>;
 };
 
 export type TActiveAdditionalPropertiesProps = {
   projectId: string | null;
   workspaceSlug: string;
-  watch: UseFormWatch<TIssueFields>;
+  watch: UseFormWatch<TIssue>;
 };
 
 export type TCreateUpdatePropertyValuesProps = {

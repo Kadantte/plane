@@ -1,12 +1,18 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 // plane imports
 import { PROGRESS_STATE_GROUPS_DETAILS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { TWorkItemFilterCondition } from "@plane/shared-state";
+import { LinearProgress } from "@makeplane/propel/components/linear-progress";
 import type { ICycle } from "@plane/types";
-import { LinearProgressIndicator, Loader } from "@plane/ui";
+import { Loader } from "@plane/ui";
 // assets
 import darkProgressAsset from "@/app/assets/empty-state/active-cycle/progress-dark.webp?url";
 import lightProgressAsset from "@/app/assets/empty-state/active-cycle/progress-light.webp?url";
@@ -27,12 +33,9 @@ export const ActiveCycleProgress = observer(function ActiveCycleProgress(props: 
   // plane hooks
   const { t } = useTranslation();
   // derived values
-  const progressIndicatorData = PROGRESS_STATE_GROUPS_DETAILS.map((group, index) => ({
-    id: index,
-    name: group.title,
-    value: cycle && cycle.total_issues > 0 ? (cycle[group.key as keyof ICycle] as number) : 0,
-    color: group.color,
-  }));
+  const closedIssues = cycle ? cycle.completed_issues + cycle.cancelled_issues : 0;
+  const closableIssues = cycle ? cycle.total_issues - cycle.cancelled_issues : 0;
+  const progressValue = closableIssues > 0 ? (closedIssues / closableIssues) * 100 : 0;
   const groupedIssues: any = cycle
     ? {
         completed: cycle?.completed_issues,
@@ -44,19 +47,27 @@ export const ActiveCycleProgress = observer(function ActiveCycleProgress(props: 
   const resolvedPath = resolvedTheme === "light" ? lightProgressAsset : darkProgressAsset;
 
   return cycle && cycle.hasOwnProperty("started_issues") ? (
-    <div className="flex flex-col min-h-[17rem] gap-5 py-4 px-3.5 bg-surface-1 border border-subtle rounded-lg">
+    <div className="flex min-h-[17rem] flex-col gap-5 rounded-lg border border-subtle bg-surface-1 px-3.5 py-4">
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between gap-4">
-          <h3 className="text-14 text-tertiary font-semibold">{t("project_cycles.active_cycle.progress")}</h3>
+          <h3 className="text-14 font-semibold text-tertiary">{t("project_cycles.active_cycle.progress")}</h3>
           {cycle.total_issues > 0 && (
-            <span className="flex gap-1 text-13 text-placeholder font-medium whitespace-nowrap rounded-xs px-3 py-1 ">
+            <span className="flex gap-1 rounded-xs px-3 py-1 text-13 font-medium whitespace-nowrap text-placeholder">
               {`${cycle.completed_issues + cycle.cancelled_issues}/${cycle.total_issues - cycle.cancelled_issues} ${
                 cycle.completed_issues + cycle.cancelled_issues > 1 ? "Work items" : "Work item"
               } closed`}
             </span>
           )}
         </div>
-        {cycle.total_issues > 0 && <LinearProgressIndicator size="lg" data={progressIndicatorData} />}
+        {cycle.total_issues > 0 && (
+          <LinearProgress
+            value={progressValue}
+            size="md"
+            variant="brand"
+            showValue={false}
+            aria-label="Cycle progress"
+          />
+        )}
       </div>
 
       {cycle.total_issues > 0 ? (
@@ -66,7 +77,7 @@ export const ActiveCycleProgress = observer(function ActiveCycleProgress(props: 
               {groupedIssues[group] > 0 && (
                 <div key={index}>
                   <div
-                    className="flex items-center justify-between gap-2 text-13 cursor-pointer"
+                    className="flex cursor-pointer items-center justify-between gap-2 text-13"
                     onClick={() => {
                       handleFiltersUpdate([{ property: "state_group", operator: "in", value: [group] }]);
                     }}
@@ -78,7 +89,7 @@ export const ActiveCycleProgress = observer(function ActiveCycleProgress(props: 
                           backgroundColor: PROGRESS_STATE_GROUPS_DETAILS[index].color,
                         }}
                       />
-                      <span className="text-tertiary capitalize font-medium w-16">{group}</span>
+                      <span className="w-16 font-medium text-tertiary capitalize">{group}</span>
                     </div>
                     <span className="text-tertiary">{`${groupedIssues[group]} ${
                       groupedIssues[group] > 1 ? "Work items" : "Work item"
@@ -99,13 +110,13 @@ export const ActiveCycleProgress = observer(function ActiveCycleProgress(props: 
           )}
         </div>
       ) : (
-        <div className="flex items-center justify-center h-full w-full">
+        <div className="flex h-full w-full items-center justify-center">
           <SimpleEmptyState title={t("active_cycle.empty_state.progress.title")} assetPath={resolvedPath} />
         </div>
       )}
     </div>
   ) : (
-    <Loader className="flex flex-col min-h-[17rem] gap-5 bg-surface-1 border border-subtle rounded-lg">
+    <Loader className="flex min-h-[17rem] flex-col gap-5 rounded-lg border border-subtle bg-surface-1">
       <Loader.Item width="100%" height="100%" />
     </Loader>
   );

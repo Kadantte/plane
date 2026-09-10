@@ -1,12 +1,19 @@
-import type { FC, MouseEvent } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { MouseEvent } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 // plane imports
+import { Avatar } from "@makeplane/propel/components/avatar";
 import { PriorityIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
-import { Row, Avatar } from "@plane/ui";
-import { cn, renderFormattedDate, getFileURL } from "@plane/utils";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
+import { Row } from "@plane/ui";
+import { cn, renderFormattedDate } from "@plane/utils";
 // components
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 // hooks
@@ -14,8 +21,6 @@ import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web imports
-import { InboxSourcePill } from "@/plane-web/components/inbox/source-pill";
 // local imports
 import { InboxIssueStatus } from "../inbox-issue-status";
 
@@ -59,8 +64,8 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
       >
         <Row
           className={cn(
-            `flex flex-col gap-2 relative border border-t-transparent border-l-transparent border-r-transparent border-b-subtle-1 py-4 hover:bg-accent-primary/5 cursor-pointer transition-all`,
-            { "border-accent-strong border": selectedInboxIssueId === issue.id }
+            `relative flex cursor-pointer flex-col gap-2 border border-t-transparent border-r-transparent border-b-subtle-1 border-l-transparent py-4 transition-all hover:bg-accent-primary/5`,
+            { "border border-accent-strong": selectedInboxIssueId === issue.id }
           )}
         >
           <div className="space-y-1">
@@ -69,35 +74,30 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
                 {projectIdentifier}-{issue.sequence_id}
               </div>
               <div className="flex items-center gap-2">
-                {inboxIssue.source && <InboxSourcePill source={inboxIssue.source} />}
                 {inboxIssue.status !== -2 && <InboxIssueStatus inboxIssue={inboxIssue} iconSize={12} />}
               </div>
             </div>
-            <h3 className="truncate w-full text-13">{issue.name}</h3>
+            <h3 className="w-full truncate text-13">{issue.name}</h3>
           </div>
 
           <div className="flex items-center justify-between">
             <div className="flex flex-wrap items-center gap-2">
-              <Tooltip
-                tooltipHeading="Created on"
-                tooltipContent={`${renderFormattedDate(issue.created_at ?? "")}`}
-                isMobile={isMobile}
-              >
+              <Tooltip label={`Created on: ${renderFormattedDate(issue.created_at ?? "") ?? ""}`} disabled={isMobile}>
                 <div className="text-11 text-secondary">{renderFormattedDate(issue.created_at ?? "")}</div>
               </Tooltip>
 
-              <div className="border-2 rounded-full border-strong-1" />
+              <div className="rounded-full border-2 border-strong-1" />
 
               {issue.priority && (
-                <Tooltip tooltipHeading="Priority" tooltipContent={`${issue.priority ?? "None"}`}>
-                  <PriorityIcon priority={issue.priority} withContainer className="w-3 h-3" />
+                <Tooltip label={`Priority: ${issue.priority ?? "None"}`}>
+                  <PriorityIcon priority={issue.priority} withContainer className="h-3 w-3" />
                 </Tooltip>
               )}
 
               {issue.label_ids && issue.label_ids.length > 3 ? (
-                <div className="relative !h-[17.5px] flex items-center gap-1 rounded-sm border border-strong px-1 text-11">
-                  <span className="h-2 w-2 rounded-full bg-orange-400" />
-                  <span className="normal-case max-w-28 truncate">{`${issue.label_ids.length} labels`}</span>
+                <div className="relative flex !h-[17.5px] items-center gap-1 rounded-sm border border-strong px-1 text-11">
+                  <span className="bg-orange-400 h-2 w-2 rounded-full" />
+                  <span className="max-w-28 truncate normal-case">{`${issue.label_ids.length} labels`}</span>
                 </div>
               ) : (
                 <>
@@ -107,7 +107,7 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
                     return (
                       <div
                         key={labelId}
-                        className="relative !h-[17.5px] flex items-center gap-1 rounded-sm border border-strong px-1 text-11"
+                        className="relative flex !h-[17.5px] items-center gap-1 rounded-sm border border-strong px-1 text-11"
                       >
                         <span
                           className="h-2 w-2 rounded-full"
@@ -115,7 +115,7 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
                             backgroundColor: labelDetails.color,
                           }}
                         />
-                        <span className="normal-case max-w-28 truncate">{labelDetails.name}</span>
+                        <span className="max-w-28 truncate normal-case">{labelDetails.name}</span>
                       </div>
                     );
                   })}
@@ -124,7 +124,7 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
             </div>
             {/* created by */}
             {createdByDetails && createdByDetails.email?.includes("intake@plane.so") ? (
-              <Avatar src={getFileURL("")} name={"Plane"} size="md" showTooltip />
+              <Avatar alt="Plane" fallback="P" size="xs" />
             ) : createdByDetails ? (
               <ButtonAvatars showTooltip={false} userIds={createdByDetails?.id} />
             ) : null}

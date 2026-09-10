@@ -1,10 +1,16 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 // ui
 import { MODULE_STATUS } from "@plane/constants";
 import { ModuleStatusIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 // components
 import { SIDEBAR_WIDTH } from "@/components/gantt-chart/constants";
 import { getBlockViewDetails } from "@/components/issues/issue-layouts/utils";
@@ -37,14 +43,10 @@ export const ModuleGanttBlock = observer(function ModuleGanttBlock(props: Props)
 
   return (
     <Tooltip
-      isMobile={isMobile}
-      tooltipContent={
-        <div className="space-y-1">
-          <h5>{moduleDetails?.name}</h5>
-          <div>{message}</div>
-        </div>
-      }
-      position="top-start"
+      label={moduleDetails?.name ? `${moduleDetails.name}: ${message ?? ""}` : (message ?? "")}
+      layout="stacked"
+      align="start"
+      disabled={isMobile}
     >
       <div
         className="relative flex h-full w-full cursor-pointer items-center rounded-sm"
@@ -55,9 +57,9 @@ export const ModuleGanttBlock = observer(function ModuleGanttBlock(props: Props)
           )
         }
       >
-        <div className="absolute left-0 top-0 h-full w-full bg-surface-1/50" />
+        <div className="absolute top-0 left-0 h-full w-full bg-surface-1/50" />
         <div
-          className="sticky w-auto overflow-hidden truncate px-2.5 py-1 text-13 text-primary"
+          className="sticky w-auto truncate overflow-hidden px-2.5 py-1 text-13 text-primary"
           style={{ left: `${SIDEBAR_WIDTH}px` }}
         >
           {moduleDetails?.name}

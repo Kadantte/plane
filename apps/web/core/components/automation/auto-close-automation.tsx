@@ -1,13 +1,20 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ArchiveX } from "lucide-react";
+import { AutoCloseOutline, StateOutline } from "@makeplane/propel/icons";
 // plane imports
 import { PROJECT_AUTOMATION_MONTHS, EUserPermissions, EUserPermissionsLevel, EIconSize } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { StateGroupIcon, StatePropertyIcon } from "@plane/propel/icons";
+import { StateGroupIcon } from "@plane/propel/icons";
 import type { IProject } from "@plane/types";
-import { CustomSelect, CustomSearchSelect, ToggleSwitch, Loader } from "@plane/ui";
+import { Switch } from "@makeplane/propel/components/switch";
+import { CustomSelect, CustomSearchSelect, Loader } from "@plane/ui";
 import { SelectMonthModal } from "@/components/automation";
 import { SettingsControlItem } from "@/components/settings/control-item";
 // hooks
@@ -81,24 +88,25 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
       />
       <div className="flex flex-col gap-4 py-2">
         <div className="flex items-center gap-3">
-          <div className="shrink-0 size-10 grid place-items-center rounded-sm bg-layer-2">
-            <ArchiveX className="shrink-0 size-4 text-danger-primary" />
+          <div className="grid size-10 shrink-0 place-items-center rounded-sm bg-layer-2">
+            <AutoCloseOutline className="size-4 shrink-0 text-danger-primary" />
           </div>
           <SettingsControlItem
             title={t("project_settings.automations.auto-close.title")}
             description={t("project_settings.automations.auto-close.description")}
             control={
-              <ToggleSwitch
-                value={autoCloseStatus}
-                onChange={() => {
+              <Switch
+                size="sm"
+                checked={autoCloseStatus}
+                onCheckedChange={() => {
                   if (currentProjectDetails?.close_in === 0) {
                     void handleChange({ close_in: 1, default_state: defaultState });
                   } else {
                     void handleChange({ close_in: 0, default_state: null });
                   }
                 }}
-                size="sm"
                 disabled={!isAdmin}
+                aria-label={t("project_settings.automations.auto-close.title")}
               />
             }
           />
@@ -130,7 +138,7 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
                         ))}
                         <button
                           type="button"
-                          className="flex w-full select-none items-center rounded-sm px-1 py-1.5 text-secondary hover:bg-layer-1"
+                          className="flex w-full items-center rounded-sm px-1 py-1.5 text-secondary select-none hover:bg-layer-1"
                           onClick={() => setmonthModal(true)}
                         >
                           {t("common.customize_time_range")}
@@ -140,7 +148,7 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
                   </div>
                 </div>
 
-                <div className="ppy sm:py-10 flex w-full items-center justify-between gap-2 px-5 py-4">
+                <div className="ppy flex w-full items-center justify-between gap-2 px-5 py-4 sm:py-10">
                   <div className="w-1/2 text-13 font-medium">
                     {t("project_settings.automations.auto-close.auto_close_status")}
                   </div>
@@ -162,7 +170,7 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
                               size={EIconSize.LG}
                             />
                           ) : (
-                            <StatePropertyIcon className="h-3.5 w-3.5 text-secondary" />
+                            <StateOutline className="h-3.5 w-3.5 text-secondary" />
                           )}
                           {selectedOption?.name
                             ? selectedOption.name

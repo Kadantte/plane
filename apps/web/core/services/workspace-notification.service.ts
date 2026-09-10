@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 /* eslint-disable no-useless-catch */
 
 import { API_BASE_URL } from "@plane/constants";
@@ -30,7 +36,7 @@ export class WorkspaceNotificationService extends APIService {
     params: TNotificationPaginatedInfoQueryParams
   ): Promise<TNotificationPaginatedInfo | undefined> {
     try {
-      const { data } = await this.get(`/api/workspaces/${workspaceSlug}/users/notifications`, {
+      const { data } = await this.get(`/api/workspaces/${workspaceSlug}/users/notifications/`, {
         params,
       });
       return data || undefined;

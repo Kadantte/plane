@@ -1,8 +1,14 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 
 import { useTranslation } from "@plane/i18n";
-import { LinkIcon, NewTabIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
+import { DeleteOutline, EditOutline, LinkOutline, NewTabOutline } from "@makeplane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TContextMenuItem } from "@plane/ui";
 import { LinkItemBlock } from "@plane/ui";
@@ -65,25 +71,25 @@ export const ProjectLinkDetail = observer(function ProjectLinkDetail(props: TPro
         key: "edit",
         action: () => handleEdit(true),
         title: t("edit"),
-        icon: EditIcon,
+        icon: EditOutline,
       },
       {
         key: "open-new-tab",
         action: handleOpenInNewTab,
         title: t("open_in_new_tab"),
-        icon: NewTabIcon,
+        icon: NewTabOutline,
       },
       {
         key: "copy-link",
         action: handleCopyText,
         title: t("copy_link"),
-        icon: LinkIcon,
+        icon: LinkOutline,
       },
       {
         key: "delete",
         action: handleDelete,
         title: t("delete"),
-        icon: TrashIcon,
+        icon: DeleteOutline,
       },
     ],
     [handleEdit, handleOpenInNewTab, handleCopyText, handleDelete, t]

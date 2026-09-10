@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -22,7 +28,7 @@ export const PreferencesProfileSettings = observer(function PreferencesProfileSe
         title={t("account_settings.preferences.heading")}
         description={t("account_settings.preferences.description")}
       />
-      <div className="mt-7 flex flex-col gap-6 w-full">
+      <div className="mt-7 flex w-full flex-col gap-6">
         <section>
           <ProfileSettingsDefaultPreferencesList />
         </section>

@@ -1,20 +1,33 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { MouseEvent } from "react";
 import React, { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { Eye, ArrowRight, CalendarDays } from "lucide-react";
+import {
+  CalendarOutline,
+  MembersOutline,
+  ShowOutline,
+  TransferWorkItemOutline,
+  WorkItemsOutline,
+} from "@makeplane/propel/icons";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { TransferIcon, WorkItemsIcon, MembersPropertyIcon } from "@plane/propel/icons";
+import { Avatar } from "@makeplane/propel/components/avatar";
 import { setPromiseToast } from "@plane/propel/toast";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 import type { ICycle, TCycleGroups } from "@plane/types";
-import { Avatar, AvatarGroup, FavoriteStar } from "@plane/ui";
+import { FavoriteStar } from "@plane/ui";
 import { getDate, getFileURL, generateQueryParams } from "@plane/utils";
 // components
+import { AvatarGroupOverflow } from "@/components/common/avatar-group-overflow";
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { MergedDateDisplay } from "@/components/dropdowns/merged-date";
@@ -25,8 +38,6 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useTimeZoneConverter } from "@/hooks/use-timezone-converter";
-// plane web components
-import { CycleAdditionalActions } from "@/plane-web/components/cycles";
 // local imports
 import { CycleQuickActions } from "../quick-actions";
 import { TransferIssuesModal } from "../transfer-issues-modal";
@@ -36,7 +47,7 @@ type Props = {
   projectId: string;
   cycleId: string;
   cycleDetails: ICycle;
-  parentRef: React.RefObject<HTMLDivElement>;
+  parentRef: React.RefObject<HTMLDivElement | null>;
   isActive?: boolean;
 };
 
@@ -103,6 +114,7 @@ export const CycleListItemAction = observer(function CycleListItemAction(props: 
     if (!workspaceSlug || !projectId) return;
 
     const addToFavoritePromise = addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId).then(
+      // oxlint-disable-next-line promise/always-return
       () => {
         if (!isFavoriteMenuOpen) toggleFavoriteMenu(true);
       }
@@ -175,26 +187,26 @@ export const CycleListItemAction = observer(function CycleListItemAction(props: 
       />
       <button
         onClick={openCycleOverview}
-        className={`z-[1] flex text-accent-secondary text-11 gap-1 flex-shrink-0 ${isMobile || (isActive && !searchParams.has("peekCycle")) ? "flex" : "hidden group-hover:flex"}`}
+        className={`z-[1] flex flex-shrink-0 gap-1 text-11 text-accent-secondary ${isMobile || (isActive && !searchParams.has("peekCycle")) ? "flex" : "hidden group-hover:flex"}`}
       >
-        <Eye className="h-4 w-4 my-auto  text-accent-secondary" />
+        <ShowOutline className="my-auto h-4 w-4 text-accent-secondary" />
         <span>{t("project_cycles.more_details")}</span>
       </button>
       {showIssueCount && (
         <div className="flex items-center gap-1">
-          <WorkItemsIcon className="h-4 w-4 text-tertiary" />
+          <WorkItemsOutline className="h-4 w-4 text-tertiary" />
           <span className="text-11 text-tertiary">{cycleDetails.total_issues}</span>
         </div>
       )}
-      <CycleAdditionalActions cycleId={cycleId} projectId={projectId} />
       {showTransferIssues && (
+        // oxlint-disable-next-line jsx_a11y/click-events-have-key-events oxlint-disable-next-line jsx_a11y/no-static-element-interactions
         <div
-          className="px-2 h-6  text-accent-secondary flex items-center gap-1 cursor-pointer"
+          className="flex h-6 cursor-pointer items-center gap-1 px-2 text-accent-secondary"
           onClick={() => {
             setTransferIssuesModal(true);
           }}
         >
-          <TransferIcon className="fill-accent-primary w-4" />
+          <TransferWorkItemOutline className="w-4 fill-accent-primary" />
           <span>{t("project_cycles.transfer_work_items", { count: transferableIssuesCount })}</span>
         </div>
       )}
@@ -203,23 +215,19 @@ export const CycleListItemAction = observer(function CycleListItemAction(props: 
           <div className="flex gap-2">
             {/* Duration */}
             <Tooltip
-              tooltipContent={
-                <span className="flex gap-1">
-                  {renderFormattedDateInUserTimezone(cycleDetails.start_date ?? "")}
-                  <ArrowRight className="h-3 w-3 flex-shrink-0 my-auto" />
-                  {renderFormattedDateInUserTimezone(cycleDetails.end_date ?? "")}
-                </span>
-              }
+              label={`${t("project_cycles.in_your_timezone")}: ${renderFormattedDateInUserTimezone(
+                cycleDetails.start_date ?? ""
+              )} → ${renderFormattedDateInUserTimezone(cycleDetails.end_date ?? "")}`}
+              layout="stacked"
               disabled={!isProjectTimeZoneDifferent()}
-              tooltipHeading={t("project_cycles.in_your_timezone")}
             >
-              <div className="flex gap-1 text-11 text-tertiary font-medium items-center">
-                <CalendarDays className="h-3 w-3 flex-shrink-0 my-auto" />
+              <div className="flex items-center gap-1 text-11 font-medium text-tertiary">
+                <CalendarOutline className="my-auto h-3 w-3 flex-shrink-0" />
                 <MergedDateDisplay startDate={cycleDetails.start_date} endDate={cycleDetails.end_date} />
               </div>
             </Tooltip>
             {projectUTCOffset && (
-              <span className="rounded-md text-11 px-2 cursor-default  py-1 bg-layer-1 text-tertiary">
+              <span className="cursor-default rounded-md bg-layer-1 px-2 py-1 text-11 text-tertiary">
                 {projectUTCOffset}
               </span>
             )}
@@ -245,13 +253,9 @@ export const CycleListItemAction = observer(function CycleListItemAction(props: 
               }}
               showTooltip={isProjectTimeZoneDifferent()}
               customTooltipHeading={t("project_cycles.in_your_timezone")}
-              customTooltipContent={
-                <span className="flex gap-1">
-                  {renderFormattedDateInUserTimezone(cycleDetails.start_date ?? "")}
-                  <ArrowRight className="h-3 w-3 flex-shrink-0 my-auto" />
-                  {renderFormattedDateInUserTimezone(cycleDetails.end_date ?? "")}
-                </span>
-              }
+              customTooltipContent={`${renderFormattedDateInUserTimezone(
+                cycleDetails.start_date ?? ""
+              )} → ${renderFormattedDateInUserTimezone(cycleDetails.end_date ?? "")}`}
               mergeDates
               required={cycleDetails.status !== "draft"}
               disabled
@@ -266,19 +270,24 @@ export const CycleListItemAction = observer(function CycleListItemAction(props: 
       {/* created by */}
       {createdByDetails && !isActive && <ButtonAvatars showTooltip={false} userIds={createdByDetails?.id} />}
       {!isActive && (
-        <Tooltip tooltipContent={`${cycleDetails.assignee_ids?.length} Members`} isMobile={isMobile}>
+        <Tooltip label={`${cycleDetails.assignee_ids?.length} Members`} layout="stacked" disabled={isMobile}>
           <div className="flex w-min cursor-default items-center justify-center">
             {cycleDetails.assignee_ids && cycleDetails.assignee_ids?.length > 0 ? (
-              <AvatarGroup showTooltip={false}>
+              <AvatarGroupOverflow size="xs">
                 {cycleDetails.assignee_ids?.map((assignee_id) => {
                   const member = getUserDetails(assignee_id);
                   return (
-                    <Avatar key={member?.id} name={member?.display_name} src={getFileURL(member?.avatar_url ?? "")} />
+                    <Avatar
+                      key={member?.id}
+                      alt={member?.display_name}
+                      fallback={member?.display_name?.[0]?.toUpperCase()}
+                      src={getFileURL(member?.avatar_url ?? "")}
+                    />
                   );
                 })}
-              </AvatarGroup>
+              </AvatarGroupOverflow>
             ) : (
-              <MembersPropertyIcon className="h-4 w-4 text-tertiary" />
+              <MembersOutline className="h-4 w-4 text-tertiary" />
             )}
           </div>
         </Tooltip>

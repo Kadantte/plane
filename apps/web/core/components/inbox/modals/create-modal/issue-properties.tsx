@@ -1,8 +1,13 @@
-import type { FC } from "react";
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { ETabIndices } from "@plane/constants";
-import { ParentPropertyIcon } from "@plane/propel/icons";
+import { ParentOutline } from "@makeplane/propel/icons";
 import type { ISearchIssueResponse, TIssue } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 import { renderFormattedPayloadDate, getDate, getTabIndex } from "@plane/utils";
@@ -49,7 +54,7 @@ export const InboxIssueProperties = observer(function InboxIssueProperties(props
   maxDate?.setDate(maxDate.getDate());
 
   return (
-    <div className="relative flex flex-wrap gap-2 items-center">
+    <div className="relative flex flex-wrap items-center gap-2">
       {/* intake state */}
       <div className="h-7">
         <IntakeStateDropdown
@@ -174,9 +179,9 @@ export const InboxIssueProperties = observer(function InboxIssueProperties(props
               customButton={
                 <button
                   type="button"
-                  className="flex cursor-pointer items-center justify-between gap-1 h-full rounded-sm border-[0.5px] border-strong px-2 py-0.5 text-11 hover:bg-layer-1"
+                  className="flex h-full cursor-pointer items-center justify-between gap-1 rounded-sm border-[0.5px] border-strong px-2 py-0.5 text-11 hover:bg-layer-1"
                 >
-                  <ParentPropertyIcon className="h-3 w-3 flex-shrink-0" />
+                  <ParentOutline className="h-3 w-3 flex-shrink-0" />
                   <span className="whitespace-nowrap">
                     {selectedParentIssue
                       ? `${selectedParentIssue.project__identifier}-${selectedParentIssue.sequence_id}`
@@ -207,10 +212,10 @@ export const InboxIssueProperties = observer(function InboxIssueProperties(props
           ) : (
             <button
               type="button"
-              className="flex cursor-pointer items-center justify-between gap-1 h-full rounded-sm border-[0.5px] border-strong px-2 py-0.5 text-11 hover:bg-layer-1"
+              className="flex h-full cursor-pointer items-center justify-between gap-1 rounded-sm border-[0.5px] border-strong px-2 py-0.5 text-11 hover:bg-layer-1"
               onClick={() => setParentIssueModalOpen(true)}
             >
-              <ParentPropertyIcon className="h-3 w-3 flex-shrink-0" />
+              <ParentOutline className="h-3 w-3 flex-shrink-0" />
               <span className="whitespace-nowrap">Add parent</span>
             </button>
           )}

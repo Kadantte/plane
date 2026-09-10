@@ -1,6 +1,12 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { useCallback } from "react";
 import { observer } from "mobx-react";
-import { ListFilter } from "lucide-react";
+import { FilterOutline } from "@makeplane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import type { TPageFilterProps, TPageNavigationTabs } from "@plane/types";
@@ -10,9 +16,8 @@ import { calculateTotalFilters } from "@plane/utils";
 import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
-// plane web hooks
-import type { EPageStoreType } from "@/plane-web/hooks/store";
-import { usePageStore } from "@/plane-web/hooks/store";
+import { usePageStore } from "@/hooks/store";
+import type { EPageStoreType } from "@/hooks/store";
 // local imports
 import { PageAppliedFiltersList } from "../list/applied-filters";
 import { PageFiltersSelection } from "../list/filters";
@@ -73,7 +78,7 @@ export const PagesListHeaderRoot = observer(function PagesListHeaderRoot(props: 
             }}
           />
           <FiltersDropdown
-            icon={<ListFilter className="h-3 w-3" />}
+            icon={<FilterOutline className="h-3 w-3" />}
             title={t("common.filters")}
             placement="bottom-end"
             isFiltersApplied={isFiltersApplied}

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import { observer } from "mobx-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -38,7 +44,7 @@ function ExportsPage() {
     <SettingsContentWrapper header={<ExportsWorkspaceSettingsHeader />} hugging>
       <PageHead title={pageTitle} />
       <div
-        className={cn("w-full flex flex-col gap-y-6", {
+        className={cn("flex w-full flex-col gap-y-6", {
           "opacity-60": !canPerformWorkspaceMemberActions,
         })}
       >

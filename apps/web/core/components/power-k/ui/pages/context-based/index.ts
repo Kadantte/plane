@@ -1,9 +1,13 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 export * from "./root";
 
 // components
 import type { TPowerKContextType } from "@/components/power-k/core/types";
-// plane web imports
-import { CONTEXT_ENTITY_MAP_EXTENDED } from "@/plane-web/components/command-palette/power-k/pages/context-based";
 
 export type TContextEntityMap = {
   i18n_title: string;
@@ -27,5 +31,4 @@ export const CONTEXT_ENTITY_MAP: Record<TPowerKContextType, TContextEntityMap> =
     i18n_title: "power_k.contextual_actions.module.title",
     i18n_indicator: "power_k.contextual_actions.module.indicator",
   },
-  ...CONTEXT_ENTITY_MAP_EXTENDED,
 };

@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import * as React from "react";
 import { Tooltip as BaseTooltip } from "@base-ui-components/react/tooltip";
 import { cn } from "../utils";
@@ -8,7 +14,9 @@ type ITooltipProps = {
   tooltipHeading?: string;
   tooltipContent?: string | React.ReactNode | null;
   position?: TPlacement;
-  children: React.ReactElement;
+  // React 19 defaults ReactElement's props to `unknown`; Base UI's `render` prop
+  // needs a named props shape to accept the element.
+  children: React.ReactElement<Record<string, unknown>>;
   disabled?: boolean;
   className?: string;
   openDelay?: number;
@@ -50,7 +58,7 @@ export function Tooltip(props: ITooltipProps) {
         <BaseTooltip.Portal>
           <BaseTooltip.Positioner
             className={cn(
-              "z-50 max-w-xs gap-1 overflow-hidden break-words rounded-lg border border-subtle-1 bg-layer-2 px-2 py-1.5 shadow-overlay-200",
+              "z-50 max-w-xs gap-1 overflow-hidden rounded-lg border border-subtle-1 bg-layer-2 px-2 py-1.5 break-words shadow-overlay-200",
               {
                 hidden: isMobile,
               },

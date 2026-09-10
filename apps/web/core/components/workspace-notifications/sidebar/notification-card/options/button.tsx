@@ -1,5 +1,11 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
 import type { ReactNode } from "react";
-import { Tooltip } from "@plane/propel/tooltip";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
@@ -18,11 +24,11 @@ export function NotificationItemOptionButton(props: TNotificationItemOptionButto
   const { isMobile } = usePlatformOS();
 
   return (
-    <Tooltip tooltipContent={tooltipContent} isMobile={isMobile}>
+    <Tooltip label={tooltipContent} layout="stacked" disabled={isMobile}>
       <button
         type="button"
         className={cn(
-          "relative flex-shrink-0 w-5 h-5 rounded-xs flex justify-center items-center outline-none bg-layer-1 hover:bg-surface-2",
+          "relative flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-xs bg-layer-1 outline-none hover:bg-surface-2",
           buttonClassName
         )}
         onClick={(e) => {
